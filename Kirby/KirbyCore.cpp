@@ -8,14 +8,14 @@ KirbyCore::~KirbyCore()
 {
 }
 
-void KirbyCore::EngineStart() {
+void KirbyCore::Start() {
 
 }
 
-void KirbyCore::EngineUpdate() {
+void KirbyCore::Update() {
 
 }
 
-void KirbyCore::EngineEnd() {
+void KirbyCore::End() {
 
 }

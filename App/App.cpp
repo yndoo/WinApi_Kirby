@@ -8,4 +8,14 @@
 // 사용자가 하고 싶을일을 어떻게 어디에 정의하게 만들거냐?
 // 내가 윈도우 크기를 변경하고 싶어.
 
-ENGINESTART(KirbyCore)
+//ENGINESTART(ContentsCore);
+
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, 
+	_In_opt_ HINSTANCE hPrevInstance, 
+	_In_ LPWSTR    lpCmdLine, 
+	_In_ int       nCmdShow) 
+{ 
+	LeakCheck; 
+	KirbyCore NewUserCore = KirbyCore();
+	EngineCore::EngineStart(hInstance, &NewUserCore);
+}

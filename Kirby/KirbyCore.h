@@ -16,9 +16,9 @@ public:
 	KirbyCore& operator=(KirbyCore&& _Other) noexcept = delete;
 
 protected:
-	void EngineStart();
-	void EngineUpdate();
-	void EngineEnd();
+	void Start() override;
+	void Update() override;
+	void End() override;
 
 private:
 
