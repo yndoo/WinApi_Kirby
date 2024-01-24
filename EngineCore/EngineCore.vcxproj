@@ -176,7 +176,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="NameObject.h" />
-    <ClInclude Include="UpdateObject.h" />
+    <ClInclude Include="TickObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -192,7 +192,7 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="NameObject.cpp" />
-    <ClCompile Include="UpdateObject.cpp" />
+    <ClCompile Include="TickObject.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

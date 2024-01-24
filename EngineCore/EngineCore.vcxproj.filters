@@ -10,7 +10,7 @@
     <ClInclude Include="Actor.h">
       <Filter>Object\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="UpdateObject.h">
+    <ClInclude Include="TickObject.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="NameObject.h">
@@ -30,7 +30,7 @@
     <ClCompile Include="NameObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="UpdateObject.cpp">
+    <ClCompile Include="TickObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>

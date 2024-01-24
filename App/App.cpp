@@ -18,4 +18,5 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	LeakCheck; 
 	KirbyCore NewUserCore = KirbyCore();
 	EngineCore::EngineStart(hInstance, &NewUserCore);
+
 }

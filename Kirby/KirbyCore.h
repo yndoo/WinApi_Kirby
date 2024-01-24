@@ -16,8 +16,8 @@ public:
 	KirbyCore& operator=(KirbyCore&& _Other) noexcept = delete;
 
 protected:
-	void Start() override;
-	void Update() override;
+	void BeginPlay() override;
+	void Tick(float _DeltaTime) override;
 	void End() override;
 
 private:
