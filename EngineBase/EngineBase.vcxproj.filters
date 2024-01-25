@@ -13,6 +13,9 @@
     <ClInclude Include="FTransform.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="EngineTime.h">
+      <Filter>Time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineDebug.cpp">
@@ -27,6 +30,9 @@
     <ClCompile Include="FTransform.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="EngineTime.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Debug">
@@ -37,6 +43,9 @@
     </Filter>
     <Filter Include="Math">
       <UniqueIdentifier>{6510af30-ea9a-408b-b251-a60cdf8ffe5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Time">
+      <UniqueIdentifier>{d7f83226-046b-4713-9ec4-b2f570449b2b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
