@@ -167,7 +167,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="FTransform.h">
+    <ClInclude Include="Transform.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -189,7 +189,7 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="FTransform.cpp">
+    <ClCompile Include="Transform.cpp">
       <SubType>
       </SubType>
     </ClCompile>

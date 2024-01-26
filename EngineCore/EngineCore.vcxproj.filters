@@ -16,6 +16,15 @@
     <ClInclude Include="NameObject.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent.h">
+      <Filter>Object\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorComponent.h">
+      <Filter>Object\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageRenderer.h">
+      <Filter>Object\Component\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp">
@@ -33,6 +42,15 @@
     <ClCompile Include="TickObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="SceneComponent.cpp">
+      <Filter>Object\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorComponent.cpp">
+      <Filter>Object\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageRenderer.cpp">
+      <Filter>Object\Component\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -43,6 +61,12 @@
     </Filter>
     <Filter Include="Object\Actor">
       <UniqueIdentifier>{bf945d53-4e73-4093-b8cd-6a1d25945812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Component">
+      <UniqueIdentifier>{13ce2f56-ddb5-4f77-b5e4-e63dc5a93b68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Component\Renderer">
+      <UniqueIdentifier>{76df3fb7-13b1-4f27-864b-d0cd91d3c698}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

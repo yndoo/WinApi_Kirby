@@ -167,7 +167,15 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="ActorComponent.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="EngineCore.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="ImageRenderer.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -176,6 +184,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="NameObject.h" />
+    <ClInclude Include="SceneComponent.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="TickObject.h" />
   </ItemGroup>
   <ItemGroup>
@@ -183,7 +195,15 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="ActorComponent.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="EngineCore.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="ImageRenderer.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -192,6 +212,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="NameObject.cpp" />
+    <ClCompile Include="SceneComponent.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="TickObject.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
