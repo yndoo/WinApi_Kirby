@@ -155,7 +155,19 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="EngineDirectory.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="EngineFile.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="EngineMath.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="EnginePath.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -177,7 +189,19 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="EngineDirectory.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="EngineFile.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="EngineMath.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="EnginePath.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -193,6 +217,9 @@
       <SubType>
       </SubType>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
