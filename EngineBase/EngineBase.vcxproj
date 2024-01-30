@@ -179,6 +179,11 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="NameObject.h" />
+    <ClInclude Include="PathObject.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Transform.h">
       <SubType>
       </SubType>
@@ -210,6 +215,11 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="EngineTime.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="NameObject.cpp" />
+    <ClCompile Include="PathObject.cpp">
       <SubType>
       </SubType>
     </ClCompile>

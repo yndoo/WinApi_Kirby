@@ -1,5 +1,6 @@
 #include "KirbyCore.h"
 #include "TitleLevel.h"
+#include "PlayLevel.h"
 
 KirbyCore::KirbyCore()
 	: EngineCore()
@@ -12,8 +13,9 @@ KirbyCore::~KirbyCore()
 
 void KirbyCore::BeginPlay() {
 	CreateLevel<UTitleLevel>("TitleLevel");
+	CreateLevel<UPlayLevel>("PlayLevel");
 
-	ChangeLevel("TitleLevel");
+	ChangeLevel("PlayLevel");
 }
 
 void KirbyCore::Tick(float _DeltaTime) {
