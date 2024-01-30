@@ -14,17 +14,28 @@ void Player::BeginPlay() {
 	
 	PlayerRenderer = CreateImageRenderer(0);
 	PlayerRenderer->SetPosition({ 0, 30 });
-	PlayerRenderer->SetImageToScale("DS DSi - Kirby Squeak Squad Kirby Mouse Attack - Kirby.png");
+	PlayerRenderer->SetImageToScale("KirbyTest.png");
 	
 	SetActorLocation({ 100,100 });
 	SetActorScale({ 100,100 });
 }
 
 void Player::Tick(float _DeltaTime) {
-	if (true == EngineInput::IsPress('A')) {
+	if (true == EngineInput::IsPress(VK_LEFT)) {
 		AddActorLocation(FVector::Left * 500.0f * _DeltaTime);
 	}
-	if (true == EngineInput::IsPress('D')) {
+	if (true == EngineInput::IsPress(VK_RIGHT)) {
 		AddActorLocation(FVector::Right * 500.0f * _DeltaTime);
 	}
+	if (true == EngineInput::IsPress(VK_UP)) {
+		AddActorLocation(FVector::Up * 500.0f * _DeltaTime);
+	}
+	if (true == EngineInput::IsPress(VK_DOWN)) {
+		AddActorLocation(FVector::Down * 500.0f * _DeltaTime);
+	}
+
+	if (true == EngineInput::IsPress('X')) {
+		// º° ¹ñ±â
+	}
+
 }
