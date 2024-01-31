@@ -11,12 +11,15 @@ Player::~Player()
 
 void Player::BeginPlay() {
 	AActor::BeginPlay();
+	SetActorLocation({ 100,100 });
 	
 	PlayerRenderer = CreateImageRenderer(0);
-	PlayerRenderer->SetPosition({ 0, 30 });
-	PlayerRenderer->SetImageToScale("KirbyTest.png");
+	PlayerRenderer->SetImage("KirbyTest.png");
+
+	PlayerRenderer->SetPosition({ 100, 100 });
+	PlayerRenderer->SetTransform({ {0,0}, {200, 200} });
+	PlayerRenderer->SetImageCuttingTransform({ {0,0}, {200, 200} });
 	
-	SetActorLocation({ 100,100 });
 }
 
 void Player::Tick(float _DeltaTime) {
