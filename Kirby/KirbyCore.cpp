@@ -3,7 +3,7 @@
 #include "PlayLevel.h"
 
 KirbyCore::KirbyCore()
-	: EngineCore()
+	: UEngineCore()
 {
 }
 
@@ -12,6 +12,8 @@ KirbyCore::~KirbyCore()
 }
 
 void KirbyCore::BeginPlay() {
+	MainWindow.SetWindowScale({ 1280, 720 });
+
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");
 

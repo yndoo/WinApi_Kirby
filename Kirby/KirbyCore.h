@@ -2,7 +2,7 @@
 #include <EngineCore/EngineCore.h>
 
 // Ό³Έν :
-class KirbyCore : public EngineCore
+class KirbyCore : public UEngineCore
 {
 public:
 	// constrcuter destructer

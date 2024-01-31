@@ -17,7 +17,6 @@ void Player::BeginPlay() {
 	PlayerRenderer->SetImageToScale("KirbyTest.png");
 	
 	SetActorLocation({ 100,100 });
-	SetActorScale({ 100,100 });
 }
 
 void Player::Tick(float _DeltaTime) {
