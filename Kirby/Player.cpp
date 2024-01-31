@@ -14,11 +14,16 @@ void Player::BeginPlay() {
 	SetActorLocation({ 100,100 });
 	
 	PlayerRenderer = CreateImageRenderer(0);
-	PlayerRenderer->SetImage("KirbyTest.png");
+	PlayerRenderer->SetImage("DS DSi - Kirby Squeak Squad Kirby Mouse Attack - Kirby.png");
 
 	PlayerRenderer->SetPosition({ 100, 100 });
-	PlayerRenderer->SetTransform({ {0,0}, {200, 200} });
-	PlayerRenderer->SetImageCuttingTransform({ {0,0}, {200, 200} });
+	PlayerRenderer->SetTransform({ {0,0}, {60, 80} });
+	
+	// 이미지보다 크게 자르면 아예 안 나옴.
+	PlayerRenderer->SetImageCuttingTransform({ {0,0}, {30, 40} });
+	
+
+	int a = 0;
 	
 }
 

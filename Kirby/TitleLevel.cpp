@@ -12,19 +12,19 @@ UTitleLevel::~UTitleLevel()
 }
 
 void UTitleLevel::BeginPlay() {
-	//UEngineDirectory NewPath;
+	UEngineDirectory NewPath;
 
-	//NewPath.MoveParent();
+	NewPath.MoveParent();
 
-	//NewPath.Move("KirbyResources");
-	//NewPath.Move("Title");
+	NewPath.Move("KirbyResources");
+	NewPath.Move("Title");
 
-	//std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
+	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
 
-	//for (UEngineFile& File : AllFileList)
-	//{
-	//	std::string FullPath = File.GetFullPath();
-	//	UEngineResourcesManager::GetInst().LoadImg(FullPath);
-	//}
+	for (UEngineFile& File : AllFileList)
+	{
+		std::string FullPath = File.GetFullPath();
+		UEngineResourcesManager::GetInst().LoadImg(FullPath);
+	}
 
 }
