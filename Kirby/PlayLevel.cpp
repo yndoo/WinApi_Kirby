@@ -28,7 +28,7 @@ void UPlayLevel::BeginPlay() {
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
 
-	UEngineResourcesManager::GetInst().CuttingImage("DS DSi - Kirby Squeak Squad Kirby Mouse Attack - Kirby.png", 13, 8);
+	UEngineResourcesManager::GetInst().CuttingImage("Kirby.png", 40, 13);
 
 	this->SpawnActor<Player>();
 }
