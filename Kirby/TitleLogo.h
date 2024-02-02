@@ -1,7 +1,8 @@
 #pragma once
+#include <EngineCore/Actor.h>
 
 // Ό³Έν :
-class TitleLogo
+class TitleLogo : public AActor
 {
 public:
 	// constrcuter destructer
@@ -15,8 +16,11 @@ public:
 	TitleLogo& operator=(TitleLogo&& _Other) noexcept = delete;
 
 protected:
+	void BeginPlay() override;
+	void Tick(float _DeltaTime) override;
 
 private:
+	UImageRenderer* PlayerRenderer;
 
 };
 

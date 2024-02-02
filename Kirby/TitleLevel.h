@@ -16,8 +16,11 @@ public:
 
 protected:
 	void BeginPlay() override;
+	void Tick(float _DeltaTime) override;
 
 private:
-
+	float AlphaTime = 0.0f;
+	UImageRenderer* Renderer = nullptr;
+	bool Dir = false;
 };
 
