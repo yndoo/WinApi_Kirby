@@ -21,6 +21,7 @@ protected:
 
 private:
 	UImageRenderer* PlayerRenderer;
+	float MoveSpeed = 0.0f;
 
 };
 

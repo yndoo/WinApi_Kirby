@@ -24,7 +24,7 @@ void Player::BeginPlay() {
 	// 이미지보다 크게 자르면 아예 안 나옴.
 	//PlayerRenderer->SetImageCuttingTransform({ {0,0}, {60, 80} });
 
-	PlayerRenderer->CreateAnimation("Test", "Kirby.png", 11, 19, 0.2f, true);
+	PlayerRenderer->CreateAnimation("Test", "Kirby.png", 11, 19, 0.1f, true);
 	PlayerRenderer->ChangeAnimation("Test");
 	
 
@@ -34,16 +34,16 @@ void Player::BeginPlay() {
 
 void Player::Tick(float _DeltaTime) {
 	if (true == EngineInput::IsPress(VK_LEFT)) {
-		AddActorLocation(FVector::Left * 500.0f * _DeltaTime);
+		AddActorLocation(FVector::Left * 200.0f * _DeltaTime);
 	}
 	if (true == EngineInput::IsPress(VK_RIGHT)) {
-		AddActorLocation(FVector::Right * 500.0f * _DeltaTime);
+		AddActorLocation(FVector::Right * 200.0f * _DeltaTime);
 	}
 	if (true == EngineInput::IsPress(VK_UP)) {
-		AddActorLocation(FVector::Up * 500.0f * _DeltaTime);
+		AddActorLocation(FVector::Up * 200.0f * _DeltaTime);
 	}
 	if (true == EngineInput::IsPress(VK_DOWN)) {
-		AddActorLocation(FVector::Down * 500.0f * _DeltaTime);
+		AddActorLocation(FVector::Down * 200.0f * _DeltaTime);
 	}
 
 	if (true == EngineInput::IsPress('X')) {

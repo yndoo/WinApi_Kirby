@@ -12,7 +12,7 @@ KirbyCore::~KirbyCore()
 }
 
 void KirbyCore::BeginPlay() {
-	MainWindow.SetWindowScale({ 1280, 720 });
+	MainWindow.SetWindowScale({ 800, 600 });
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");
