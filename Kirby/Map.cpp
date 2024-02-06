@@ -1,6 +1,7 @@
 #include "Map.h"
 #include "ContentsHelper.h"
 #include <EngineCore/EngineResourcesManager.h>
+#include <EnginePlatform/EngineInput.h>
 
 AMap::AMap()
 {
@@ -27,9 +28,27 @@ void AMap::SetColMapImage(std::string_view _MapImageName)
 	ColRenderer->SetTransform({ ImageScale.Half2D(), ImageScale });
 }
 
+void AMap::SwitchDebug()
+{
+	if (true == Renderer->IsActive())
+	{
+		Renderer->SetActive(false);
+		ColRenderer->SetActive(true);
+	}
+	else
+	{
+		Renderer->SetActive(true);
+		ColRenderer->SetActive(false);
+	}
+
+}
 
 void AMap::Tick(float _DeltaTime) {
 	AActor::Tick(_DeltaTime);
+	if (EngineInput::IsDown('O'))
+	{
+		SwitchDebug();
+	}
 }
 
 void AMap::BeginPlay() {

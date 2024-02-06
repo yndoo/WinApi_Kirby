@@ -1,27 +1,46 @@
 #pragma once
 #include <EngineCore/Actor.h>
+#include "ContentsHelper.h"
 
 // 설명 :
-class Player : public AActor
+class APlayer : public AActor
 {
 public:
 	// constrcuter destructer
-	Player();
-	~Player();
+	APlayer();
+	~APlayer();
 
 	// delete Function
-	Player(const Player& _Other) = delete;
-	Player(Player&& _Other) noexcept = delete;
-	Player& operator=(const Player& _Other) = delete;
-	Player& operator=(Player&& _Other) noexcept = delete;
+	APlayer(const APlayer& _Other) = delete;
+	APlayer(APlayer&& _Other) noexcept = delete;
+	APlayer& operator=(const APlayer& _Other) = delete;
+	APlayer& operator=(APlayer&& _Other) noexcept = delete;
 
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 
-private:
-	UImageRenderer* PlayerRenderer;
-	float MoveSpeed = 0.0f;
+	// 상태 보조 함수
+	void GravityCheck(float _DeltaTime);
+	void DirCheck();
+	std::string GetAnimationName(std::string _Name);
 
+	// 상태
+	void Idle(float _DeltaTime);
+	void Move(float _DeltaTime);
+
+	// 상태 업데이트
+	void StateUpdate(float _DeltaTime);
+	void StateChange(EPlayState _State);
+
+	EPlayState State = EPlayState::None;
+	EActorDir DirState = EActorDir::Right;
+	std::string CurAnimationName = "None";
+
+private:
+	UImageRenderer* PlayerRenderer = nullptr;
+
+	float MoveSpeed = 300.0f;
+	float Gravity = 500.0f;
 };
 

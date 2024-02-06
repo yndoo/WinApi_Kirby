@@ -47,10 +47,10 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 
 	AMap* Map = SpawnActor<AMap>();
 	Map->SetMapImage("level1-3_foreground01.png");
-	Map->SetColMapImage("level1-3_foreground01.png");
+	Map->SetColMapImage("level1-3_foreground01_col.png");
 	
 
-	this->SpawnActor<Player>();
+	this->SpawnActor<APlayer>();
 }
 void UPlayLevel::LevelEnd(ULevel* _Level)
 {
