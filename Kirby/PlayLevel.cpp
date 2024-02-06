@@ -3,6 +3,7 @@
 #include <EngineBase/EngineDirectory.h>
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
+#include "Map.h"
 
 UPlayLevel::UPlayLevel()
 {
@@ -13,12 +14,25 @@ UPlayLevel::~UPlayLevel()
 }
 
 void UPlayLevel::BeginPlay() {
+	ULevel::BeginPlay();
+
+}
+
+void UPlayLevel::Tick(float _DeltaTime)
+{
+	ULevel::Tick(_DeltaTime);
+}
+
+void UPlayLevel::LevelStart(ULevel* _Level)
+{
+	// 여기서 리소스를 로드하고
+	// 액터도 여기서 만들고
 	UEngineDirectory NewPath;
 
 	NewPath.MoveParent();
 
 	NewPath.Move("KirbyResources");
-	NewPath.Move("Kirby");
+	NewPath.Move("Level1-3");
 
 	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
 
@@ -28,7 +42,19 @@ void UPlayLevel::BeginPlay() {
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
 
+	// 이 레벨에서 필요한 작업들
 	UEngineResourcesManager::GetInst().CuttingImage("Kirby.png", 40, 13);
 
+	AMap* Map = SpawnActor<AMap>();
+	Map->SetMapImage("level1-3_foreground01.png");
+	Map->SetColMapImage("level1-3_foreground01.png");
+	
+
 	this->SpawnActor<Player>();
+}
+void UPlayLevel::LevelEnd(ULevel* _Level)
+{
+	// 리소스도 날려요.
+	// 액터를 삭제한다.
+	int a = 0;
 }

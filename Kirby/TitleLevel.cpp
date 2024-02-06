@@ -62,3 +62,16 @@ void UTitleLevel::Tick(float _DeltaTime) {
 		Renderer->SetAlpha(1.0f - AlphaTime);
 	}
 }
+
+void UTitleLevel::LevelStart(ULevel* _Level)
+{
+	// 여기서 리소스를 로드하고
+	// 액터도 여기서 만들고
+	int a = 0;
+}
+void UTitleLevel::LevelEnd(ULevel* _Level)
+{
+	// 리소스도 날려요.
+	// 액터를 삭제한다.
+	int a = 0;
+}

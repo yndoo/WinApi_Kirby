@@ -151,7 +151,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ContentsHelper.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="KirbyCore.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Map.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -173,7 +181,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ContentsHelper.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="KirbyCore.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
       <SubType>
       </SubType>
     </ClCompile>

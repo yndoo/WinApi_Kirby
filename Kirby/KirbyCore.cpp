@@ -12,7 +12,10 @@ KirbyCore::~KirbyCore()
 }
 
 void KirbyCore::BeginPlay() {
-	MainWindow.SetWindowScale({ 800, 600 });
+	float MyX = 2.5f;
+	float MyY = 2.5f;
+
+	MainWindow.SetWindowScale({ 255 * MyX, 208 * MyY });
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");

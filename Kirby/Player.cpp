@@ -11,6 +11,7 @@ Player::~Player()
 
 void Player::BeginPlay() {
 	AActor::BeginPlay();
+
 	SetActorLocation({ 100,100 });
 	
 	PlayerRenderer = CreateImageRenderer(0);
