@@ -44,6 +44,10 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 
 	// 이 레벨에서 필요한 작업들
 	UEngineResourcesManager::GetInst().CuttingImage("Kirby.png", 40, 13);
+	UEngineResourcesManager::GetInst().CuttingImage("Move_Right.png", 10, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Move_Left.png", 10, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Idle_Right.png", 3, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Idle_Left.png", 3, 1);
 
 	AMap* Map = SpawnActor<AMap>();
 	Map->SetMapImage("level1-3_foreground01.png");

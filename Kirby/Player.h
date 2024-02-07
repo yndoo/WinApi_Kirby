@@ -28,6 +28,8 @@ protected:
 	// 상태
 	void Idle(float _DeltaTime);
 	void Move(float _DeltaTime);
+	void FreeMove(float _DeltaTime);	
+	void CameraFreeMove(float _DeltaTime);
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
@@ -39,6 +41,8 @@ protected:
 
 private:
 	UImageRenderer* PlayerRenderer = nullptr;
+
+	float FreeMoveSpeed = 1000.0f;
 
 	float MoveSpeed = 300.0f;
 	float Gravity = 500.0f;
