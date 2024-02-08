@@ -42,7 +42,7 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
 
-	// 이 레벨에서 필요한 작업들
+	// 이 레벨에서 필요한 애니메이션을 위한 이미지들
 	UEngineResourcesManager::GetInst().CuttingImage("Kirby.png", 40, 13);
 	UEngineResourcesManager::GetInst().CuttingImage("Move_Right.png", 10, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Move_Left.png", 10, 1);
@@ -52,8 +52,8 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	AMap* Map = SpawnActor<AMap>();
 	Map->SetMapImage("level1-3_foreground01.png");
 	Map->SetColMapImage("level1-3_foreground01_col.png");
+	Map->SetBackMapImage("level1-3_background.png");
 	
-
 	this->SpawnActor<APlayer>();
 }
 void UPlayLevel::LevelEnd(ULevel* _Level)

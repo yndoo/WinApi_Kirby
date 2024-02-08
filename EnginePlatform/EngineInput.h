@@ -7,14 +7,14 @@
 
 // AllStateClass
 // 설명 :
-class EngineInput
+class UEngineInput
 {
 	friend class InputInitCreator;
 
 private:
 	class /*EngineInput::*/EngineKey
 	{
-		friend EngineInput;
+		friend UEngineInput;
 
 	public:
 		bool Down = false; // 누른 순간
@@ -42,14 +42,14 @@ private:
 
 public:
 	// constrcuter destructer
-	EngineInput();
-	~EngineInput();
+	UEngineInput();
+	~UEngineInput();
 
 	// delete Function
-	EngineInput(const EngineInput& _Other) = delete;
-	EngineInput(EngineInput&& _Other) noexcept = delete;
-	EngineInput& operator=(const EngineInput& _Other) = delete;
-	EngineInput& operator=(EngineInput&& _Other) noexcept = delete;
+	UEngineInput(const UEngineInput& _Other) = delete;
+	UEngineInput(UEngineInput&& _Other) noexcept = delete;
+	UEngineInput& operator=(const UEngineInput& _Other) = delete;
+	UEngineInput& operator=(UEngineInput&& _Other) noexcept = delete;
 
 	static bool IsDown(int _Key)
 	{
@@ -91,11 +91,33 @@ public:
 		return AllKeys[_Key].Free;
 	}
 
+	static bool IsAnykeyDown()
+	{
+		return AnykeyDown;
+	}
+	static bool IsAnykeyPress()
+	{
+		return AnykeyPress;
+	}
+	static bool IsAnykeyUp()
+	{
+		return AnykeyUp;
+	}
+	static bool IsAnykeyFree()
+	{
+		return AnykeyFree;
+	}
+
 	static void KeyCheckTick(float _DeltaTime);
 
 protected:
 	//              'A'  상태가 어때?
 	static std::map<int, EngineKey> AllKeys;
+
+	static bool AnykeyDown;
+	static bool AnykeyPress;
+	static bool AnykeyUp;
+	static bool AnykeyFree;
 
 	int Value;
 

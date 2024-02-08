@@ -30,6 +30,7 @@ class UContentsHelper
 {
 public:
 	static UWindowImage* ColMapImage;
+	static UWindowImage* BackgroundImage;
 
 protected:
 

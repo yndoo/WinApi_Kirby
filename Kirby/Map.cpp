@@ -2,6 +2,7 @@
 #include "ContentsHelper.h"
 #include <EngineCore/EngineResourcesManager.h>
 #include <EnginePlatform/EngineInput.h>
+#include <EngineCore/EngineCore.h>
 
 AMap::AMap()
 {
@@ -28,31 +29,40 @@ void AMap::SetColMapImage(std::string_view _MapImageName)
 	ColRenderer->SetTransform({ ImageScale.Half2D(), ImageScale });
 }
 
+void AMap::SetBackMapImage(std::string_view _MapImageName) {
+	BackRenderer->SetImage(_MapImageName);
+	UWindowImage* Image = BackRenderer->GetImage();
+	FVector ImageScale = Image->GetScale();
+	FVector WinScale = GEngine->MainWindow.GetWindowScale();
+	BackRenderer->SetTransform({ WinScale.Half2D(), WinScale });
+}
+
 void AMap::SwitchDebug()
 {
 	if (true == Renderer->IsActive())
 	{
-		Renderer->SetActive(false);
-		ColRenderer->SetActive(true);
+		Renderer->ActiveOff();
+		ColRenderer->ActiveOn();
 	}
 	else
 	{
-		Renderer->SetActive(true);
-		ColRenderer->SetActive(false);
+		Renderer->ActiveOn();
+		ColRenderer->ActiveOff();
 	}
 
 }
 
 void AMap::Tick(float _DeltaTime) {
 	AActor::Tick(_DeltaTime);
-	if (EngineInput::IsDown('O'))
+	if (UEngineInput::IsDown('O'))
 	{
 		SwitchDebug();
 	}
 }
 
 void AMap::BeginPlay() {
+	BackRenderer = CreateImageRenderer(KirbyRenderOrder::Map);
 	Renderer = CreateImageRenderer(KirbyRenderOrder::Map);
 	ColRenderer = CreateImageRenderer(KirbyRenderOrder::Map);
-	ColRenderer->SetActive(false);
+	ColRenderer->ActiveOff();
 }
