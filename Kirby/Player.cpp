@@ -106,7 +106,7 @@ void  APlayer::Idle(float _DeltaTime) {
 		true == UEngineInput::IsPress(VK_RIGHT)
 		)
 	{
-		if (IsMoveClicked == true && !DirCheck() && MoveDoubleClickTime < 0.3f)
+		if (IsMoveClicked == true && !DirCheck() && MoveDoubleClickTime < 0.15f)
 		{
 			StateChange(EPlayState::Run);
 			return;

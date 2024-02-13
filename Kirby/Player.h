@@ -57,8 +57,8 @@ private:
 	float Gravity = 500.0f;
 
 	bool IsMoveClicked = false;
-	double MoveDoubleClickTime = 0;
-	double SlideTime = 0;
+	double MoveDoubleClickTime = 0;		// 더블 클릭 인정 시간
+	double SlideTime = 0;				// 슬라이딩 지속 시간
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 };
