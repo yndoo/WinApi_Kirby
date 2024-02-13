@@ -393,13 +393,13 @@ void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
 		if (NextLoc.X >= 0 && NextLoc.X <= 4718) {
 			AddActorLocation(MovePos);	// 진짜 이동시킴
 
-			//MovePos.Y += i;				// 카메라는 올라가면 안 되니까 다시 더해줌
+			MovePos.Y += i;				// 카메라는 올라가면 안 되니까 다시 더해줌
 		}
 
 		// 카메라가 플레이어 따라오는 문제 해결 코드
 		FVector CameraPosLeft = GetWorld()->GetCameraPos();					// 카메라 왼쪽 끝
 		FVector NextCameraPosLeft = GetWorld()->GetCameraPos() + MovePos;	// 왼쪽 카메라 끝 + MovePos (이동 후의 카메라 위치, 왼쪽)
-		FVector WinScale = GEngine->MainWindow.GetWindowScale();			// 윈도우 크기
+		//FVector WinScale = GEngine->MainWindow.GetWindowScale();			// 윈도우 크기
 		FVector NextCameraPosRight = WinScale + NextCameraPosLeft;			// 이동 후의 카메라 오른쪽 끝
 		FVector NextPlayerPos = GetActorLocation();							// 이동한 플레이어 위치
 
@@ -409,8 +409,7 @@ void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
 			NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&		// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
 			NextPlayerPos.X <= 4720 - WinScale.hX() &&						// 플레이어 위치가 맵 오른쪽 끝에서 절반일 때까지만 카메라 따라오도록
 			NextCameraPosLeft.X >= 0 &&										// 카메라가 맵 밖으로 안 나오도록
-			NextCameraPosRight.X <= 4720 &&
-			NextCameraPosLeft.Y >= 0
+			NextCameraPosRight.X <= 4720
 			) 
 		{
 			// MovePos가 맵 밖이 아니면

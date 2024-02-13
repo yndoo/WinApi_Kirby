@@ -2,6 +2,7 @@
 #include <EngineCore/Actor.h>
 #include "ContentsHelper.h"
 #include <EngineBase/EngineTime.h>
+#include <EngineCore/EngineCore.h>
 
 // Ό³Έν :
 class APlayer : public AActor
@@ -58,5 +59,7 @@ private:
 	bool IsMoveClicked = false;
 	double MoveDoubleClickTime = 0;
 	double SlideTime = 0;
+
+	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 };
 
