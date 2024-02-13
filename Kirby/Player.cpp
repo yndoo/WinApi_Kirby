@@ -15,14 +15,14 @@ void APlayer::BeginPlay() {
 	AActor::BeginPlay();
 
 	SetActorLocation({ 100,100 });
-	
+
 	PlayerRenderer = CreateImageRenderer(0);
 	PlayerRenderer->SetImage("Kirby.png");
 
 	PlayerRenderer->SetTransform({ {0,0}, {300, 300} });
 	PlayerRenderer->SetTransColor(Color8Bit::Blue);
-	
-	
+
+
 	// 이미지보다 크게 자르면 아예 안 나옴.
 	//PlayerRenderer->SetImageCuttingTransform({ {0,0}, {60, 80} });
 
@@ -36,14 +36,14 @@ void APlayer::BeginPlay() {
 	PlayerRenderer->CreateAnimation("Slide_Left", "Slide_Left.png", 0, 0, 0.3f, true);
 	PlayerRenderer->CreateAnimation("Run_Right", "Run_Right.png", 0, 7, 0.1f, true);
 	PlayerRenderer->CreateAnimation("Run_Left", "Run_Left.png", 0, 7, 0.1f, true);
-	
+
 	PlayerRenderer->ChangeAnimation("Idle_Right");
-	
+
 
 	StateChange(EPlayState::Idle);
 
 	int a = 0;
-	
+
 }
 
 void APlayer::Tick(float _DeltaTime) {
@@ -106,7 +106,7 @@ void  APlayer::Idle(float _DeltaTime) {
 		true == UEngineInput::IsPress(VK_RIGHT)
 		)
 	{
-		if(IsMoveClicked == true && !DirCheck() && MoveDoubleClickTime < 0.3f)
+		if (IsMoveClicked == true && !DirCheck() && MoveDoubleClickTime < 0.3f)
 		{
 			StateChange(EPlayState::Run);
 			return;
@@ -154,11 +154,11 @@ void APlayer::Move(float _DeltaTime) {
 		return;
 	}
 
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Move")); 
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
 }
 
 // Crouch : 웅크리기
-void APlayer::Crouch(float _DeltaTime) 
+void APlayer::Crouch(float _DeltaTime)
 {
 	GravityCheck(_DeltaTime);
 
@@ -180,7 +180,7 @@ void APlayer::Crouch(float _DeltaTime)
 	}
 }
 
-void APlayer::Slide(float _DeltaTime) 
+void APlayer::Slide(float _DeltaTime)
 {
 	GravityCheck(_DeltaTime);
 
@@ -211,7 +211,7 @@ void APlayer::Slide(float _DeltaTime)
 }
 
 // Run : 달리기
-void APlayer::Run(float _DeltaTime) 
+void APlayer::Run(float _DeltaTime)
 {
 	MoveDoubleClickTime = 0;
 	IsMoveClicked = false;
@@ -342,6 +342,7 @@ bool APlayer::DirCheck()
 // RealMove : 진짜 이동시키는 함수
 void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
 {
+	// MovePos : 이동할 양
 	FVector MovePos = FVector::Zero;
 	if (DirState == EActorDir::Left)
 	{
@@ -354,7 +355,7 @@ void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
 	}
 
 	FVector CurLoc = GetActorLocation();
-	FVector NextLoc = CurLoc + MovePos;
+	FVector NextLoc = CurLoc + MovePos;		// 이동할 위치
 
 	// 경사 코드
 	// : 이동할 앞쪽 위치를 1픽셀씩 올려보면서 마젠타가 아닐 때까지의 픽셀 값(i)을 구해서 플레이어가 움직일 위치를 i만큼 올려준다.
@@ -371,7 +372,7 @@ void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
 		break;
 	}
 
-	if (NextLoc.X <= 0 && NextLoc.X >= 4720) {	// 경사체크 하기 전에 맵 넘어가는거 미리 체크. 안 하면 무한루프 걸림.
+	if (NextLoc.X < 0 || NextLoc.X > 4718) {	// 경사체크 하기 전에 맵 넘어가는거 미리 체크. 안 하면 무한루프 걸림.
 		return;
 	}
 
@@ -380,8 +381,7 @@ void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
 	while (Color == Color8Bit(255, 0, 255, 0)) {
 		i++;
 		Color = UContentsHelper::ColMapImage->GetColor(NextLoc.iX(), NextLoc.iY() - i, Color8Bit::MagentaA);
-	}
-
+	} 
 	// while문을 나오면 경사 높이 알 수 있음
 	MovePos.Y -= i;
 
@@ -390,18 +390,20 @@ void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
 		// 이동 가능한 경우
 
 		// 플레이어도 맵을 못 나가도록 조건. 4720은 1-3의 첫번째 맵 가로크기
-		if (CurLoc.X + MovePos.X > 0 && CurLoc.X + MovePos.X < 4720) {
-			AddActorLocation(MovePos);
+		if (NextLoc.X >= 0 && NextLoc.X <= 4718) {
+			AddActorLocation(MovePos);	// 진짜 이동시킴
 
 			//MovePos.Y += i;				// 카메라는 올라가면 안 되니까 다시 더해줌
 		}
 
 		// 카메라가 플레이어 따라오는 문제 해결 코드
-		FVector NextCameraPosLeft = GetWorld()->GetCameraPos() + MovePos;	// 왼쪽 카메라 끝
+		FVector CameraPosLeft = GetWorld()->GetCameraPos();					// 카메라 왼쪽 끝
+		FVector NextCameraPosLeft = GetWorld()->GetCameraPos() + MovePos;	// 왼쪽 카메라 끝 + MovePos (이동 후의 카메라 위치, 왼쪽)
 		FVector WinScale = GEngine->MainWindow.GetWindowScale();			// 윈도우 크기
-		FVector NextCameraPosRight = WinScale + NextCameraPosLeft;			// 오른쪽 카메라 끝
-		FVector NextPlayerPos = GetActorLocation();							// 현재 플레이어 위치
+		FVector NextCameraPosRight = WinScale + NextCameraPosLeft;			// 이동 후의 카메라 오른쪽 끝
+		FVector NextPlayerPos = GetActorLocation();							// 이동한 플레이어 위치
 
+		float Test = 4720 - WinScale.hX();
 
 		if (
 			NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&		// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
@@ -409,9 +411,13 @@ void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
 			NextCameraPosLeft.X >= 0 &&										// 카메라가 맵 밖으로 안 나오도록
 			NextCameraPosRight.X <= 4720 &&
 			NextCameraPosLeft.Y >= 0
-			) {
+			) 
+		{
 			// MovePos가 맵 밖이 아니면
 			GetWorld()->AddCameraPos(MovePos);
 		}
+
+		FVector Test2 = GetWorld()->GetCameraPos();
+		int a = 0;
 	}
 }
