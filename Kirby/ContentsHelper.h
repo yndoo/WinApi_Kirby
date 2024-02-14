@@ -1,7 +1,7 @@
 #pragma once
 #include <EngineCore\ImageRenderer.h>
 
-enum KirbyRenderOrder
+enum class KirbyRenderOrder
 {
 	Map,
 	Monster,

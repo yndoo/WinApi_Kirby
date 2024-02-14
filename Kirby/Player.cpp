@@ -106,11 +106,13 @@ void  APlayer::Idle(float _DeltaTime) {
 		true == UEngineInput::IsPress(VK_RIGHT)
 		)
 	{
-		if (IsMoveClicked == true && !DirCheck() && MoveDoubleClickTime < 0.15f)
+		// 같은 방향 더블 클릭이라면 Run
+		if (IsMoveClicked == true && !DirCheck() && MoveDoubleClickTime < 0.15f)	
 		{
 			StateChange(EPlayState::Run);
 			return;
 		}
+
 		StateChange(EPlayState::Move);
 		MoveDoubleClickTime = 0;
 		return;
@@ -136,6 +138,7 @@ void  APlayer::Idle(float _DeltaTime) {
 
 	GravityCheck(_DeltaTime);
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
+	MoveUpdate(_DeltaTime, MoveSpeed);
 }
 
 // Move : 플레이어 이동(오른쪽 왼쪽)
@@ -144,17 +147,27 @@ void APlayer::Move(float _DeltaTime) {
 	GravityCheck(_DeltaTime);
 
 	MoveDoubleClickTime += _DeltaTime;
+	// 입력에 의한 이동 계산
+	if (DirState == EActorDir::Left)
+	{
+		AddMoveVector(FVector::Left * _DeltaTime);
+	}
 
-	RealMove(_DeltaTime, MoveSpeed);
+	if (DirState == EActorDir::Right)
+	{
+		AddMoveVector(FVector::Right * _DeltaTime);
+	}
 
+	// Move하다가 가만히 있는 경우
 	if (true == UEngineInput::IsFree(VK_LEFT) && UEngineInput::IsFree(VK_RIGHT))
 	{
-		StateChange(EPlayState::Idle);	// Move하다가 가만히 있는 경우
+		StateChange(EPlayState::Idle);	
 		IsMoveClicked = true;
 		return;
 	}
 
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
+	MoveUpdate(_DeltaTime, MoveSpeed);
 }
 
 // Crouch : 웅크리기
@@ -180,11 +193,11 @@ void APlayer::Crouch(float _DeltaTime)
 	}
 }
 
+// Slide : 슬라이딩
 void APlayer::Slide(float _DeltaTime)
 {
 	GravityCheck(_DeltaTime);
 
-	RealMove(_DeltaTime, SlideSpeed);
 
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Slide"));
@@ -208,7 +221,7 @@ void APlayer::Slide(float _DeltaTime)
 		}
 	}
 
-
+	MoveUpdate(_DeltaTime, SlideSpeed);
 }
 
 // Run : 달리기
@@ -220,13 +233,13 @@ void APlayer::Run(float _DeltaTime)
 	DirCheck();
 	GravityCheck(_DeltaTime);
 
-	RealMove(_DeltaTime, RunSpeed);
-
 	if (true == UEngineInput::IsFree(VK_LEFT) && UEngineInput::IsFree(VK_RIGHT))
 	{
 		StateChange(EPlayState::Idle);
 		return;
 	}
+
+	MoveUpdate(_DeltaTime, RunSpeed);
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
 }
 
@@ -356,20 +369,9 @@ void APlayer::HillMove(float _DeltaTime)
 	}
 }
 
-// RealMove : 진짜 이동시키는 함수
-void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
+// MoveUpdate : 작용하는 힘 계산해서 이동
+void APlayer::MoveUpdate(float _DeltaTime, float _MoveSpeed)
 {
-	// 입력에 의한 이동 계산
-	if (DirState == EActorDir::Left)
-	{
-		AddMoveVector(FVector::Left * _DeltaTime);
-	}
-
-	if (DirState == EActorDir::Right)
-	{
-		AddMoveVector(FVector::Right * _DeltaTime);
-	}
-
 	// 모든 작용하는 힘 계산해서 이동
 	CalMoveVector(_DeltaTime);
 	CalGravityVector(_DeltaTime);
@@ -384,7 +386,7 @@ void APlayer::AddMoveVector(const FVector& _DirDelta) {
 	MoveVector += _DirDelta * MoveAcc;
 }
 
-void APlayer::CalMoveVector(float _DeltaTime) 
+void APlayer::CalMoveVector(float _DeltaTime)
 {
 	FVector CheckPos = GetActorLocation();
 	switch (DirState) 
@@ -411,7 +413,7 @@ void APlayer::CalMoveVector(float _DeltaTime)
 		if (0.001 <= MoveVector.Size2D())
 		{
 			// 움직이던 방향 반대로 가속도
-			MoveVector += (-MoveVector.Normalize2DReturn()) * _DeltaTime * MoveAcc;
+			MoveVector += (-MoveVector.Normalize2DReturn()) * _DeltaTime * MoveAcc ;
 		}
 		else 
 		{
@@ -437,9 +439,11 @@ void APlayer::CalFinalMoveVector(float _DeltaTime)
 	FinalMoveVector += MoveVector;
 	FinalMoveVector += GravityVector;
 }
+
+// 최종 계산된 방향과 힘으로 이동시키는 함수
 void APlayer::FinalMove(float _DeltaTime) 
 {
-	FVector MovePos = FinalMoveVector * _DeltaTime;						// 플레이어 이동량
+	FVector MovePos = FinalMoveVector * _DeltaTime;						// 플레이어 이동량 (걷기의 Move가 아님)
 
 	// 플레이어 이동
 	AddActorLocation(MovePos);
