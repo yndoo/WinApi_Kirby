@@ -27,6 +27,7 @@ protected:
 	bool DirCheck();								// 방향 체크하고, 방향이 바뀌었는지를 리턴
 	std::string GetAnimationName(std::string _Name);
 	void RealMove(float _DeltaTime, float _MoveSpeed);				// 진짜 이동시키는 함수
+	void HillMove(float _DeltaTime);
 
 	// 상태
 	void Idle(float _DeltaTime);
@@ -48,13 +49,30 @@ protected:
 
 private:
 	UImageRenderer* PlayerRenderer = nullptr;
+	void AddMoveVector(const FVector& _DirDelta);	// 방향 벡터에 DeltaTime 곱한 값으로 들어옴
+	void FinalMove(float _DeltaTime);				// 최종 계산된 방향과 힘으로 이동시키는 함수
 
-	float FreeMoveSpeed = 1000.0f;
+	// 가속 운동 관련 함수들
+	void CalMoveVector(float _DeltaTime);
+	void CalGravityVector(float _DeltaTime);
+	void CalFinalMoveVector(float _DeltaTime);
 
-	float MoveSpeed = 300.0f;
+	// 가속 운동 관련 변수
+	FVector MoveVector = FVector::Zero;
+	FVector MoveAcc = FVector::Right * 300.0f;
+	FVector GravityVector = FVector::Zero;
+	FVector GravityAcc = FVector::Down * 500.0f;
+
+	FVector FinalMoveVector = FVector::Zero;
+	
+	
+	// 보조 변수들
+	float MoveSpeed = 300.0f;	// 없앨 예정?
+	float MoveMaxSpeed = 300.0f;
 	float SlideSpeed = 400.0f;
 	float RunSpeed = 600.0f;
 	float Gravity = 500.0f;
+	float FreeMoveSpeed = 1000.0f;
 
 	bool IsMoveClicked = false;
 	double MoveDoubleClickTime = 0;		// 더블 클릭 인정 시간

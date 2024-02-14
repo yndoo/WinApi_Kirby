@@ -28,8 +28,8 @@ void APlayer::BeginPlay() {
 
 	PlayerRenderer->CreateAnimation("Move_Right", "Move_Right.png", 0, 9, 0.1f, true);
 	PlayerRenderer->CreateAnimation("Move_Left", "Move_Left.png", 0, 9, 0.1f, true);
-	PlayerRenderer->CreateAnimation("Idle_Right", "Idle_Right.png", 0, 2, 0.3f, true);
-	PlayerRenderer->CreateAnimation("Idle_Left", "Idle_Left.png", 0, 2, 0.3f, true);
+	PlayerRenderer->CreateAnimation("Idle_Right", "Idle_Right.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
+	PlayerRenderer->CreateAnimation("Idle_Left", "Idle_Left.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
 	PlayerRenderer->CreateAnimation("Crouch_Right", "Crouch_Right.png", 1, 1, 0.3f, true);
 	PlayerRenderer->CreateAnimation("Crouch_Left", "Crouch_Left.png", 1, 1, 0.3f, true);
 	PlayerRenderer->CreateAnimation("Slide_Right", "Slide_Right.png", 0, 0, 0.3f, true);
@@ -195,7 +195,8 @@ void APlayer::Slide(float _DeltaTime)
 	{
 		return;
 	}
-	else {
+	else 
+	{
 		if (true == UEngineInput::IsFree(VK_DOWN))
 		{
 			StateChange(EPlayState::Idle);
@@ -339,84 +340,123 @@ bool APlayer::DirCheck()
 	return IsChanged;
 }
 
+void APlayer::HillMove(float _DeltaTime)
+{
+	while (true)
+	{
+		Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
+		if (Color == Color8Bit(255, 0, 255, 0))
+		{
+			AddActorLocation(FVector::Up);
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
 // RealMove : 진짜 이동시키는 함수
 void APlayer::RealMove(float _DeltaTime, float _MoveSpeed)
 {
-	// MovePos : 이동할 양
-	FVector MovePos = FVector::Zero;
+	// 입력에 의한 이동 계산
 	if (DirState == EActorDir::Left)
 	{
-		MovePos += FVector::Left * _DeltaTime * _MoveSpeed;
+		AddMoveVector(FVector::Left * _DeltaTime);
 	}
 
 	if (DirState == EActorDir::Right)
 	{
-		MovePos += FVector::Right * _DeltaTime * _MoveSpeed;
+		AddMoveVector(FVector::Right * _DeltaTime);
 	}
 
-	FVector CurLoc = GetActorLocation();
-	FVector NextLoc = CurLoc + MovePos;		// 이동할 위치
+	// 모든 작용하는 힘 계산해서 이동
+	CalMoveVector(_DeltaTime);
+	CalGravityVector(_DeltaTime);
+	CalFinalMoveVector(_DeltaTime);
+	FinalMove(_DeltaTime);
 
-	// 경사 코드
-	// : 이동할 앞쪽 위치를 1픽셀씩 올려보면서 마젠타가 아닐 때까지의 픽셀 값(i)을 구해서 플레이어가 움직일 위치를 i만큼 올려준다.
+	// 경사로 이동
+	HillMove(_DeltaTime);
+}
 
-	switch (DirState)
+void APlayer::AddMoveVector(const FVector& _DirDelta) {
+	MoveVector += _DirDelta * MoveAcc;
+}
+
+void APlayer::CalMoveVector(float _DeltaTime) 
+{
+	FVector CheckPos = GetActorLocation();
+	switch (DirState) 
 	{
 	case EActorDir::Left:
-		NextLoc.X -= 20;
+		CheckPos.X -= 20;
 		break;
 	case EActorDir::Right:
-		NextLoc.X += 20;
+		CheckPos.X += 20;
 		break;
 	default:
 		break;
 	}
+	CheckPos.Y -= 20;
 
-	if (NextLoc.X < 0 || NextLoc.X > 4718) {	// 경사체크 하기 전에 맵 넘어가는거 미리 체크. 안 하면 무한루프 걸림.
-		return;
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(CheckPos.iX(), CheckPos.iY(), Color8Bit::MagentaA);
+	if (Color == Color8Bit(255, 0, 255, 0))
+	{
+		MoveVector = FVector::Zero;
 	}
 
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(NextLoc.iX(), NextLoc.iY() - 2, Color8Bit::MagentaA);
-	int i = 0;
-	while (Color == Color8Bit(255, 0, 255, 0)) {
-		i++;
-		Color = UContentsHelper::ColMapImage->GetColor(NextLoc.iX(), NextLoc.iY() - i, Color8Bit::MagentaA);
-	} 
-	// while문을 나오면 경사 높이 알 수 있음
-	MovePos.Y -= i;
-
-	if (Color != Color8Bit(255, 0, 255, 0))
+	if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT)) 
 	{
-		// 이동 가능한 경우
-
-		// 플레이어도 맵을 못 나가도록 조건. 4720은 1-3의 첫번째 맵 가로크기
-		if (NextLoc.X >= 0 && NextLoc.X <= 4718) {
-			AddActorLocation(MovePos);	// 진짜 이동시킴
-
-			MovePos.Y += i;				// 카메라는 올라가면 안 되니까 다시 더해줌
-		}
-
-		// 카메라가 플레이어 따라오는 문제 해결 코드
-		FVector CameraPosLeft = GetWorld()->GetCameraPos();					// 카메라 왼쪽 끝
-		FVector NextCameraPosLeft = GetWorld()->GetCameraPos() + MovePos;	// 왼쪽 카메라 끝 + MovePos (이동 후의 카메라 위치, 왼쪽)
-		//FVector WinScale = GEngine->MainWindow.GetWindowScale();			// 윈도우 크기
-		FVector NextCameraPosRight = WinScale + NextCameraPosLeft;			// 이동 후의 카메라 오른쪽 끝
-		FVector NextPlayerPos = GetActorLocation();							// 이동한 플레이어 위치
-
-		float Test = 4720 - WinScale.hX();
-
-		if (
-			NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&		// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-			NextPlayerPos.X <= 4720 - WinScale.hX() &&						// 플레이어 위치가 맵 오른쪽 끝에서 절반일 때까지만 카메라 따라오도록
-			NextCameraPosLeft.X >= 0 &&										// 카메라가 맵 밖으로 안 나오도록
-			NextCameraPosRight.X <= 4720
-			) 
+		if (0.001 <= MoveVector.Size2D())
 		{
-			// MovePos가 맵 밖이 아니면
-			GetWorld()->AddCameraPos(MovePos);
+			// 움직이던 방향 반대로 가속도
+			MoveVector += (-MoveVector.Normalize2DReturn()) * _DeltaTime * MoveAcc;
 		}
+		else 
+		{
+			MoveVector = float4::Zero;
+		}
+	}
+	// 최대 속도를 넘어가지 않도록
+	if (MoveMaxSpeed <= MoveVector.Size2D())
+	{
+		MoveVector = MoveVector.Normalize2DReturn() * MoveMaxSpeed;
+	}
+}
 
-		FVector Test2 = GetWorld()->GetCameraPos();
-		int a = 0;
+void APlayer::CalGravityVector(float _DeltaTime)
+{
+	GravityVector += GravityAcc * _DeltaTime;
+
+}
+
+void APlayer::CalFinalMoveVector(float _DeltaTime)
+{
+	FinalMoveVector = FVector::Zero;
+	FinalMoveVector += MoveVector;
+	FinalMoveVector += GravityVector;
+}
+void APlayer::FinalMove(float _DeltaTime) 
+{
+	FVector MovePos = FinalMoveVector * _DeltaTime;						// 플레이어 이동량
+
+	// 플레이어 이동
+	AddActorLocation(MovePos);
+
+	// 카메라 이동
+	FVector CameraPosLeft = GetWorld()->GetCameraPos();					// 카메라 왼쪽 좌표
+	FVector NextCameraPosLeft = CameraPosLeft + MovePos;				// 플레이어 이동 후 왼쪽 카메라 끝 
+	FVector NextCameraPosRight = WinScale + NextCameraPosLeft;			// 이동 후의 카메라 오른쪽 끝
+	FVector NextPlayerPos = GetActorLocation();							// 플레이어 위치
+
+	if (
+		NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&		// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
+		NextPlayerPos.X <= 4720 - WinScale.hX() &&						// 플레이어 위치가 맵 오른쪽 끝에서 절반일 때까지만 카메라 따라오도록
+		NextCameraPosLeft.X >= 0 &&										// 카메라가 맵 밖으로 안 나오도록
+		NextCameraPosRight.X <= 4720
+		)
+	{
+		GetWorld()->AddCameraPos(MoveVector * _DeltaTime);
 	}
 }
