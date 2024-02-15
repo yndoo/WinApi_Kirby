@@ -60,7 +60,30 @@ void APlayer::GravityCheck(float _DeltaTime)
 	}
 }
 
-void APlayer::StateChange(EPlayState _State) {
+void APlayer::StateChange(EPlayState _State) 
+{
+	if (State != _State)
+	{
+		switch (_State)
+		{
+		case EPlayState::Idle:
+			IdleStart();
+			break;
+		case EPlayState::Move:
+			MoveStart();
+			break;
+		case EPlayState::Run:
+			RunStart();
+			break;
+		case EPlayState::Slide:
+			SlideStart();
+			break;
+		case EPlayState::Crouch:
+			CrouchStart();
+		default:
+			break;
+		}
+	}
 	State = _State;
 }
 
@@ -99,8 +122,43 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	}
 }
 
+void APlayer::IdleStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
+}
+
+void APlayer::MoveStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
+}
+
+void APlayer::RunStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
+
+	MoveDoubleClickTime = 0;
+	IsMoveClicked = false;
+}
+
+void APlayer::SlideStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Slide"));
+}
+
+void APlayer::CrouchStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
+}
+
 // Idle : 가만히 있는 상태
 void  APlayer::Idle(float _DeltaTime) {
+	GravityCheck(_DeltaTime);
+
 	if (
 		true == UEngineInput::IsPress(VK_LEFT) ||
 		true == UEngineInput::IsPress(VK_RIGHT)
@@ -113,6 +171,7 @@ void  APlayer::Idle(float _DeltaTime) {
 			return;
 		}
 
+		// 그냥 Move
 		StateChange(EPlayState::Move);
 		MoveDoubleClickTime = 0;
 		return;
@@ -135,38 +194,33 @@ void  APlayer::Idle(float _DeltaTime) {
 		StateChange(EPlayState::CameraFreeMove);
 		return;
 	}
-
-	GravityCheck(_DeltaTime);
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
-	//MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 }
 
 // Move : 플레이어 이동(오른쪽 왼쪽)
-void APlayer::Move(float _DeltaTime) {
-	DirCheck();
+void APlayer::Move(float _DeltaTime) 
+{
 	GravityCheck(_DeltaTime);
 
+	// 무브 첫 클릭 후 시간 측정
 	MoveDoubleClickTime += _DeltaTime;
-	// 입력에 의한 이동 계산
-	if (DirState == EActorDir::Left)
-	{
-		AddMoveVector(FVector::Left * _DeltaTime);
-	}
 
-	if (DirState == EActorDir::Right)
-	{
-		AddMoveVector(FVector::Right * _DeltaTime);
-	}
+	// 입력에 의한 이동 계산
+	AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc);
 
 	// Move하다가 가만히 있는 경우
-	if (true == UEngineInput::IsFree(VK_LEFT) && UEngineInput::IsFree(VK_RIGHT))
+	float CurSpeed = MoveVector.X * _DeltaTime;
+	if (
+		true == UEngineInput::IsFree(VK_LEFT) &&
+		true == UEngineInput::IsFree(VK_RIGHT) && 
+		(CurSpeed < 1.0f && CurSpeed > -1.0f )
+		)
 	{
+		MoveVector = FVector::Zero;
 		StateChange(EPlayState::Idle);	
 		IsMoveClicked = true;
 		return;
 	}
 
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
 	MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 }
 
@@ -175,6 +229,7 @@ void APlayer::Crouch(float _DeltaTime)
 {
 	GravityCheck(_DeltaTime);
 
+	// 방향 전환때문에
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
 
@@ -183,16 +238,8 @@ void APlayer::Crouch(float _DeltaTime)
 	{
 		SlideTime = 0;
 		MoveVector = FVector::Zero;
-		if (DirState == EActorDir::Left)
-		{
-			AddMoveVector(FVector::Left * _DeltaTime * 400);
-		}
-		if (DirState == EActorDir::Right)
-		{
-			AddMoveVector(FVector::Right * _DeltaTime * 400);
-		}
+		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, SlideAcc);
 		StateChange(EPlayState::Slide);
-
 		return;
 	}
 
@@ -207,59 +254,42 @@ void APlayer::Crouch(float _DeltaTime)
 void APlayer::Slide(float _DeltaTime)
 {
 	GravityCheck(_DeltaTime);
-	DirCheck();
+	MoveUpdate(_DeltaTime, SlideMaxSpeed, SlideAcc);
 
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Slide"));
-
-	if (SlideTime < 0.5f)
+	float CurSpeed = MoveVector.X * _DeltaTime;
+	if (
+		true == UEngineInput::IsFree(VK_LEFT) &&
+		true == UEngineInput::IsFree(VK_RIGHT) &&
+		(CurSpeed < 1.0f && CurSpeed > -1.0f)
+		)
 	{
-		SlideTime += _DeltaTime;
-		MoveUpdate(_DeltaTime, SlideMaxSpeed, SlideAcc);
+		MoveVector = FVector::Zero;
+		StateChange(EPlayState::Idle);
+		IsMoveClicked = true;
 		return;
 	}
-	else 
-	{
-		if (true == UEngineInput::IsFree(VK_DOWN))
-		{
-			StateChange(EPlayState::Idle);
-			return;
-		}
-		else if (true == UEngineInput::IsPress(VK_DOWN))
-		{
-			StateChange(EPlayState::Crouch);
-			return;
-		}
-	}
-
 }
 
 // Run : 달리기
 void APlayer::Run(float _DeltaTime)
 {
-	MoveDoubleClickTime = 0;
-	IsMoveClicked = false;
-
-	DirCheck();
 	GravityCheck(_DeltaTime);
+	
+	AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
 
-	if (DirState == EActorDir::Left)
+	float CurSpeed = MoveVector.X * _DeltaTime;
+	if (
+		true == UEngineInput::IsFree(VK_LEFT) &&
+		true == UEngineInput::IsFree(VK_RIGHT) &&
+		(CurSpeed < 1.0f && CurSpeed > -1.0f)
+		)
 	{
-		AddMoveVector(FVector::Left * _DeltaTime);
-	}
-
-	if (DirState == EActorDir::Right)
-	{
-		AddMoveVector(FVector::Right * _DeltaTime);
-	}
-
-	if (true == UEngineInput::IsFree(VK_LEFT) && UEngineInput::IsFree(VK_RIGHT))
-	{
+		MoveVector = FVector::Zero;
 		StateChange(EPlayState::Idle);
 		return;
 	}
 
 	MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
 }
 
 // FreeMove : 디버깅용 캐릭터 자유 이동
@@ -401,24 +431,16 @@ void APlayer::MoveUpdate(float _DeltaTime, float MaxSpeed, FVector Acc)
 	HillMove(_DeltaTime);
 }
 
-void APlayer::AddMoveVector(const FVector& _DirDelta) {
-	MoveVector += _DirDelta * MoveAcc;
+void APlayer::AddMoveVector(const FVector& _DirDelta, FVector Acc)
+{
+	MoveVector += _DirDelta * Acc;
 }
 
 void APlayer::CalMoveVector(float _DeltaTime, float MaxSpeed, FVector Acc)
 {
 	FVector CheckPos = GetActorLocation();
-	switch (DirState) 
-	{
-	case EActorDir::Left:
-		CheckPos.X -= 20;
-		break;
-	case EActorDir::Right:
-		CheckPos.X += 20;
-		break;
-	default:
-		break;
-	}
+	CheckPos.X += static_cast<float>(DirState) * 20.0f;
+
 	CheckPos.Y -= 40;	// 40픽셀 이상 높이의 언덕맵은 막히게 하기 (커비 잔디 한 블록이 40픽셀)
 
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(CheckPos.iX(), CheckPos.iY(), Color8Bit::MagentaA);

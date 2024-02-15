@@ -38,6 +38,12 @@ protected:
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
 
+	// 상태 시작
+	void IdleStart();
+	void MoveStart();
+	void SlideStart();
+	void RunStart();
+	void CrouchStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
@@ -49,7 +55,7 @@ protected:
 
 private:
 	UImageRenderer* PlayerRenderer = nullptr;
-	void AddMoveVector(const FVector& _DirDelta);	// 방향 벡터에 DeltaTime 곱한 값으로 들어옴
+	void AddMoveVector(const FVector& _DirDelta, FVector Acc);	// 방향 벡터에 DeltaTime 곱한 값으로 들어옴
 	void FinalMove(float _DeltaTime);				// 최종 계산된 방향과 힘으로 이동시키는 함수
 
 	// 가속 운동 관련 함수들
