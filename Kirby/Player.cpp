@@ -138,7 +138,7 @@ void  APlayer::Idle(float _DeltaTime) {
 
 	GravityCheck(_DeltaTime);
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
-	MoveUpdate(_DeltaTime, MoveSpeed);
+	//MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 }
 
 // Move : 플레이어 이동(오른쪽 왼쪽)
@@ -167,7 +167,7 @@ void APlayer::Move(float _DeltaTime) {
 	}
 
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
-	MoveUpdate(_DeltaTime, MoveSpeed);
+	MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 }
 
 // Crouch : 웅크리기
@@ -179,10 +179,20 @@ void APlayer::Crouch(float _DeltaTime)
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
 
 	// 웅크리기 상태에서 점프키 누르면 슬라이드
-	if (true == UEngineInput::IsPress('Z'))
+	if (true == UEngineInput::IsDown('Z'))
 	{
 		SlideTime = 0;
+		MoveVector = FVector::Zero;
+		if (DirState == EActorDir::Left)
+		{
+			AddMoveVector(FVector::Left * _DeltaTime * 400);
+		}
+		if (DirState == EActorDir::Right)
+		{
+			AddMoveVector(FVector::Right * _DeltaTime * 400);
+		}
 		StateChange(EPlayState::Slide);
+
 		return;
 	}
 
@@ -197,15 +207,14 @@ void APlayer::Crouch(float _DeltaTime)
 void APlayer::Slide(float _DeltaTime)
 {
 	GravityCheck(_DeltaTime);
-
-
 	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Slide"));
 
-	SlideTime += _DeltaTime;
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Slide"));
 
 	if (SlideTime < 0.5f)
 	{
+		SlideTime += _DeltaTime;
+		MoveUpdate(_DeltaTime, SlideMaxSpeed, SlideAcc);
 		return;
 	}
 	else 
@@ -215,13 +224,13 @@ void APlayer::Slide(float _DeltaTime)
 			StateChange(EPlayState::Idle);
 			return;
 		}
-		else {
+		else if (true == UEngineInput::IsPress(VK_DOWN))
+		{
 			StateChange(EPlayState::Crouch);
 			return;
 		}
 	}
 
-	MoveUpdate(_DeltaTime, SlideSpeed);
 }
 
 // Run : 달리기
@@ -233,13 +242,23 @@ void APlayer::Run(float _DeltaTime)
 	DirCheck();
 	GravityCheck(_DeltaTime);
 
+	if (DirState == EActorDir::Left)
+	{
+		AddMoveVector(FVector::Left * _DeltaTime);
+	}
+
+	if (DirState == EActorDir::Right)
+	{
+		AddMoveVector(FVector::Right * _DeltaTime);
+	}
+
 	if (true == UEngineInput::IsFree(VK_LEFT) && UEngineInput::IsFree(VK_RIGHT))
 	{
 		StateChange(EPlayState::Idle);
 		return;
 	}
 
-	MoveUpdate(_DeltaTime, RunSpeed);
+	MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
 }
 
@@ -370,10 +389,10 @@ void APlayer::HillMove(float _DeltaTime)
 }
 
 // MoveUpdate : 작용하는 힘 계산해서 이동
-void APlayer::MoveUpdate(float _DeltaTime, float _MoveSpeed)
+void APlayer::MoveUpdate(float _DeltaTime, float MaxSpeed, FVector Acc)
 {
 	// 모든 작용하는 힘 계산해서 이동
-	CalMoveVector(_DeltaTime);
+	CalMoveVector(_DeltaTime, MaxSpeed, Acc);
 	CalGravityVector(_DeltaTime);
 	CalFinalMoveVector(_DeltaTime);
 	FinalMove(_DeltaTime);
@@ -386,7 +405,7 @@ void APlayer::AddMoveVector(const FVector& _DirDelta) {
 	MoveVector += _DirDelta * MoveAcc;
 }
 
-void APlayer::CalMoveVector(float _DeltaTime)
+void APlayer::CalMoveVector(float _DeltaTime, float MaxSpeed, FVector Acc)
 {
 	FVector CheckPos = GetActorLocation();
 	switch (DirState) 
@@ -400,7 +419,7 @@ void APlayer::CalMoveVector(float _DeltaTime)
 	default:
 		break;
 	}
-	CheckPos.Y -= 20;
+	CheckPos.Y -= 40;	// 40픽셀 이상 높이의 언덕맵은 막히게 하기 (커비 잔디 한 블록이 40픽셀)
 
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(CheckPos.iX(), CheckPos.iY(), Color8Bit::MagentaA);
 	if (Color == Color8Bit(255, 0, 255, 0))
@@ -413,7 +432,7 @@ void APlayer::CalMoveVector(float _DeltaTime)
 		if (0.001 <= MoveVector.Size2D())
 		{
 			// 움직이던 방향 반대로 가속도
-			MoveVector += (-MoveVector.Normalize2DReturn()) * _DeltaTime * MoveAcc ;
+			MoveVector += (-MoveVector.Normalize2DReturn()) * _DeltaTime * Acc;
 		}
 		else 
 		{
@@ -421,9 +440,9 @@ void APlayer::CalMoveVector(float _DeltaTime)
 		}
 	}
 	// 최대 속도를 넘어가지 않도록
-	if (MoveMaxSpeed <= MoveVector.Size2D())
+	if (MaxSpeed <= MoveVector.Size2D())
 	{
-		MoveVector = MoveVector.Normalize2DReturn() * MoveMaxSpeed;
+		MoveVector = MoveVector.Normalize2DReturn() * MaxSpeed;
 	}
 }
 
