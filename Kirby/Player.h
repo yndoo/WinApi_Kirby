@@ -23,10 +23,9 @@ protected:
 	void Tick(float _DeltaTime) override;
 
 	// 상태 보조 함수
-	void GravityCheck(float _DeltaTime);
 	bool DirCheck();								// 방향 체크하고, 방향이 바뀌었는지를 리턴
 	std::string GetAnimationName(std::string _Name);
-	void MoveUpdate(float _DeltaTime, float MaxSpeed, FVector Acc);				// 진짜 이동시키는 함수
+	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);				// 진짜 이동시키는 함수
 	void HillMove(float _DeltaTime);
 
 	// 상태
@@ -60,6 +59,7 @@ private:
 
 	// 가속 운동 관련 함수들
 	void CalMoveVector(float _DeltaTime, float MaxSpeed, FVector Acc);
+	void CalSlideVector(float _DeltaTime, float MaxSpeed, FVector Acc);
 	void CalGravityVector(float _DeltaTime);
 	void CalFinalMoveVector(float _DeltaTime);
 
@@ -71,7 +71,7 @@ private:
 	FVector RunAcc = FVector::Right * 2000.0f;
 	float RunMaxSpeed = 600.0f;
 	FVector SlideVector = FVector::Zero;
-	FVector SlideAcc = FVector::Right * 1500.0f;
+	FVector SlideAcc = FVector::Right * 2000.0f;
 	float SlideMaxSpeed = 800.0f;
 	FVector GravityVector = FVector::Zero;
 	FVector GravityAcc = FVector::Down * 1000.0f;
