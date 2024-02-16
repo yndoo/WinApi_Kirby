@@ -59,17 +59,16 @@ private:
 
 	// 가속 운동 관련 함수들
 	void CalMoveVector(float _DeltaTime, float MaxSpeed, FVector Acc);
-	void CalSlideVector(float _DeltaTime, float MaxSpeed, FVector Acc);
 	void CalGravityVector(float _DeltaTime);
 	void CalFinalMoveVector(float _DeltaTime);
 
 	// 가속 운동 관련 변수
 	FVector MoveVector = FVector::Zero;
-	FVector MoveAcc = FVector::Right * 1000.0f;
+	FVector MoveAcc = FVector::Right * 600.0f;
 	float MoveMaxSpeed = 300.0f;
 	FVector RunVector = FVector::Zero;
 	FVector RunAcc = FVector::Right * 2000.0f;
-	float RunMaxSpeed = 600.0f;
+	float RunMaxSpeed = 400.0f;
 	FVector SlideVector = FVector::Zero;
 	FVector SlideAcc = FVector::Right * 2000.0f;
 	float SlideMaxSpeed = 800.0f;
@@ -89,5 +88,6 @@ private:
 	double SlideTime = 0;				// 슬라이딩 지속 시간
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
+	FVector MapSize = UContentsHelper::ColMapImage->GetScale();
 };
 

@@ -26,16 +26,16 @@ void APlayer::BeginPlay() {
 	// 이미지보다 크게 자르면 아예 안 나옴.
 	//PlayerRenderer->SetImageCuttingTransform({ {0,0}, {60, 80} });
 
-	PlayerRenderer->CreateAnimation("Move_Right", "Move_Right.png", 0, 9, 0.1f, true);
-	PlayerRenderer->CreateAnimation("Move_Left", "Move_Left.png", 0, 9, 0.1f, true);
+	PlayerRenderer->CreateAnimation("Move_Right", "Move_Right.png", 0, 9, 0.07f, true);
+	PlayerRenderer->CreateAnimation("Move_Left", "Move_Left.png", 0, 9, 0.07f, true);
 	PlayerRenderer->CreateAnimation("Idle_Right", "Idle_Right.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
 	PlayerRenderer->CreateAnimation("Idle_Left", "Idle_Left.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
 	PlayerRenderer->CreateAnimation("Crouch_Right", "Crouch_Right.png", 1, 1, 0.3f, true);
 	PlayerRenderer->CreateAnimation("Crouch_Left", "Crouch_Left.png", 1, 1, 0.3f, true);
 	PlayerRenderer->CreateAnimation("Slide_Right", "Slide_Right.png", 0, 0, 0.3f, true);
 	PlayerRenderer->CreateAnimation("Slide_Left", "Slide_Left.png", 0, 0, 0.3f, true);
-	PlayerRenderer->CreateAnimation("Run_Right", "Run_Right.png", 0, 7, 0.1f, true);
-	PlayerRenderer->CreateAnimation("Run_Left", "Run_Left.png", 0, 7, 0.1f, true);
+	PlayerRenderer->CreateAnimation("Run_Right", "Run_Right.png", 0, 7, 0.05f, true);
+	PlayerRenderer->CreateAnimation("Run_Left", "Run_Left.png", 0, 7, 0.05f, true);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
 
@@ -139,9 +139,7 @@ void APlayer::SlideStart()
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Slide"));
 
-	SlideTime = 0;
-	MoveVector = { static_cast<float>(DirState) * 1200.f, 0.f};
-	//AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, SlideAcc);
+	MoveVector = { static_cast<float>(DirState) * SlideMaxSpeed, 0.f};
 }
 
 void APlayer::CrouchStart()
@@ -197,19 +195,24 @@ void APlayer::Move(float _DeltaTime)
 	// 무브 첫 클릭 후 시간 측정
 	MoveDoubleClickTime += _DeltaTime;
 
-	// 입력에 의한 이동 계산
-	AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc);
 
-	// Move하다가 가만히 있는 경우
-	float CurSpeed = MoveVector.X * _DeltaTime;
-	if (
-		true == UEngineInput::IsFree(VK_LEFT) &&
-		true == UEngineInput::IsFree(VK_RIGHT) && 
-		(CurSpeed < 1.0f && CurSpeed > -1.0f)		// 남은 속도 크기가 1 미만이면 종료시킴
-		)	
+	if (true == UEngineInput::IsPress(VK_LEFT) || true == UEngineInput::IsPress(VK_RIGHT))
+	{
+		// 입력에 의한 이동 계산
+		//DirCheck(); << 이거 하면 키 바꿀 때 문워크됨
+		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc);
+	}
+	else if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
+	{
+		// 감속
+		AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc);
+	}
+
+	// 일정 속도 이하면 움직임 멈추기
+	if (abs(MoveVector.X) < 0.5f) 
 	{
 		MoveVector = FVector::Zero;
-		StateChange(EPlayState::Idle);	
+		StateChange(EPlayState::Idle);
 		IsMoveClicked = true;
 		return;
 	}
@@ -241,40 +244,31 @@ void APlayer::Crouch(float _DeltaTime)
 // Slide : 슬라이딩
 void APlayer::Slide(float _DeltaTime)
 {
-	AddMoveVector({(-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, SlideAcc);
-	CalSlideVector(_DeltaTime, SlideMaxSpeed, SlideAcc);
-	CalGravityVector(_DeltaTime);
-	CalFinalMoveVector(_DeltaTime);
-	FinalMove(_DeltaTime);
-	HillMove(_DeltaTime);
+	AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, SlideAcc);
+	MoveUpdate(_DeltaTime, SlideMaxSpeed, SlideAcc);
 
-	//MoveUpdate(_DeltaTime, SlideMaxSpeed, SlideAcc);
-
-	float CurSpeed = MoveVector.X * _DeltaTime;
-	if (
-		//true == UEngineInput::IsFree(VK_DOWN) &&
-		CurSpeed < 0.1f && CurSpeed > -0.1f
-		)
+	if (abs(MoveVector.X) < 1.0f)
 	{
 		MoveVector = FVector::Zero;
 		StateChange(EPlayState::Idle);
-		IsMoveClicked = true;
-		return;
 	}
-
 }
 
 // Run : 달리기
 void APlayer::Run(float _DeltaTime)
 {	
-	AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
+	if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
+	{
+		// 입력 끝나면 감속
+		AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
+	}
+	else
+	{
+		// 입력에 의한 이동 계산
+		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
+	}
 
-	float CurSpeed = MoveVector.X * _DeltaTime;
-	if (
-		true == UEngineInput::IsFree(VK_LEFT) &&
-		true == UEngineInput::IsFree(VK_RIGHT) &&
-		(CurSpeed < 1.0f && CurSpeed > -1.0f)
-		)
+	if (abs(MoveVector.X) < 2.0f)
 	{
 		MoveVector = FVector::Zero;
 		StateChange(EPlayState::Idle);
@@ -431,15 +425,6 @@ void APlayer::AddMoveVector(const FVector& _DirDelta, FVector Acc)
 	MoveVector += _DirDelta * Acc;
 }
 
-void APlayer::CalSlideVector(float _DeltaTime, float MaxSpeed, FVector Acc)
-{
-	if (0.001 <= MoveVector.Size2D())
-	{
-		// 움직이던 방향 반대로 가속도
-		MoveVector += (-MoveVector.Normalize2DReturn()) * _DeltaTime * Acc;
-	}
-}
-
 void APlayer::CalMoveVector(float _DeltaTime, float MaxSpeed, FVector Acc)
 {
 	// 벽 못가게 체크
@@ -457,19 +442,7 @@ void APlayer::CalMoveVector(float _DeltaTime, float MaxSpeed, FVector Acc)
 	{
 		MoveVector = FVector::Zero;
 	}
-
-	if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT)) 
-	{
-		if (0.001 <= MoveVector.Size2D())
-		{
-			// 움직이던 방향 반대로 가속도
-			MoveVector += (-MoveVector.Normalize2DReturn()) * _DeltaTime * Acc;
-		}
-		else 
-		{
-			MoveVector = FVector::Zero;
-		}
-	}
+	
 	// 최대 속도를 넘어가지 않도록
 	if (MaxSpeed <= MoveVector.Size2D())
 	{
@@ -481,11 +454,12 @@ void APlayer::CalGravityVector(float _DeltaTime)
 {
 	GravityVector += GravityAcc * _DeltaTime;
 
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
 	if (Color == Color8Bit(255, 0, 255, 0))
 	{
 		GravityVector = FVector::Zero;
 	}
+	int a = 0;
 }
 
 void APlayer::CalFinalMoveVector(float _DeltaTime)
@@ -498,23 +472,31 @@ void APlayer::CalFinalMoveVector(float _DeltaTime)
 // 최종 계산된 방향과 힘으로 이동시키는 함수
 void APlayer::FinalMove(float _DeltaTime) 
 {
-	FVector MovePos = FinalMoveVector * _DeltaTime;						// 플레이어 이동량 (걷기의 Move가 아님)
+	FVector MovePos = FinalMoveVector * _DeltaTime;					// 플레이어 이동량 (걷기의 Move가 아님)
 
-	// 플레이어 이동
-	AddActorLocation(MovePos);
+	FVector CheckPos = GetActorLocation() + MovePos;
+	CheckPos.X += static_cast<float>(DirState) * 20.0f;	// 앞뒤로 20픽셀
+	CheckPos.Y -= 20;									// 잔디 블록 막히게
+
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(CheckPos.iX(), CheckPos.iY(), Color8Bit::MagentaA);
+	if (Color != Color8Bit::MagentaA)
+	{
+		// 플레이어 이동
+		AddActorLocation(MovePos);
+	}
 
 	// 카메라 이동
-	FVector CameraPosLeft = GetWorld()->GetCameraPos();					// 카메라 왼쪽 좌표
-	FVector NextCameraPosLeft = CameraPosLeft + MovePos;				// 플레이어 이동 후 왼쪽 카메라 끝 
-	FVector NextCameraPosRight = WinScale + NextCameraPosLeft;			// 이동 후의 카메라 오른쪽 끝
-	FVector NextPlayerPos = GetActorLocation();							// 플레이어 위치
+	FVector CameraPosLeft = GetWorld()->GetCameraPos();				// 카메라 왼쪽 좌표
+	FVector NextCameraPosLeft = CameraPosLeft + MovePos;			// 플레이어 이동 후 왼쪽 카메라 끝 
+	FVector NextCameraPosRight = WinScale + NextCameraPosLeft;		// 이동 후의 카메라 오른쪽 끝
+	FVector NextPlayerPos = GetActorLocation();								// 플레이어 위치
 
-	FVector MapSize = UContentsHelper::ColMapImage->GetScale();
+	
 
 	if (
-		NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&		// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-		NextPlayerPos.X <= MapSize.X - WinScale.hX() &&						// 플레이어 위치가 맵 오른쪽 끝에서 절반일 때까지만 카메라 따라오도록
-		NextCameraPosLeft.X >= 0 &&										// 카메라가 맵 밖으로 안 나오도록
+		NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&	// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
+		NextPlayerPos.X <= MapSize.X - WinScale.hX() &&				// 플레이어 위치가 맵 오른쪽 끝에서 절반일 때까지만 카메라 따라오도록
+		NextCameraPosLeft.X >= 0 &&									// 카메라가 맵 밖으로 안 나오도록
 		NextCameraPosRight.X <= MapSize.X
 		)
 	{
