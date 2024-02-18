@@ -34,6 +34,7 @@ protected:
 	void Crouch(float _DeltaTime);
 	void Slide(float _DeltaTime);
 	void Run(float _DeltaTime);
+	void Jump(float _DeltaTime);
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
 
@@ -43,6 +44,7 @@ protected:
 	void SlideStart();
 	void RunStart();
 	void CrouchStart();
+	void JumpStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
@@ -58,20 +60,23 @@ private:
 	void FinalMove(float _DeltaTime);				// 최종 계산된 방향과 힘으로 이동시키는 함수
 
 	// 가속 운동 관련 함수들
-	void CalMoveVector(float _DeltaTime, float MaxSpeed, FVector Acc);
+	void CalMoveVector(float _DeltaTime, float MaxSpeed);
 	void CalGravityVector(float _DeltaTime);
 	void CalFinalMoveVector(float _DeltaTime);
 
 	// 가속 운동 관련 변수
 	FVector MoveVector = FVector::Zero;
-	FVector MoveAcc = FVector::Right * 600.0f;
-	float MoveMaxSpeed = 300.0f;
+	FVector MoveAcc = FVector::Right * 200.0f;
+	float MoveMaxSpeed = 200.0f;
 	FVector RunVector = FVector::Zero;
 	FVector RunAcc = FVector::Right * 2000.0f;
 	float RunMaxSpeed = 400.0f;
 	FVector SlideVector = FVector::Zero;
 	FVector SlideAcc = FVector::Right * 2000.0f;
 	float SlideMaxSpeed = 800.0f;
+	FVector JumpVector = FVector::Zero;
+	FVector JumpPower = FVector::Up * 400.0f;
+	float JumpMaxSpeed = 600.0f;
 	FVector GravityVector = FVector::Zero;
 	FVector GravityAcc = FVector::Down * 1000.0f;
 

@@ -26,8 +26,8 @@ void APlayer::BeginPlay() {
 	// 이미지보다 크게 자르면 아예 안 나옴.
 	//PlayerRenderer->SetImageCuttingTransform({ {0,0}, {60, 80} });
 
-	PlayerRenderer->CreateAnimation("Move_Right", "Move_Right.png", 0, 9, 0.07f, true);
-	PlayerRenderer->CreateAnimation("Move_Left", "Move_Left.png", 0, 9, 0.07f, true);
+	PlayerRenderer->CreateAnimation("Move_Right", "Move_Right.png", 0, 9, 0.13f, true);
+	PlayerRenderer->CreateAnimation("Move_Left", "Move_Left.png", 0, 9, 0.13f, true);
 	PlayerRenderer->CreateAnimation("Idle_Right", "Idle_Right.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
 	PlayerRenderer->CreateAnimation("Idle_Left", "Idle_Left.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
 	PlayerRenderer->CreateAnimation("Crouch_Right", "Crouch_Right.png", 1, 1, 0.3f, true);
@@ -72,6 +72,9 @@ void APlayer::StateChange(EPlayState _State)
 		case EPlayState::Crouch:
 			CrouchStart();
 			break;
+		case EPlayState::Jump:
+			JumpStart();
+			break;
 		default:
 			break;
 		}
@@ -101,6 +104,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 		// 달리기
 		Run(_DeltaTime);
 		break;
+	case EPlayState::Jump:
+		// 점프
+		Jump(_DeltaTime);
+		break;
 	case EPlayState::FreeMove:
 		// 자유 이동
 		FreeMove(_DeltaTime);
@@ -124,6 +131,11 @@ void APlayer::MoveStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
+
+	if (MoveVector.X == 0.f) 
+	{
+		MoveVector = { static_cast<float>(DirState) * 50, 0.f };
+	}
 }
 
 void APlayer::RunStart()
@@ -146,12 +158,21 @@ void APlayer::CrouchStart()
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
 }
 
+void APlayer::JumpStart()
+{
+	DirCheck();
+	
+	JumpVector = JumpPower;
+	// Jump 리소스 따면 변경할 예정 ******
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
+}
+
 // Idle : 가만히 있는 상태
 void  APlayer::Idle(float _DeltaTime) {
 	MoveVector = FVector::Zero;
 	MoveUpdate(_DeltaTime);
 
-	if (true == UEngineInput::IsDown(VK_LEFT) || true == UEngineInput::IsDown(VK_RIGHT))
+	if (true == UEngineInput::IsPress(VK_LEFT) || true == UEngineInput::IsPress(VK_RIGHT))
 	{
 		// 그냥 Move
 		StateChange(EPlayState::Move);
@@ -161,6 +182,12 @@ void  APlayer::Idle(float _DeltaTime) {
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
 		StateChange(EPlayState::Crouch);
+		return;
+	}
+
+	if (true == UEngineInput::IsDown('Z'))
+	{
+		StateChange(EPlayState::Jump);
 		return;
 	}
 
@@ -205,13 +232,20 @@ void APlayer::Move(float _DeltaTime)
 		FVector DirDelta = FVector((-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f);
 		AddMoveVector(DirDelta, MoveAcc);
 		// 일정 속도 이하면 멈추기
-		if (abs(MoveVector.X) < 1.0f)
+		if (abs(MoveVector.X) < 5.0f)
 		{
 			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Idle);
 			return;
 		}
 	}
+
+	if (true == UEngineInput::IsDown('Z'))
+	{
+		StateChange(EPlayState::Jump);
+		return;
+	}
+
 	MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 }
 
@@ -282,6 +316,25 @@ void APlayer::Run(float _DeltaTime)
 	}
 
 	MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
+}
+
+// Jump : 점프
+void APlayer::Jump(float _DeltaTime)
+{
+	if (UEngineInput::IsPress(VK_LEFT) || UEngineInput::IsPress(VK_RIGHT))
+	{
+		DirCheck();
+		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc); // 점프 중 이동은 Move가속도로
+	}
+	MoveUpdate(_DeltaTime, JumpMaxSpeed);
+
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
+	if (Color == Color8Bit(255, 0, 255, 0))
+	{
+		JumpVector = FVector::Zero;
+		StateChange(EPlayState::Idle);
+		return;
+	}
 }
 
 // FreeMove : 디버깅용 캐릭터 자유 이동
@@ -416,7 +469,7 @@ void APlayer::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Ac
 	// MaxSpeed, Acc 입력 없었으면 CalMoveVector 하면 안 됨
 	if (MaxSpeed != 0.0f) 
 	{
-		CalMoveVector(_DeltaTime, MaxSpeed, Acc);
+		CalMoveVector(_DeltaTime, MaxSpeed);
 	}
 	CalGravityVector(_DeltaTime);
 	CalFinalMoveVector(_DeltaTime);
@@ -431,7 +484,7 @@ void APlayer::AddMoveVector(const FVector& _DirDelta, FVector Acc)
 	MoveVector += _DirDelta * Acc;
 }
 
-void APlayer::CalMoveVector(float _DeltaTime, float MaxSpeed, FVector Acc)
+void APlayer::CalMoveVector(float _DeltaTime, float MaxSpeed)
 {
 	// 벽 못가게 체크
 	FVector CheckPos = GetActorLocation();
@@ -473,6 +526,7 @@ void APlayer::CalFinalMoveVector(float _DeltaTime)
 	FinalMoveVector = FVector::Zero;
 	FinalMoveVector += MoveVector;
 	FinalMoveVector += GravityVector;
+	FinalMoveVector += JumpVector;
 }
 
 // 최종 계산된 방향과 힘으로 이동시키는 함수
@@ -501,9 +555,7 @@ void APlayer::FinalMove(float _DeltaTime)
 	FVector CameraPosLeft = GetWorld()->GetCameraPos();				// 카메라 왼쪽 좌표
 	FVector NextCameraPosLeft = CameraPosLeft + MovePos;			// 플레이어 이동 후 왼쪽 카메라 끝 
 	FVector NextCameraPosRight = WinScale + NextCameraPosLeft;		// 이동 후의 카메라 오른쪽 끝
-	FVector NextPlayerPos = GetActorLocation();								// 플레이어 위치
-
-	
+	FVector NextPlayerPos = GetActorLocation();						// 플레이어 위치
 
 	if (
 		NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&	// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
