@@ -79,13 +79,8 @@ private:
 	
 	
 	// 보조 변수들
-	float SlideSpeed = 400.0f;
 	float Gravity = 500.0f;
 	float FreeMoveSpeed = 1000.0f;
-
-	bool IsMoveClicked = false;
-	double MoveDoubleClickTime = 0;		// 더블 클릭 인정 시간
-	double SlideTime = 0;				// 슬라이딩 지속 시간
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	FVector MapSize = UContentsHelper::ColMapImage->GetScale();

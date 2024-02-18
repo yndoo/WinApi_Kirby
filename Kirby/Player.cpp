@@ -71,6 +71,7 @@ void APlayer::StateChange(EPlayState _State)
 			break;
 		case EPlayState::Crouch:
 			CrouchStart();
+			break;
 		default:
 			break;
 		}
@@ -129,9 +130,6 @@ void APlayer::RunStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
-
-	MoveDoubleClickTime = 0;
-	IsMoveClicked = false;
 }
 
 void APlayer::SlideStart()
@@ -150,23 +148,13 @@ void APlayer::CrouchStart()
 
 // Idle : 가만히 있는 상태
 void  APlayer::Idle(float _DeltaTime) {
+	MoveVector = FVector::Zero;
 	MoveUpdate(_DeltaTime);
 
-	if (
-		true == UEngineInput::IsDown(VK_LEFT) ||
-		true == UEngineInput::IsDown(VK_RIGHT)
-		)
+	if (true == UEngineInput::IsDown(VK_LEFT) || true == UEngineInput::IsDown(VK_RIGHT))
 	{
-		// 같은 방향 더블 클릭이라면 Run
-		if (IsMoveClicked == true && !DirCheck() && MoveDoubleClickTime < 0.15f)	
-		{
-			StateChange(EPlayState::Run);
-			return;
-		}
-
 		// 그냥 Move
 		StateChange(EPlayState::Move);
-		MoveDoubleClickTime = 0;
 		return;
 	}
 
@@ -192,31 +180,38 @@ void  APlayer::Idle(float _DeltaTime) {
 // Move : 플레이어 이동(오른쪽 왼쪽)
 void APlayer::Move(float _DeltaTime) 
 {
-	// 무브 첫 클릭 후 시간 측정
-	MoveDoubleClickTime += _DeltaTime;
+	if (DirCheck()) // 방향 바뀌었으면 
+	{
+		// 브레이크모션(일단 Idle)
+		StateChange(EPlayState::Idle);
+		return;
+	}
 
+	if (true == UEngineInput::IsPress(VK_LEFT) && true == UEngineInput::IsPress(VK_RIGHT))
+	{
+		// 동시에 입력됐을 때는 Idle
+		StateChange(EPlayState::Idle);
+		return;
+	}
 
 	if (true == UEngineInput::IsPress(VK_LEFT) || true == UEngineInput::IsPress(VK_RIGHT))
 	{
 		// 입력에 의한 이동 계산
-		//DirCheck(); << 이거 하면 키 바꿀 때 문워크됨
 		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc);
 	}
 	else if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
 	{
 		// 감속
-		AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc);
+		FVector DirDelta = FVector((-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f);
+		AddMoveVector(DirDelta, MoveAcc);
+		// 일정 속도 이하면 멈추기
+		if (abs(MoveVector.X) < 1.0f)
+		{
+			MoveVector = FVector::Zero;
+			StateChange(EPlayState::Idle);
+			return;
+		}
 	}
-
-	// 일정 속도 이하면 움직임 멈추기
-	if (abs(MoveVector.X) < 0.5f) 
-	{
-		MoveVector = FVector::Zero;
-		StateChange(EPlayState::Idle);
-		IsMoveClicked = true;
-		return;
-	}
-
 	MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 }
 
@@ -244,35 +239,46 @@ void APlayer::Crouch(float _DeltaTime)
 // Slide : 슬라이딩
 void APlayer::Slide(float _DeltaTime)
 {
-	AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, SlideAcc);
-	MoveUpdate(_DeltaTime, SlideMaxSpeed, SlideAcc);
-
-	if (abs(MoveVector.X) < 1.0f)
+	if (abs(MoveVector.X) < 10.0f)
 	{
 		MoveVector = FVector::Zero;
 		StateChange(EPlayState::Idle);
+		return;
+	}
+	else 
+	{
+		AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, SlideAcc);
+		MoveUpdate(_DeltaTime, SlideMaxSpeed, SlideAcc);
+		return;
 	}
 }
 
 // Run : 달리기
 void APlayer::Run(float _DeltaTime)
 {	
-	if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
+	if (DirCheck()) // 방향 바뀌었으면 
+	{
+		// 브레이크모션(일단 Idle)
+		StateChange(EPlayState::Idle);
+		return;
+	}
+	if (true == UEngineInput::IsPress(VK_LEFT) || true == UEngineInput::IsPress(VK_RIGHT))
+	{
+		// 입력에 의한 이동 계산
+		DirCheck();
+		PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
+		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
+	}
+	else if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
 	{
 		// 입력 끝나면 감속
 		AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
-	}
-	else
-	{
-		// 입력에 의한 이동 계산
-		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
-	}
-
-	if (abs(MoveVector.X) < 2.0f)
-	{
-		MoveVector = FVector::Zero;
-		StateChange(EPlayState::Idle);
-		return;
+		if (abs(MoveVector.X) < 3.0f)
+		{
+			MoveVector = FVector::Zero;
+			StateChange(EPlayState::Idle);
+			return;
+		}
 	}
 
 	MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
@@ -474,16 +480,22 @@ void APlayer::FinalMove(float _DeltaTime)
 {
 	FVector MovePos = FinalMoveVector * _DeltaTime;					// 플레이어 이동량 (걷기의 Move가 아님)
 
-	FVector CheckPos = GetActorLocation() + MovePos;
+	FVector CheckPos = GetActorLocation();
 	CheckPos.X += static_cast<float>(DirState) * 20.0f;	// 앞뒤로 20픽셀
 	CheckPos.Y -= 20;									// 잔디 블록 막히게
 
+	FVector CheckPos2 = GetActorLocation();
+	CheckPos2.X += static_cast<float>(DirState) * 20.0f;	// 앞뒤로 20픽셀
+	CheckPos2.Y -= 28;										// 경사로는 올라야돼
+
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(CheckPos.iX(), CheckPos.iY(), Color8Bit::MagentaA);
-	if (Color != Color8Bit::MagentaA)
+	Color8Bit Color2 = UContentsHelper::ColMapImage->GetColor(CheckPos2.iX(), CheckPos2.iY(), Color8Bit::MagentaA);
+	if (Color == Color8Bit::MagentaA && Color2 == Color8Bit::MagentaA)
 	{
-		// 플레이어 이동
-		AddActorLocation(MovePos);
+		return;
 	}
+	// 플레이어 이동
+	AddActorLocation(MovePos);
 
 	// 카메라 이동
 	FVector CameraPosLeft = GetWorld()->GetCameraPos();				// 카메라 왼쪽 좌표
