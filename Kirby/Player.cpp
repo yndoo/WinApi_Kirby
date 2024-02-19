@@ -36,6 +36,10 @@ void APlayer::BeginPlay() {
 	PlayerRenderer->CreateAnimation("Slide_Left", "Slide_Left.png", 0, 0, 0.3f, true);
 	PlayerRenderer->CreateAnimation("Run_Right", "Run_Right.png", 0, 7, 0.05f, true);
 	PlayerRenderer->CreateAnimation("Run_Left", "Run_Left.png", 0, 7, 0.05f, true);
+	PlayerRenderer->CreateAnimation("JumpTurn_Right", "Jump_Right.png", 1, 8, 0.05f, false);	// 공중 회전
+	PlayerRenderer->CreateAnimation("JumpTurn_Left", "Jump_Left.png", 1, 8, 0.05f, false);
+	PlayerRenderer->CreateAnimation("JumpStart_Right", "Jump_Right.png", 0, 0, 0.1f, false);	// 점프 시작
+	PlayerRenderer->CreateAnimation("JumpStart_Left", "Jump_Left.png", 0, 0, 0.1f, false);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
 
@@ -164,7 +168,7 @@ void APlayer::JumpStart()
 	
 	JumpVector = JumpPower;
 	// Jump 리소스 따면 변경할 예정 ******
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
+	PlayerRenderer->ChangeAnimation(GetAnimationName("JumpStart"));
 }
 
 // Idle : 가만히 있는 상태
@@ -178,6 +182,7 @@ void  APlayer::Idle(float _DeltaTime) {
 		StateChange(EPlayState::Move);
 		return;
 	}
+
 
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
@@ -211,6 +216,13 @@ void APlayer::Move(float _DeltaTime)
 	{
 		// 브레이크모션(일단 Idle)
 		StateChange(EPlayState::Idle);
+		return;
+	}
+	
+	if (true == UEngineInput::IsDoubleClick(VK_RIGHT, 0.2f))
+	{
+		StateChange(EPlayState::Run);
+		int a = 0;
 		return;
 	}
 
@@ -296,23 +308,37 @@ void APlayer::Run(float _DeltaTime)
 		StateChange(EPlayState::Idle);
 		return;
 	}
+
+	if (true == UEngineInput::IsPress(VK_LEFT) && true == UEngineInput::IsPress(VK_RIGHT))
+	{
+		// 동시에 입력됐을 때는 Idle
+		StateChange(EPlayState::Idle);
+		return;
+	}
+
 	if (true == UEngineInput::IsPress(VK_LEFT) || true == UEngineInput::IsPress(VK_RIGHT))
 	{
 		// 입력에 의한 이동 계산
-		DirCheck();
-		PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
 		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
 	}
 	else if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
 	{
-		// 입력 끝나면 감속
-		AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
-		if (abs(MoveVector.X) < 3.0f)
+		// 감속
+		FVector DirDelta = FVector((-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f);
+		AddMoveVector(DirDelta, RunAcc);
+		// 일정 속도 이하면 멈추기
+		if (abs(MoveVector.X) < 10.0f)
 		{
 			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Idle);
 			return;
 		}
+	}
+
+	if (true == UEngineInput::IsDown('Z'))
+	{
+		StateChange(EPlayState::Jump);
+		return;
 	}
 
 	MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
@@ -321,18 +347,32 @@ void APlayer::Run(float _DeltaTime)
 // Jump : 점프
 void APlayer::Jump(float _DeltaTime)
 {
+
 	if (UEngineInput::IsPress(VK_LEFT) || UEngineInput::IsPress(VK_RIGHT))
 	{
 		DirCheck();
 		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc); // 점프 중 이동은 Move가속도로
 	}
+
 	MoveUpdate(_DeltaTime, JumpMaxSpeed);
+
+	if (abs(FinalMoveVector.Y) < 50.f)
+	{
+		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpTurn"));
+	}
 
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
 	if (Color == Color8Bit(255, 0, 255, 0))
 	{
 		JumpVector = FVector::Zero;
-		StateChange(EPlayState::Idle);
+		if (UEngineInput::IsPress(VK_LEFT) || UEngineInput::IsPress(VK_RIGHT)) 
+		{
+			StateChange(EPlayState::Move);
+		}
+		else
+		{
+			StateChange(EPlayState::Idle);
+		}
 		return;
 	}
 }
