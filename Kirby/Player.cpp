@@ -11,6 +11,17 @@ APlayer::~APlayer()
 {
 }
 
+void APlayer::AutoCreateAnimation(std::string_view _AnimationName, /*std::string_view _ImageName,*/ std::vector<int> _Indexs, float _Inter, bool _Loop)
+{
+	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Right"), std::string(_AnimationName) + std::string("_Right.png"), _Indexs, _Inter, _Loop);
+	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Left"), std::string(_AnimationName) + std::string("_Left.png"), _Indexs, _Inter, _Loop);
+}
+void APlayer::AutoCreateAnimation(std::string_view _AnimationName, /*std::string_view _ImageName,*/ int _Start, int _End, float _Inter, bool _Loop)
+{
+	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Right"), std::string(_AnimationName) + std::string("_Right.png"), _Start, _End, _Inter, _Loop);
+	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Left"), std::string(_AnimationName) + std::string("_Left.png"), _Start, _End, _Inter, _Loop);
+}
+
 void APlayer::BeginPlay() {
 	AActor::BeginPlay();
 
@@ -20,36 +31,23 @@ void APlayer::BeginPlay() {
 	PlayerRenderer->SetImage("Kirby.png");
 
 	PlayerRenderer->SetTransform({ {0,0}, {300, 300} });
-	PlayerRenderer->SetTransColor(Color8Bit::Blue);
+	PlayerRenderer->SetTransColor(Color8Bit::Magenta);
 
+	AutoCreateAnimation("Move", { 0,1,1,2,3,4,5,6,6,7,8,9 }, 0.07f, true);
+	AutoCreateAnimation("Idle", { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 }, 0.09f, true);
+	AutoCreateAnimation("Crouch", 1, 1, 0.3f, true);
+	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
+	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
+	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
 
-	// 이미지보다 크게 자르면 아예 안 나옴.
-	//PlayerRenderer->SetImageCuttingTransform({ {0,0}, {60, 80} });
-
-	PlayerRenderer->CreateAnimation("Move_Right", "Move_Right.png", 0, 9, 0.07f, true);
-	PlayerRenderer->CreateAnimation("Move_Left", "Move_Left.png", 0, 9, 0.07f, true);
-	PlayerRenderer->CreateAnimation("Idle_Right", "Idle_Right.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
-	PlayerRenderer->CreateAnimation("Idle_Left", "Idle_Left.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
-	PlayerRenderer->CreateAnimation("Crouch_Right", "Crouch_Right.png", 1, 1, 0.3f, true);
-	PlayerRenderer->CreateAnimation("Crouch_Left", "Crouch_Left.png", 1, 1, 0.3f, true);
-	PlayerRenderer->CreateAnimation("Slide_Right", "Slide_Right.png", 0, 0, 0.3f, true);
-	PlayerRenderer->CreateAnimation("Slide_Left", "Slide_Left.png", 0, 0, 0.3f, true);
-	PlayerRenderer->CreateAnimation("Run_Right", "Run_Right.png", 0, 7, 0.05f, true);
-	PlayerRenderer->CreateAnimation("Run_Left", "Run_Left.png", 0, 7, 0.05f, true);
-	PlayerRenderer->CreateAnimation("JumpTurn_Right", "Jump_Right.png", 1, 8, 0.05f, false);// 공중 회전
+	// 같은 이미지로 두 애니메이션을 제작하기 때문에 Auto로 불가능
+	PlayerRenderer->CreateAnimation("JumpTurn_Right", "Jump_Right.png", 1, 8, 0.05f, false);	// 공중 회전
 	PlayerRenderer->CreateAnimation("JumpTurn_Left", "Jump_Left.png", 1, 8, 0.05f, false);
-	PlayerRenderer->CreateAnimation("JumpStart_Right", "Jump_Right.png", 0, 0, 0.1f, false);// 점프 시작
+	PlayerRenderer->CreateAnimation("JumpStart_Right", "Jump_Right.png", 0, 0, 0.1f, false);	// 점프 시작
 	PlayerRenderer->CreateAnimation("JumpStart_Left", "Jump_Left.png", 0, 0, 0.1f, false);
-	PlayerRenderer->CreateAnimation("Break_Right", "Break_Right.png", 0, 0, 0.2f, false);
-	PlayerRenderer->CreateAnimation("Break_Left", "Break_Left.png", 0, 0, 0.2f, false);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
-
-
 	StateChange(EPlayState::Idle);
-
-	int a = 0;
-
 }
 
 void APlayer::Tick(float _DeltaTime) {
