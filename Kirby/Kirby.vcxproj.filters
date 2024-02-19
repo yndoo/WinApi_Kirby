@@ -18,6 +18,9 @@
       <Filter>PlayLevel</Filter>
     </ClInclude>
     <ClInclude Include="ContentsHelper.h" />
+    <ClInclude Include="Flamer.h">
+      <Filter>PlayLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -37,6 +40,9 @@
       <Filter>PlayLevel</Filter>
     </ClCompile>
     <ClCompile Include="ContentsHelper.cpp" />
+    <ClCompile Include="Flamer.cpp">
+      <Filter>PlayLevel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PlayLevel">

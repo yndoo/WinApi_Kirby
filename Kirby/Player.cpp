@@ -11,12 +11,12 @@ APlayer::~APlayer()
 {
 }
 
-void APlayer::AutoCreateAnimation(std::string_view _AnimationName, /*std::string_view _ImageName,*/ std::vector<int> _Indexs, float _Inter, bool _Loop)
+void APlayer::AutoCreateAnimation(std::string_view _AnimationName, std::vector<int> _Indexs, float _Inter, bool _Loop)
 {
 	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Right"), std::string(_AnimationName) + std::string("_Right.png"), _Indexs, _Inter, _Loop);
 	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Left"), std::string(_AnimationName) + std::string("_Left.png"), _Indexs, _Inter, _Loop);
 }
-void APlayer::AutoCreateAnimation(std::string_view _AnimationName, /*std::string_view _ImageName,*/ int _Start, int _End, float _Inter, bool _Loop)
+void APlayer::AutoCreateAnimation(std::string_view _AnimationName, int _Start, int _End, float _Inter, bool _Loop)
 {
 	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Right"), std::string(_AnimationName) + std::string("_Right.png"), _Start, _End, _Inter, _Loop);
 	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Left"), std::string(_AnimationName) + std::string("_Left.png"), _Start, _End, _Inter, _Loop);
@@ -40,7 +40,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
 	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
 
-	// 같은 이미지로 두 애니메이션을 제작하기 때문에 Auto로 불가능
+	// 같은 이미지로 여러 애니메이션을 제작하기 때문에 직접 해줌
 	PlayerRenderer->CreateAnimation("JumpTurn_Right", "Jump_Right.png", 1, 8, 0.05f, false);	// 공중 회전
 	PlayerRenderer->CreateAnimation("JumpTurn_Left", "Jump_Left.png", 1, 8, 0.05f, false);
 	PlayerRenderer->CreateAnimation("JumpStart_Right", "Jump_Right.png", 0, 0, 0.1f, false);	// 점프 시작
@@ -174,7 +174,6 @@ void APlayer::JumpStart()
 	DirCheck();
 	
 	JumpVector = JumpPower;
-	// Jump 리소스 따면 변경할 예정 ******
 	PlayerRenderer->ChangeAnimation(GetAnimationName("JumpStart"));
 }
 
@@ -265,7 +264,7 @@ void APlayer::Move(float _DeltaTime)
 		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 
 		// 일정 속도 이하면 멈추기
-		if (abs(FinalMoveVector.X) < 50.0f)
+		if (abs(FinalMoveVector.X) < 80.0f)
 		{
 			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Idle);
@@ -599,20 +598,6 @@ void APlayer::FinalMove(float _DeltaTime)
 {
 	FVector MovePos = FinalMoveVector * _DeltaTime;					// 플레이어 이동량 (걷기의 Move가 아님)
 
-	FVector CheckPos = GetActorLocation();
-	CheckPos.X += static_cast<float>(DirState) * 20.0f;	// 앞뒤로 20픽셀
-	CheckPos.Y -= 20;									// 잔디 블록 막히게
-
-	FVector CheckPos2 = GetActorLocation();
-	CheckPos2.X += static_cast<float>(DirState) * 20.0f;	// 앞뒤로 20픽셀
-	CheckPos2.Y -= 28;										// 경사로는 올라야돼
-
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(CheckPos.iX(), CheckPos.iY(), Color8Bit::MagentaA);
-	Color8Bit Color2 = UContentsHelper::ColMapImage->GetColor(CheckPos2.iX(), CheckPos2.iY(), Color8Bit::MagentaA);
-	if (Color == Color8Bit::MagentaA && Color2 == Color8Bit::MagentaA)
-	{
-		return;
-	}
 	// 플레이어 이동
 	AddActorLocation(MovePos);
 

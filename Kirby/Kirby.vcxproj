@@ -159,6 +159,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Flamer.h" />
     <ClInclude Include="KirbyCore.h">
       <SubType>
       </SubType>
@@ -189,6 +190,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Flamer.cpp" />
     <ClCompile Include="KirbyCore.cpp">
       <SubType>
       </SubType>

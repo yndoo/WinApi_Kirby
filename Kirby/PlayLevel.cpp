@@ -1,5 +1,6 @@
 #include "PlayLevel.h"
 #include "Player.h"
+#include "Flamer.h"
 #include <EngineBase/EngineDirectory.h>
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
@@ -58,6 +59,7 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	UEngineResourcesManager::GetInst().CuttingImage("Jump_Left.png", 9, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Break_Right.png", 1, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Break_Left.png", 1, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\foreground"));
 
 	AMap* Map = SpawnActor<AMap>();
@@ -67,6 +69,7 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Map->SetBackMapImage("level1-3_background.png");
 	
 	this->SpawnActor<APlayer>();
+	this->SpawnActor<AFlamer>();
 }
 void UPlayLevel::LevelEnd(ULevel* _Level)
 {
