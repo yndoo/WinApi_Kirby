@@ -25,6 +25,7 @@ enum class EPlayState
 	Slide,
 	Run,
 	Jump,
+	Break,
 };
 
 

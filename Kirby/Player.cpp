@@ -26,8 +26,8 @@ void APlayer::BeginPlay() {
 	// 이미지보다 크게 자르면 아예 안 나옴.
 	//PlayerRenderer->SetImageCuttingTransform({ {0,0}, {60, 80} });
 
-	PlayerRenderer->CreateAnimation("Move_Right", "Move_Right.png", 0, 9, 0.13f, true);
-	PlayerRenderer->CreateAnimation("Move_Left", "Move_Left.png", 0, 9, 0.13f, true);
+	PlayerRenderer->CreateAnimation("Move_Right", "Move_Right.png", 0, 9, 0.07f, true);
+	PlayerRenderer->CreateAnimation("Move_Left", "Move_Left.png", 0, 9, 0.07f, true);
 	PlayerRenderer->CreateAnimation("Idle_Right", "Idle_Right.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
 	PlayerRenderer->CreateAnimation("Idle_Left", "Idle_Left.png", { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2 }, 0.09f, true);
 	PlayerRenderer->CreateAnimation("Crouch_Right", "Crouch_Right.png", 1, 1, 0.3f, true);
@@ -36,10 +36,12 @@ void APlayer::BeginPlay() {
 	PlayerRenderer->CreateAnimation("Slide_Left", "Slide_Left.png", 0, 0, 0.3f, true);
 	PlayerRenderer->CreateAnimation("Run_Right", "Run_Right.png", 0, 7, 0.05f, true);
 	PlayerRenderer->CreateAnimation("Run_Left", "Run_Left.png", 0, 7, 0.05f, true);
-	PlayerRenderer->CreateAnimation("JumpTurn_Right", "Jump_Right.png", 1, 8, 0.05f, false);	// 공중 회전
+	PlayerRenderer->CreateAnimation("JumpTurn_Right", "Jump_Right.png", 1, 8, 0.05f, false);// 공중 회전
 	PlayerRenderer->CreateAnimation("JumpTurn_Left", "Jump_Left.png", 1, 8, 0.05f, false);
-	PlayerRenderer->CreateAnimation("JumpStart_Right", "Jump_Right.png", 0, 0, 0.1f, false);	// 점프 시작
+	PlayerRenderer->CreateAnimation("JumpStart_Right", "Jump_Right.png", 0, 0, 0.1f, false);// 점프 시작
 	PlayerRenderer->CreateAnimation("JumpStart_Left", "Jump_Left.png", 0, 0, 0.1f, false);
+	PlayerRenderer->CreateAnimation("Break_Right", "Break_Right.png", 0, 0, 0.2f, false);
+	PlayerRenderer->CreateAnimation("Break_Left", "Break_Left.png", 0, 0, 0.2f, false);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
 
@@ -79,6 +81,9 @@ void APlayer::StateChange(EPlayState _State)
 		case EPlayState::Jump:
 			JumpStart();
 			break;
+		case EPlayState::Break:
+			BreakStart();
+			break;
 		default:
 			break;
 		}
@@ -111,6 +116,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EPlayState::Jump:
 		// 점프
 		Jump(_DeltaTime);
+		break;
+	case EPlayState::Break:
+		// 브레이크
+		Break(_DeltaTime);
 		break;
 	case EPlayState::FreeMove:
 		// 자유 이동
@@ -171,10 +180,27 @@ void APlayer::JumpStart()
 	PlayerRenderer->ChangeAnimation(GetAnimationName("JumpStart"));
 }
 
+void APlayer::BreakStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Break"));
+}
+
 // Idle : 가만히 있는 상태
 void  APlayer::Idle(float _DeltaTime) {
 	MoveVector = FVector::Zero;
 	MoveUpdate(_DeltaTime);
+
+	if (true == UEngineInput::IsDoubleClick(VK_RIGHT, 0.3f))
+	{
+		StateChange(EPlayState::Run);
+		return;
+	}
+	if (true == UEngineInput::IsDoubleClick(VK_LEFT, 0.3f))
+	{
+		StateChange(EPlayState::Run);
+		return;
+	}
 
 	if (true == UEngineInput::IsPress(VK_LEFT) || true == UEngineInput::IsPress(VK_RIGHT))
 	{
@@ -192,6 +218,7 @@ void  APlayer::Idle(float _DeltaTime) {
 
 	if (true == UEngineInput::IsDown('Z'))
 	{
+		BeforeJumpState = EPlayState::Idle;
 		StateChange(EPlayState::Jump);
 		return;
 	}
@@ -212,17 +239,10 @@ void  APlayer::Idle(float _DeltaTime) {
 // Move : 플레이어 이동(오른쪽 왼쪽)
 void APlayer::Move(float _DeltaTime) 
 {
-	if (DirCheck()) // 방향 바뀌었으면 
+	if (DirCheck()) 
 	{
-		// 브레이크모션(일단 Idle)
-		StateChange(EPlayState::Idle);
-		return;
-	}
-	
-	if (true == UEngineInput::IsDoubleClick(VK_RIGHT, 0.2f))
-	{
-		StateChange(EPlayState::Run);
-		int a = 0;
+		// 방향 바뀌었으면 브레이크
+		StateChange(EPlayState::Break);
 		return;
 	}
 
@@ -237,14 +257,17 @@ void APlayer::Move(float _DeltaTime)
 	{
 		// 입력에 의한 이동 계산
 		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc);
+		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 	}
 	else if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
 	{
 		// 감속
 		FVector DirDelta = FVector((-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f);
 		AddMoveVector(DirDelta, MoveAcc);
+		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
+
 		// 일정 속도 이하면 멈추기
-		if (abs(MoveVector.X) < 5.0f)
+		if (abs(FinalMoveVector.X) < 50.0f)
 		{
 			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Idle);
@@ -254,11 +277,10 @@ void APlayer::Move(float _DeltaTime)
 
 	if (true == UEngineInput::IsDown('Z'))
 	{
+		BeforeJumpState = EPlayState::Move;
 		StateChange(EPlayState::Jump);
 		return;
 	}
-
-	MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 }
 
 // Crouch : 웅크리기
@@ -285,7 +307,7 @@ void APlayer::Crouch(float _DeltaTime)
 // Slide : 슬라이딩
 void APlayer::Slide(float _DeltaTime)
 {
-	if (abs(MoveVector.X) < 10.0f)
+	if (abs(FinalMoveVector.X) < 10.0f)
 	{
 		MoveVector = FVector::Zero;
 		StateChange(EPlayState::Idle);
@@ -302,10 +324,10 @@ void APlayer::Slide(float _DeltaTime)
 // Run : 달리기
 void APlayer::Run(float _DeltaTime)
 {	
-	if (DirCheck()) // 방향 바뀌었으면 
+	if (DirCheck()) 
 	{
-		// 브레이크모션(일단 Idle)
-		StateChange(EPlayState::Idle);
+		// 방향 바뀌었으면 브레이크
+		StateChange(EPlayState::Break);
 		return;
 	}
 
@@ -320,14 +342,16 @@ void APlayer::Run(float _DeltaTime)
 	{
 		// 입력에 의한 이동 계산
 		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
+		MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
 	}
 	else if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
 	{
 		// 감속
 		FVector DirDelta = FVector((-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f);
 		AddMoveVector(DirDelta, RunAcc);
+		MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
 		// 일정 속도 이하면 멈추기
-		if (abs(MoveVector.X) < 10.0f)
+		if (abs(FinalMoveVector.X) < 10.0f)
 		{
 			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Idle);
@@ -337,11 +361,12 @@ void APlayer::Run(float _DeltaTime)
 
 	if (true == UEngineInput::IsDown('Z'))
 	{
+		BeforeJumpState = EPlayState::Run;
 		StateChange(EPlayState::Jump);
 		return;
 	}
 
-	MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
+	
 }
 
 // Jump : 점프
@@ -365,14 +390,16 @@ void APlayer::Jump(float _DeltaTime)
 	if (Color == Color8Bit(255, 0, 255, 0))
 	{
 		JumpVector = FVector::Zero;
-		if (UEngineInput::IsPress(VK_LEFT) || UEngineInput::IsPress(VK_RIGHT)) 
-		{
-			StateChange(EPlayState::Move);
-		}
-		else
-		{
-			StateChange(EPlayState::Idle);
-		}
+		StateChange(BeforeJumpState);
+		return;
+	}
+}
+
+void APlayer::Break(float _DeltaTime)
+{
+	if (PlayerRenderer->IsCurAnimationEnd()) 
+	{
+		StateChange(EPlayState::Idle);
 		return;
 	}
 }

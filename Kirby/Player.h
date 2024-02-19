@@ -35,6 +35,7 @@ protected:
 	void Slide(float _DeltaTime);
 	void Run(float _DeltaTime);
 	void Jump(float _DeltaTime);
+	void Break(float _DeltaTime);
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
 
@@ -45,12 +46,14 @@ protected:
 	void RunStart();
 	void CrouchStart();
 	void JumpStart();
+	void BreakStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
 	void StateChange(EPlayState _State);
 
 	EPlayState State = EPlayState::None;
+	EPlayState BeforeJumpState = EPlayState::None;
 	EActorDir DirState = EActorDir::Right;
 	std::string CurAnimationName = "None";
 

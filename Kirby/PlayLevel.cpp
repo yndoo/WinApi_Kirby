@@ -56,6 +56,8 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	UEngineResourcesManager::GetInst().CuttingImage("Run_Left.png", 8, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Jump_Right.png", 9, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Jump_Left.png", 9, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Break_Right.png", 1, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Break_Left.png", 1, 1);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\foreground"));
 
 	AMap* Map = SpawnActor<AMap>();
