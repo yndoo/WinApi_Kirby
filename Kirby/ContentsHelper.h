@@ -28,6 +28,11 @@ enum class EPlayState
 	Break,
 };
 
+enum class EEnemyState
+{
+	None,
+	Idle,
+};
 
 // Ό³Έν :
 class UContentsHelper

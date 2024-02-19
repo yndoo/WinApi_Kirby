@@ -26,14 +26,14 @@ protected:
 	void AutoCreateAnimation(std::string_view _AnimationName, int _Start, int _End, float _Inter, bool _Loop);
 
 	// 상태 보조 함수
-	bool DirCheck();								// 방향 체크하고, 방향이 바뀌었는지를 리턴
+	bool DirCheck();											// 방향 체크하고, 방향이 바뀌었는지를 리턴
 	std::string GetAnimationName(std::string _Name);
-	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);				// 진짜 이동시키는 함수
+	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);	// 진짜 이동시키는 함수
 	void HillMove(float _DeltaTime);
 
 	// 상태
 	void Idle(float _DeltaTime);
-	void Move(float _DeltaTime);					// 플레이어 왼/오른쪽 이동 상태
+	void Move(float _DeltaTime);								// 플레이어 왼/오른쪽 이동 상태
 	void Crouch(float _DeltaTime);
 	void Slide(float _DeltaTime);
 	void Run(float _DeltaTime);
@@ -56,14 +56,14 @@ protected:
 	void StateChange(EPlayState _State);
 
 	EPlayState State = EPlayState::None;
-	EPlayState BeforeJumpState = EPlayState::None;
+	EPlayState BeforeJumpState = EPlayState::None;				// 점프 이전 State가 무엇인지 저장
 	EActorDir DirState = EActorDir::Right;
 	std::string CurAnimationName = "None";
 
 private:
 	UImageRenderer* PlayerRenderer = nullptr;
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);	// 방향 벡터에 DeltaTime 곱한 값으로 들어옴
-	void FinalMove(float _DeltaTime);				// 최종 계산된 방향과 힘으로 이동시키는 함수
+	void FinalMove(float _DeltaTime);							// 최종 계산된 방향과 힘으로 이동시키는 함수
 
 	// 가속 운동 관련 함수들
 	void CalMoveVector(float _DeltaTime, float MaxSpeed);
