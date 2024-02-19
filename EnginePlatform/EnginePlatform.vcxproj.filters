@@ -36,9 +36,6 @@
     <ClCompile Include="WindowImage.cpp">
       <Filter>Window</Filter>
     </ClCompile>
-    <ClCompile Include="EngineSound.cpp">
-      <Filter>Sound</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineWindow.h">
@@ -90,6 +87,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="ThirdParty\FMOD\Release\fmod_vc.lib">
       <Filter>ThirdParty\FMOD\Release</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="EngineSound.cpp">
+      <Filter>Sound</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>
