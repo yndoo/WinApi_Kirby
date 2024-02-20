@@ -675,7 +675,6 @@ void APlayer::FinalMove(float _DeltaTime)
 
 bool APlayer::IsPlayerBottomMagentaA()
 {
-	float value = GetActorLocation().iY();
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
 	if (Color == Color8Bit(255, 0, 255, 0))
 	{

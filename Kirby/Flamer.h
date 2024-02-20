@@ -31,6 +31,11 @@ protected:
 
 private:
 	UImageRenderer* FlamerRenderer = nullptr;
-
+	FVector ActorImgScale = FVector({ 10, 10 }); // Flmer의 눈으로 보이는 크기 대충
+	
+	// 왼, 아, 오, 위
+	int dx[4] = { -1, 0, 1, 0 };
+	int dy[4] = { 0, 1, 0, -1 };
+	int CurDir = 0; // dx[0], dy[0] : 왼
 };
 
