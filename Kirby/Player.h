@@ -24,6 +24,7 @@ protected:
 
 	void AutoCreateAnimation(std::string_view _AnimationName, std::vector<int> _Indexs, float _Inter, bool _Loop);
 	void AutoCreateAnimation(std::string_view _AnimationName, int _Start, int _End, float _Inter, bool _Loop);
+	bool IsPlayerBottomMagentaA();
 
 	// 상태 보조 함수
 	bool DirCheck();											// 방향 체크하고, 방향이 바뀌었는지를 리턴
@@ -57,7 +58,8 @@ protected:
 
 	EPlayState State = EPlayState::None;
 	EPlayState BeforeJumpState = EPlayState::None;				// 점프 이전 State가 무엇인지 저장
-	EActorDir DirState = EActorDir::Right;
+	EActorDir DirState = EActorDir::Right;						// DirCheck에 쓰이는 DirState
+	EActorDir MyDir = EActorDir::Right;							// Move, Run 함수에서 쓸 Dir
 	std::string CurAnimationName = "None";
 
 private:

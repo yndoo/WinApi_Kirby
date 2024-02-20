@@ -234,12 +234,19 @@ void  APlayer::Idle(float _DeltaTime) {
 }
 
 // Move : 플레이어 이동(오른쪽 왼쪽)
-void APlayer::Move(float _DeltaTime) 
+void APlayer::Move(float _DeltaTime)
 {
-	if (DirCheck()) 
+	if (DirCheck())
 	{
-		// 방향 바뀌었으면 브레이크
-		StateChange(EPlayState::Break);
+		if (IsPlayerBottomMagentaA())
+		{
+			// 땅 위에서 방향 바뀌었으면 브레이크
+			StateChange(EPlayState::Break);
+		}
+		else
+		{
+			PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
+		}
 		return;
 	}
 
@@ -250,21 +257,42 @@ void APlayer::Move(float _DeltaTime)
 		return;
 	}
 
-	if (true == UEngineInput::IsPress(VK_LEFT) || true == UEngineInput::IsPress(VK_RIGHT))
+	// 입력에 의한 이동 계산
+	if (true == UEngineInput::IsPress(VK_LEFT))
 	{
-		// 입력에 의한 이동 계산
-		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc);
+		MyDir = EActorDir::Left;
+		AddMoveVector(FVector::Left * _DeltaTime, MoveAcc);
 		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 	}
-	else if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
+	if (true == UEngineInput::IsPress(VK_RIGHT))
+	{
+		MyDir = EActorDir::Right;
+		AddMoveVector(FVector::Right * _DeltaTime, MoveAcc);
+		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
+	}
+
+	if (MyDir == EActorDir::Left && true == UEngineInput::IsFree(VK_LEFT))
 	{
 		// 감속
-		FVector DirDelta = FVector((-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f);
-		AddMoveVector(DirDelta, MoveAcc);
+		AddMoveVector(FVector::Right * _DeltaTime, MoveAcc);
 		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 
 		// 일정 속도 이하면 멈추기
-		if (abs(FinalMoveVector.X) < 80.0f)
+		if (FinalMoveVector.X > -80.0f)
+		{
+			MoveVector = FVector::Zero;
+			StateChange(EPlayState::Idle);
+			return;
+		}
+	}
+	if (MyDir == EActorDir::Right && true == UEngineInput::IsFree(VK_RIGHT))
+	{
+		// 감속
+		AddMoveVector(FVector::Left * _DeltaTime, MoveAcc);
+		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
+
+		// 일정 속도 이하면 멈추기
+		if (FinalMoveVector.X < 80.0f)
 		{
 			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Idle);
@@ -321,10 +349,17 @@ void APlayer::Slide(float _DeltaTime)
 // Run : 달리기
 void APlayer::Run(float _DeltaTime)
 {	
-	if (DirCheck()) 
+	if (DirCheck())
 	{
-		// 방향 바뀌었으면 브레이크
-		StateChange(EPlayState::Break);
+		if (IsPlayerBottomMagentaA())
+		{
+			// 땅 위에서 방향 바뀌었으면 브레이크
+			StateChange(EPlayState::Break);
+		}
+		else
+		{
+			PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
+		}
 		return;
 	}
 
@@ -335,20 +370,42 @@ void APlayer::Run(float _DeltaTime)
 		return;
 	}
 
-	if (true == UEngineInput::IsPress(VK_LEFT) || true == UEngineInput::IsPress(VK_RIGHT))
+	// 입력에 의한 이동 계산
+	if (true == UEngineInput::IsPress(VK_LEFT))
 	{
-		// 입력에 의한 이동 계산
-		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, RunAcc);
+		MyDir = EActorDir::Left;
+		AddMoveVector(FVector::Left * _DeltaTime, RunAcc);
 		MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
 	}
-	else if (true == UEngineInput::IsFree(VK_LEFT) && true == UEngineInput::IsFree(VK_RIGHT))
+	if (true == UEngineInput::IsPress(VK_RIGHT))
+	{
+		MyDir = EActorDir::Right;
+		AddMoveVector(FVector::Right * _DeltaTime, RunAcc);
+		MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
+	}
+
+	if (MyDir == EActorDir::Left && true == UEngineInput::IsFree(VK_LEFT))
 	{
 		// 감속
-		FVector DirDelta = FVector((-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f);
-		AddMoveVector(DirDelta, RunAcc);
+		AddMoveVector(FVector::Right * _DeltaTime, RunAcc);
 		MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
+
 		// 일정 속도 이하면 멈추기
-		if (abs(FinalMoveVector.X) < 10.0f)
+		if (FinalMoveVector.X > -80.0f)
+		{
+			MoveVector = FVector::Zero;
+			StateChange(EPlayState::Idle);
+			return;
+		}
+	}
+	if (MyDir == EActorDir::Right && true == UEngineInput::IsFree(VK_RIGHT))
+	{
+		// 감속
+		AddMoveVector(FVector::Left * _DeltaTime, RunAcc);
+		MoveUpdate(_DeltaTime, RunMaxSpeed, RunAcc);
+
+		// 일정 속도 이하면 멈추기
+		if (FinalMoveVector.X < 80.0f)
 		{
 			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Idle);
@@ -362,18 +419,16 @@ void APlayer::Run(float _DeltaTime)
 		StateChange(EPlayState::Jump);
 		return;
 	}
-
-	
 }
 
 // Jump : 점프
 void APlayer::Jump(float _DeltaTime)
 {
-
 	if (UEngineInput::IsPress(VK_LEFT) || UEngineInput::IsPress(VK_RIGHT))
 	{
 		DirCheck();
-		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc); // 점프 중 이동은 Move가속도로
+		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpTurn"));
+		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc); // 점프 중 이동은 Move만 됨
 	}
 
 	MoveUpdate(_DeltaTime, JumpMaxSpeed);
@@ -616,4 +671,15 @@ void APlayer::FinalMove(float _DeltaTime)
 	{
 		GetWorld()->AddCameraPos(MoveVector * _DeltaTime);
 	}
+}
+
+bool APlayer::IsPlayerBottomMagentaA()
+{
+	float value = GetActorLocation().iY();
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
+	if (Color == Color8Bit(255, 0, 255, 0))
+	{
+		return true;
+	}
+	return false;
 }
