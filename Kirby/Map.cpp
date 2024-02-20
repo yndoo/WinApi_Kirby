@@ -65,7 +65,9 @@ void AMap::BeginPlay() {
 	Renderer = CreateImageRenderer(KirbyRenderOrder::Map);
 	ColRenderer = CreateImageRenderer(KirbyRenderOrder::Map);
 	ColRenderer->ActiveOff();
-	BackRenderer->CameraEffectOff();
+	//BackRenderer->CameraEffectOff();
+
+	BackRenderer->SetCameraRatio(512 / 4720);
 
 	Renderer->CreateAnimation("MapAnimation", "foreground", 0, 3, 0.5f, true);
 	Renderer->ChangeAnimation("MapAnimation");
