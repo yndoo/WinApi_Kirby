@@ -48,6 +48,10 @@ void APlayer::BeginPlay() {
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
 	StateChange(EPlayState::Idle);
+
+	BodyCollision = CreateCollision(KirbyCollisionOrder::Player);
+	BodyCollision->SetScale({ 10, 100 });
+	BodyCollision->SetColType(ECollisionType::CirCle);
 }
 
 void APlayer::Tick(float _DeltaTime) {
@@ -332,7 +336,8 @@ void APlayer::Crouch(float _DeltaTime)
 // Slide : 슬라이딩
 void APlayer::Slide(float _DeltaTime)
 {
-	if (abs(FinalMoveVector.X) < 10.0f)
+	// 슬라이딩은 MoveVector로 체크
+	if (abs(MoveVector.X) < 10.0f)
 	{
 		MoveVector = FVector::Zero;
 		StateChange(EPlayState::Idle);

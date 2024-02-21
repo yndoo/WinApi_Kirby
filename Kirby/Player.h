@@ -63,6 +63,8 @@ protected:
 	std::string CurAnimationName = "None";
 
 private:
+	UCollision* BodyCollision = nullptr;
+
 	UImageRenderer* PlayerRenderer = nullptr;
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);	// 방향 벡터에 DeltaTime 곱한 값으로 들어옴
 	void FinalMove(float _DeltaTime);							// 최종 계산된 방향과 힘으로 이동시키는 함수

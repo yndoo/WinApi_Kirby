@@ -8,6 +8,13 @@ enum class KirbyRenderOrder
 	Player
 };
 
+enum class KirbyCollisionOrder
+{
+	PlayerBullet,
+	Monster,
+	Player
+};
+
 enum class EActorDir
 {
 	Left = -1,

@@ -34,14 +34,24 @@ void AFlamer::BeginPlay() {
 			break;
 		}
 	}
-
-	//ActorScale = GetTransform().GetScale();
 	StateChange(EEnemyState::Idle);
+
+	FlamerCollision = CreateCollision(KirbyCollisionOrder::Monster);
+	FlamerCollision->SetScale({ 100, 100 });
+	FlamerCollision->SetColType(ECollisionType::Rect);
 }
 
 void AFlamer::Tick(float _DeltaTime) {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
+
+
+	std::vector<UCollision*> Result;
+	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::Player, Result))
+	{
+		FlamerCollision->Destroy();
+		FlamerCollision = nullptr;
+	}
 }
 
 void AFlamer::StateChange(EEnemyState _State)

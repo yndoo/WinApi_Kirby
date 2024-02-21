@@ -68,6 +68,7 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Map->SetColMapImage("level1-3_foreground01_col.png");
 	Map->SetBackMapImage("level1-3_background.png");
 	
+
 	this->SpawnActor<APlayer>();
 	this->SpawnActor<AFlamer>();
 }

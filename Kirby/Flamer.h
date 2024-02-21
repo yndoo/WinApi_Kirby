@@ -30,6 +30,7 @@ protected:
 	EEnemyState State = EEnemyState::None;
 
 private:
+	UCollision* FlamerCollision;
 	UImageRenderer* FlamerRenderer = nullptr;
 	FVector ActorImgScale = FVector({ 10, 10 }); // Flmer의 눈으로 보이는 크기 대충
 	
