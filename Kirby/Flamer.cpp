@@ -19,7 +19,7 @@ void AFlamer::BeginPlay() {
 	FlamerRenderer->SetTransColor(Color8Bit::Magenta);
 
 	FlamerRenderer->CreateAnimation("Spin", "Flamer_Spin.png", 0, 3, 0.2f, true);
-	FlamerRenderer->CreateAnimation("Hurt", "Flamer_Hurt.png", { 0,0,0,0,0,1 }, 0.3f, false);
+	FlamerRenderer->CreateAnimation("Hurt", "Flamer_Hurt.png", { 0,0,0,0,1 }, 0.2f, false);
 	FlamerRenderer->ChangeAnimation("Spin");
 
 	// 일단 잔디블록에 떨어지게 함...
@@ -121,6 +121,7 @@ void AFlamer::Idle(float _DeltaTime)
 
 void AFlamer::Move(float _DeltaTime)
 {
+	CurDir = 0;
 	ColorMove(_DeltaTime, Color8Bit({ 255,0,255,0 }));
 
 	/*std::vector<UCollision*> Result;
