@@ -17,9 +17,14 @@ public:
 	AFlamer& operator=(AFlamer&& _Other) noexcept = delete;
 
 	void Idle(float _DeltaTime);
+	void Hurt(float _DeltaTime);
+	void Move(float _DeltaTime);
 
 	void IdleStart();
+	void HurtStart();
+	void MoveStart();
 
+	void ColorMove(float _DeltaTime, Color8Bit _Color);
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;

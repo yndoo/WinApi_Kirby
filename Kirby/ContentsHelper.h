@@ -39,6 +39,8 @@ enum class EEnemyState
 {
 	None,
 	Idle,
+	Hurt,
+	Move,
 };
 
 // Ό³Έν :
