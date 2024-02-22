@@ -75,7 +75,6 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 
 	Map->Renderer->CreateAnimation("MapAnimation", "1_3_foreground", 0, 3, 0.5f, true);
 	Map->Renderer->ChangeAnimation("MapAnimation");
-	
 
 	Kirby = this->SpawnActor<APlayer>();
 	this->SpawnActor<AFlamer>();
