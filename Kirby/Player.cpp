@@ -447,11 +447,14 @@ void APlayer::Jump(float _DeltaTime)
 		MoveVector = FVector::Zero;
 	}
 
-	if (UEngineInput::IsPress(VK_LEFT) || UEngineInput::IsPress(VK_RIGHT))
+	// 점프 입력에 의한 이동 계산
+	if (true == UEngineInput::IsPress(VK_LEFT))
 	{
-		DirCheck();
-		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpTurn"));
-		AddMoveVector({ static_cast<float>(DirState) * _DeltaTime, 0.f }, MoveAcc); // 점프 중 이동은 Move만 됨
+		AddMoveVector(FVector::Left * _DeltaTime, MoveAcc);
+	}
+	if (true == UEngineInput::IsPress(VK_RIGHT))
+	{
+		AddMoveVector(FVector::Right * _DeltaTime, MoveAcc);
 	}
 
 	MoveUpdate(_DeltaTime, JumpMaxSpeed);
