@@ -64,4 +64,5 @@ void AMap::BeginPlay() {
 	Renderer = CreateImageRenderer(KirbyRenderOrder::Map);
 	ColRenderer = CreateImageRenderer(KirbyRenderOrder::Map);
 	ColRenderer->ActiveOff();
+
 }

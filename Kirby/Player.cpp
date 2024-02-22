@@ -625,7 +625,7 @@ void APlayer::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Ac
 	}
 	if (IsPlayerBottomYellow())
 	{
-		UpMoving(_DeltaTime, Color8Bit(255,255,0,0));
+		UpMoving(_DeltaTime, Color8Bit::YellowA);
 	}
 }
 
@@ -720,7 +720,7 @@ bool APlayer::IsPlayerBottomMagentaA()
 bool APlayer::IsPlayerBottomYellow()
 {
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
-	if (Color == Color8Bit(255, 255, 0, 0))
+	if (Color == Color8Bit::YellowA)
 	{
 		return true;
 	}
