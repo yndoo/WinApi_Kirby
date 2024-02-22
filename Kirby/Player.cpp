@@ -240,11 +240,12 @@ void  APlayer::Idle(float _DeltaTime) {
 // Move : 플레이어 이동(오른쪽 왼쪽)
 void APlayer::Move(float _DeltaTime)
 {
-	if (DirCheck())
+	if (DirCheck())	// 방향 전환됐을 경우
 	{
 		if (IsPlayerBottomMagentaA())
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
+			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Break);
 		}
 		else
@@ -274,7 +275,8 @@ void APlayer::Move(float _DeltaTime)
 		AddMoveVector(FVector::Right * _DeltaTime, MoveAcc);
 		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 	}
-	// 걷는 중에 연타시 달리기
+
+	// 걷는 중에 연타 시 달리기
 	if (true == UEngineInput::IsDown(VK_LEFT))
 	{
 		StateChange(EPlayState::Run);
@@ -440,6 +442,11 @@ void APlayer::Run(float _DeltaTime)
 // Jump : 점프
 void APlayer::Jump(float _DeltaTime)
 {
+	if (DirCheck())	// 공중에서 방향 전환됐을 경우 남은 속도 초기화
+	{
+		MoveVector = FVector::Zero;
+	}
+
 	if (UEngineInput::IsPress(VK_LEFT) || UEngineInput::IsPress(VK_RIGHT))
 	{
 		DirCheck();
@@ -449,7 +456,7 @@ void APlayer::Jump(float _DeltaTime)
 
 	MoveUpdate(_DeltaTime, JumpMaxSpeed);
 
-	if (abs(FinalMoveVector.Y) < 50.f)
+	if (abs(FinalMoveVector.Y) < 40.f)
 	{
 		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpTurn"));
 	}
