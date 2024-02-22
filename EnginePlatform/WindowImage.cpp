@@ -346,6 +346,70 @@ void UWindowImage::TextCopy(const std::string& _Text, const std::string& _Font, 
 	TextCopyFormat(_Text, _Font, stringFormat, _Size, _Trans, _Color);  //출력
 }
 
+void UWindowImage::TextCopy(const std::string& _Text, const std::string& _Font, float _Size, const FTransform& _Trans, Color8Bit _OutLineColor, Color8Bit _FillColor)
+{
+	Gdiplus::Graphics graphics(ImageDC);
+	std::wstring WFont = UEngineString::AnsiToUniCode(_Font);
+	Gdiplus::Font fnt(WFont.c_str(), _Size, Gdiplus::FontStyleBold | Gdiplus::FontStyleItalic, Gdiplus::UnitPixel);
+
+	// 테두리용 브러시 설정
+	Gdiplus::SolidBrush OutLineBrush(Gdiplus::Color(_OutLineColor.R, _OutLineColor.G, _OutLineColor.B));
+
+	// 내부 채우기용 브러시 설정
+	Gdiplus::SolidBrush fillBrush(Gdiplus::Color(_FillColor.R, _FillColor.G, _FillColor.B));
+
+	FVector Pos = _Trans.GetPosition();
+	Gdiplus::RectF rectF(Pos.X, Pos.Y, 0, 0);
+
+	Gdiplus::StringFormat stringFormat;
+	stringFormat.SetAlignment(Gdiplus::StringAlignmentCenter);
+	stringFormat.SetLineAlignment(Gdiplus::StringAlignmentCenter);
+	std::wstring WText = UEngineString::AnsiToUniCode(_Text);
+
+	// 테두리 효과를 위해 텍스트를 여러 방향으로 그립니다.
+	float offsetsX[] = { -3.f, 3.f }; // 테두리의 두께를 조절하려면 이 값을 조정.
+	float offsetsY[] = { -2.f, 2.f }; // 테두리의 두께를 조절하려면 이 값을 조정.
+	for (float dx : offsetsX)
+	{
+		for (float dy : offsetsY)
+		{
+			Gdiplus::RectF borderRect = rectF;
+			borderRect.X += dx;
+			borderRect.Y += dy;
+			graphics.DrawString(WText.c_str(), -1, &fnt, borderRect, &stringFormat, &OutLineBrush);
+		}
+	}
+	float offsets_X[] = { -2.f, 2.f }; // 내부의 두께를 조절하려면 이 값을 조정.
+	float offsets_Y[] = { -1.f, 1.f }; // 내부의 두께를 조절하려면 이 값을 조정.
+	for (float dx : offsets_X)
+	{
+		for (float dy : offsets_Y)
+		{
+			Gdiplus::RectF borderRect = rectF;
+			borderRect.X += dx;
+			borderRect.Y += dy;
+			graphics.DrawString(WText.c_str(), -1, &fnt, borderRect, &stringFormat, &fillBrush);
+		}
+	}
+}
+
+void UWindowImage::TextCopyBold(const std::string& _Text, const std::string& _Font, float _Size, const FTransform& _Trans, Color8Bit _Color)
+{
+	Gdiplus::StringFormat stringFormat;
+	stringFormat.SetAlignment(Gdiplus::StringAlignmentCenter);
+	stringFormat.SetLineAlignment(Gdiplus::StringAlignmentCenter);
+
+	Gdiplus::Graphics graphics(ImageDC);
+	std::wstring WFont = UEngineString::AnsiToUniCode(_Font);
+	Gdiplus::Font fnt(WFont.c_str(), _Size, Gdiplus::FontStyleBold, Gdiplus::UnitPixel);
+	Gdiplus::SolidBrush hB(Gdiplus::Color(_Color.R, _Color.G, _Color.B));
+	FVector Pos = _Trans.GetPosition();
+	Gdiplus::RectF  rectF(_Trans.GetPosition().X, _Trans.GetPosition().Y, 0, 0);
+
+	std::wstring WText = UEngineString::AnsiToUniCode(_Text);
+	graphics.DrawString(WText.c_str(), -1, &fnt, rectF, &stringFormat, &hB);  //출력
+}
+
 void UWindowImage::TextCopyFormat(const std::string& _Text, const std::string& _Font, const Gdiplus::StringFormat& stringFormat, float _Size, const FTransform& _Trans, Color8Bit _Color /*= Color8Bit::Black*/)
 {
 	Gdiplus::Graphics graphics(ImageDC);
@@ -426,6 +490,8 @@ void UWindowImage::PlgCopy(UWindowImage* _CopyImage, const FTransform& _Trans, i
 	}
 
 
+	UImageInfo& CurInfo = _CopyImage->Infos[_Index];
+
 	FTransform& ImageTrans = _CopyImage->Infos[_Index].CuttingTrans;
 
 	POINT Arr[3];
@@ -458,7 +524,7 @@ void UWindowImage::PlgCopy(UWindowImage* _CopyImage, const FTransform& _Trans, i
 	//// 각도만큼 회전시킨 값을 만들어 내야 합니다.
 	//// 어떻게 그렇게 만들수 있을까?
 
-	if (nullptr == _CopyImage->RotationMaskImage)
+	if (nullptr == CurInfo.RotationMaskImage)
 	{
 		MsgBoxAssert("이미지를 회전시키려고 했는데 이미지가 없습니다.");
 	}
@@ -475,7 +541,7 @@ void UWindowImage::PlgCopy(UWindowImage* _CopyImage, const FTransform& _Trans, i
 		ImageTop,   							// int x1,  
 		ImageScaleX, 							// int y1, 
 		ImageScaleY, 							// int y1, 
-		_CopyImage->RotationMaskImage->hBitMap, // 투명처리할 부분을 알려달라고 하는데
+		CurInfo.RotationMaskImage->hBitMap, // 투명처리할 부분을 알려달라고 하는데
 		ImageLeft,   							// int y1, 
 		ImageTop   							// int x1,  
 	);
