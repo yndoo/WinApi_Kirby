@@ -210,7 +210,6 @@ void  APlayer::Idle(float _DeltaTime) {
 		return;
 	}
 
-
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
 		StateChange(EPlayState::Crouch);
@@ -464,8 +463,7 @@ void APlayer::Jump(float _DeltaTime)
 		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpTurn"));
 	}
 
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
-	if (Color == Color8Bit(255, 0, 255, 0))
+	if (IsPlayerBottomMagentaA() || IsPlayerBottomYellow())
 	{
 		JumpVector = FVector::Zero;
 		StateChange(BeforeJumpState);
@@ -592,12 +590,12 @@ bool APlayer::DirCheck()
 	return IsChanged;
 }
 
-void APlayer::HillMove(float _DeltaTime)
+void APlayer::UpMoving(float _DeltaTime, Color8Bit _Color)
 {
 	while (true)
 	{
 		Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
-		if (Color == Color8Bit(255, 0, 255, 0))
+		if (Color == _Color)
 		{
 			AddActorLocation(FVector::Up);
 		}
@@ -620,8 +618,15 @@ void APlayer::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Ac
 	CalFinalMoveVector(_DeltaTime);
 	FinalMove(_DeltaTime);
 
-	// 경사로 이동
-	HillMove(_DeltaTime);
+	// 바닥에 박히지 않도록 올려줌
+	if (IsPlayerBottomMagentaA()) 
+	{
+		UpMoving(_DeltaTime, Color8Bit::MagentaA);
+	}
+	if (IsPlayerBottomYellow())
+	{
+		UpMoving(_DeltaTime, Color8Bit(255,255,0,0));
+	}
 }
 
 void APlayer::AddMoveVector(const FVector& _DirDelta, FVector Acc)
@@ -658,12 +663,15 @@ void APlayer::CalGravityVector(float _DeltaTime)
 {
 	GravityVector += GravityAcc * _DeltaTime;
 
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
-	if (Color == Color8Bit(255, 0, 255, 0))
+	if (IsPlayerBottomMagentaA())
 	{
 		GravityVector = FVector::Zero;
 	}
-	int a = 0;
+
+	if (IsPlayerBottomYellow())
+	{
+		GravityVector = FVector::Zero;
+	}
 }
 
 void APlayer::CalFinalMoveVector(float _DeltaTime)
@@ -702,7 +710,27 @@ void APlayer::FinalMove(float _DeltaTime)
 bool APlayer::IsPlayerBottomMagentaA()
 {
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
-	if (Color == Color8Bit(255, 0, 255, 0))
+	if (Color == Color8Bit::MagentaA)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool APlayer::IsPlayerBottomYellow()
+{
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
+	if (Color == Color8Bit(255, 255, 0, 0))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool APlayer::IsPlayerDoor()
+{
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() - 10, Color8Bit::MagentaA);
+	if (Color == Color8Bit::GreenA)
 	{
 		return true;
 	}

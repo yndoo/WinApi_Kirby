@@ -108,7 +108,7 @@ void AFlamer::MoveStart()
 
 void AFlamer::Idle(float _DeltaTime)
 {
-	ColorMove(_DeltaTime, Color8Bit({ 255,255,0,0 }));
+	ColorMove(_DeltaTime, Color8Bit({ 255, 255, 0,0 }));
 
 	std::vector<UCollision*> Result;
 	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::Player, Result))
@@ -122,7 +122,7 @@ void AFlamer::Idle(float _DeltaTime)
 void AFlamer::Move(float _DeltaTime)
 {
 	CurDir = 0;
-	ColorMove(_DeltaTime, Color8Bit({ 255,0,255,0 }));
+	ColorMove(_DeltaTime, Color8Bit::MagentaA);
 
 	/*std::vector<UCollision*> Result;
 	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::Player, Result))

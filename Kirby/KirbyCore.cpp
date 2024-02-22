@@ -1,6 +1,7 @@
 #include "KirbyCore.h"
 #include "TitleLevel.h"
 #include "PlayLevel.h"
+#include "RestAreaLevel.h"
 
 KirbyCore::KirbyCore()
 	: UEngineCore()
@@ -19,6 +20,7 @@ void KirbyCore::BeginPlay() {
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");
+	CreateLevel<URestAreaLevel>("RestAreaLevel");
 
 	ChangeLevel("PlayLevel");
 }

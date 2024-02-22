@@ -33,7 +33,6 @@ void AMap::SetBackMapImage(std::string_view _MapImageName) {
 	BackRenderer->SetImage(_MapImageName);
 	UWindowImage* Image = BackRenderer->GetImage();
 	FVector ImageScale = Image->GetScale();
-	//FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	BackRenderer->SetTransform({ ImageScale.Half2D(), ImageScale });
 }
 
@@ -65,13 +64,4 @@ void AMap::BeginPlay() {
 	Renderer = CreateImageRenderer(KirbyRenderOrder::Map);
 	ColRenderer = CreateImageRenderer(KirbyRenderOrder::Map);
 	ColRenderer->ActiveOff();
-	//BackRenderer->CameraEffectOff();
-
-
-	//(background 크기 - 윈도우 창 X크기) / (foreground 크기 - 윈도우 창 X크기)
-	FVector WinScale = GEngine->MainWindow.GetWindowScale();
-	BackRenderer->SetCameraRatio((1386.f - WinScale.X) / (4720.f - WinScale.X));
-
-	Renderer->CreateAnimation("MapAnimation", "foreground", 0, 3, 0.5f, true);
-	Renderer->ChangeAnimation("MapAnimation");
 }

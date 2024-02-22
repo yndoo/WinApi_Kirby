@@ -18,23 +18,26 @@ public:
 	APlayer& operator=(const APlayer& _Other) = delete;
 	APlayer& operator=(APlayer&& _Other) noexcept = delete;
 
+	bool IsPlayerBottomMagentaA();
+	bool IsPlayerBottomYellow();
+	bool IsPlayerDoor();
+
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 
 	void AutoCreateAnimation(std::string_view _AnimationName, std::vector<int> _Indexs, float _Inter, bool _Loop);
 	void AutoCreateAnimation(std::string_view _AnimationName, int _Start, int _End, float _Inter, bool _Loop);
-	bool IsPlayerBottomMagentaA();
 
 	// 상태 보조 함수
-	bool DirCheck();											// 방향 체크하고, 방향이 바뀌었는지를 리턴
+	bool DirCheck(); // 방향 체크하고, 방향이 바뀌었는지를 리턴
 	std::string GetAnimationName(std::string _Name);
 	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);	// 진짜 이동시키는 함수
-	void HillMove(float _DeltaTime);
+	void UpMoving(float _DeltaTime, Color8Bit _Color);
 
 	// 상태
 	void Idle(float _DeltaTime);
-	void Move(float _DeltaTime);								// 플레이어 왼/오른쪽 이동 상태
+	void Move(float _DeltaTime); // 플레이어 왼/오른쪽 이동 상태
 	void Crouch(float _DeltaTime);
 	void Slide(float _DeltaTime);
 	void Run(float _DeltaTime);

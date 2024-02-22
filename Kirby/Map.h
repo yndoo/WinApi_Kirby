@@ -21,13 +21,13 @@ public:
 
 	void SwitchDebug();
 
+	UImageRenderer* Renderer = nullptr;
+	UImageRenderer* ColRenderer = nullptr;
+	UImageRenderer* BackRenderer = nullptr;
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 
 private:
-	UImageRenderer* Renderer = nullptr;
-	UImageRenderer* ColRenderer = nullptr;
-	UImageRenderer* BackRenderer = nullptr;
 };
 

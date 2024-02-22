@@ -1,10 +1,8 @@
 #include "PlayLevel.h"
-#include "Player.h"
-#include "Flamer.h"
 #include <EngineBase/EngineDirectory.h>
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
-#include "Map.h"
+
 
 UPlayLevel::UPlayLevel()
 {
@@ -16,24 +14,25 @@ UPlayLevel::~UPlayLevel()
 
 void UPlayLevel::BeginPlay() {
 	ULevel::BeginPlay();
-
 }
 
 void UPlayLevel::Tick(float _DeltaTime)
 {
 	ULevel::Tick(_DeltaTime);
+	if (true == Kirby->IsPlayerDoor())
+	{
+		GEngine->ChangeLevel("RestAreaLevel");
+	}
 }
 
 void UPlayLevel::LevelStart(ULevel* _Level)
 {
-	// 여기서 리소스를 로드하고
-	// 액터도 여기서 만들고
 	UEngineDirectory NewPath;
 
 	NewPath.MoveParent();
 
 	NewPath.Move("KirbyResources");
-	NewPath.Move("Level1-3");
+	NewPath.Move("PlayLevel");
 
 	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
 
@@ -61,16 +60,24 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	UEngineResourcesManager::GetInst().CuttingImage("Break_Left.png", 1, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);
-	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\foreground"));
+	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
-	AMap* Map = SpawnActor<AMap>();
 	
-	Map->SetMapImage("foreground");
+	AMap* Map = SpawnActor<AMap>();
+
+	Map->SetMapImage("1_3_foreground");
 	Map->SetColMapImage("level1-3_foreground01_col.png");
 	Map->SetBackMapImage("level1-3_background.png");
+
+	//(background 크기 - 윈도우 창 X크기) / (foreground 크기 - 윈도우 창 X크기)
+	FVector WinScale = GEngine->MainWindow.GetWindowScale();
+	Map->BackRenderer->SetCameraRatio((1386.f - WinScale.X) / (4720.f - WinScale.X));
+
+	Map->Renderer->CreateAnimation("MapAnimation", "1_3_foreground", 0, 3, 0.5f, true);
+	Map->Renderer->ChangeAnimation("MapAnimation");
 	
 
-	this->SpawnActor<APlayer>();
+	Kirby = this->SpawnActor<APlayer>();
 	this->SpawnActor<AFlamer>();
 }
 void UPlayLevel::LevelEnd(ULevel* _Level)

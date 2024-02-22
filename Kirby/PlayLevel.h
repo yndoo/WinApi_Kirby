@@ -1,6 +1,8 @@
 #pragma once
 #include <EngineCore/Level.h>
-
+#include "Player.h"
+#include "Flamer.h"
+#include "Map.h"
 
 // Ό³Έν :
 class UPlayLevel : public ULevel
@@ -23,6 +25,7 @@ protected:
 	void LevelEnd(ULevel* _Level) override;
 
 private:
+	APlayer* Kirby = nullptr;
 
 };
 

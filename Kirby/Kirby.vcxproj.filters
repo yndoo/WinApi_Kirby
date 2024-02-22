@@ -14,13 +14,14 @@
     <ClInclude Include="TitleLevel.h">
       <Filter>TitleLevel</Filter>
     </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>PlayLevel</Filter>
-    </ClInclude>
     <ClInclude Include="ContentsHelper.h" />
     <ClInclude Include="Flamer.h">
       <Filter>PlayLevel</Filter>
     </ClInclude>
+    <ClInclude Include="RestAreaLevel.h">
+      <Filter>RestAreaLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -36,13 +37,14 @@
     <ClCompile Include="TitleLevel.cpp">
       <Filter>TitleLevel</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>PlayLevel</Filter>
-    </ClCompile>
     <ClCompile Include="ContentsHelper.cpp" />
     <ClCompile Include="Flamer.cpp">
       <Filter>PlayLevel</Filter>
     </ClCompile>
+    <ClCompile Include="RestAreaLevel.cpp">
+      <Filter>RestAreaLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PlayLevel">
@@ -50,6 +52,9 @@
     </Filter>
     <Filter Include="TitleLevel">
       <UniqueIdentifier>{840b5315-ce39-454e-9751-8d24613004a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RestAreaLevel">
+      <UniqueIdentifier>{a3ab6508-127a-4090-8775-b5fda92db73e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
