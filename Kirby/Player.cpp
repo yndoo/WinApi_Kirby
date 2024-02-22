@@ -274,6 +274,17 @@ void APlayer::Move(float _DeltaTime)
 		AddMoveVector(FVector::Right * _DeltaTime, MoveAcc);
 		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 	}
+	// 걷는 중에 연타시 달리기
+	if (true == UEngineInput::IsDown(VK_LEFT))
+	{
+		StateChange(EPlayState::Run);
+		return;
+	}
+	if (true == UEngineInput::IsDown(VK_RIGHT))
+	{
+		StateChange(EPlayState::Run);
+		return;
+	}
 
 	if (MyDir == EActorDir::Left && true == UEngineInput::IsFree(VK_LEFT))
 	{

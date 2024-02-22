@@ -20,7 +20,7 @@ void KirbyCore::BeginPlay() {
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");
 
-	ChangeLevel("TitleLevel");
+	ChangeLevel("PlayLevel");
 }
 
 void KirbyCore::Tick(float _DeltaTime) {
