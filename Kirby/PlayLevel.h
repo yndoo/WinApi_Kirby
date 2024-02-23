@@ -25,7 +25,6 @@ protected:
 	void LevelEnd(ULevel* _Level) override;
 
 private:
-	APlayer* Kirby = nullptr;
-
+	APlayer* NewKirby = nullptr;
+	AMap* Map = nullptr;
 };
-

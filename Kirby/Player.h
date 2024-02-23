@@ -22,6 +22,11 @@ public:
 	bool IsPlayerBottomYellow();
 	bool IsPlayerDoor();
 
+	FVector BeforePos = { 100, 100 };
+
+	FVector WinScale = GEngine->MainWindow.GetWindowScale();
+	FVector MapSize = UContentsHelper::ColMapImage->GetScale();
+
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -63,12 +68,12 @@ protected:
 	EPlayState BeforeJumpState = EPlayState::None;				// 점프 이전 State가 무엇인지 저장
 	EActorDir DirState = EActorDir::Right;						// DirCheck에 쓰이는 DirState
 	EActorDir MyDir = EActorDir::Right;							// Move, Run 함수에서 쓸 Dir
-	std::string CurAnimationName = "None";
+	std::string CurAnimationName = "Idle";
 
 private:
 	UCollision* BodyCollision = nullptr;
-
 	UImageRenderer* PlayerRenderer = nullptr;
+
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);	// 방향 벡터에 DeltaTime 곱한 값으로 들어옴
 	void FinalMove(float _DeltaTime);							// 최종 계산된 방향과 힘으로 이동시키는 함수
 
@@ -100,7 +105,7 @@ private:
 	float Gravity = 500.0f;
 	float FreeMoveSpeed = 1000.0f;
 
-	FVector WinScale = GEngine->MainWindow.GetWindowScale();
-	FVector MapSize = UContentsHelper::ColMapImage->GetScale();
+	
 };
 
+extern APlayer* Kirby;

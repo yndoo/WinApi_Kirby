@@ -53,8 +53,6 @@ void AFlamer::StateChange(EEnemyState _State)
 	{
 		switch (_State)
 		{
-		case EEnemyState::None:
-			break;
 		case EEnemyState::Idle:
 			IdleStart();
 			break;
@@ -75,8 +73,6 @@ void AFlamer::StateUpdate(float _DeltaTime)
 {
 	switch (State)
 	{
-	case EEnemyState::None:
-		break;
 	case EEnemyState::Idle:
 		Idle(_DeltaTime);
 		break;

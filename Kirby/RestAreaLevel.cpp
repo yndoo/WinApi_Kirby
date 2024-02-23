@@ -14,7 +14,6 @@ URestAreaLevel::~URestAreaLevel()
 void URestAreaLevel::BeginPlay() 
 {
 	ULevel::BeginPlay();
-
 	UEngineDirectory NewPath;
 
 	NewPath.MoveParent();
@@ -32,27 +31,31 @@ void URestAreaLevel::BeginPlay()
 
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\restarea_foreground"));
 
-	{
-		AMap* Map = SpawnActor<AMap>();
+	Map = SpawnActor<AMap>();
 
-		Map->SetMapImage("restarea_foreground");
-		Map->SetColMapImage("restarea_colmap.png");
-		Map->SetBackMapImage("RestAreaBackground.png");
-		Map->ColRenderer->ActiveOff();
 
-		Map->Renderer->CreateAnimation("RestAreaMapAnimation", "restarea_foreground", 0, 3, 0.5f, true);
-		Map->Renderer->ChangeAnimation("RestAreaMapAnimation");
-	}
+	Map->Renderer->CreateAnimation("RestAreaMapAnimation", "restarea_foreground", 0, 3, 0.5f, true);
 }
 
 void URestAreaLevel::Tick(float _DeltaTime)
 {
 	ULevel::Tick(_DeltaTime);
+	if (true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
+	{
+		// 다시 나갈 때 갖고있던 BeforePos를 넘겨줘야 함.
+		GEngine->ChangeLevel("PlayLevel");
+	}
 }
 
 void URestAreaLevel::LevelStart(ULevel* _Level)
 {
+	Map->SetMapImage("restarea_foreground");
+	Map->SetColMapImage("restarea_colmap.png");
+	Map->SetBackMapImage("RestAreaBackground.png");
 
+	Map->Renderer->ChangeAnimation("RestAreaMapAnimation");
+
+	this->SpawnActor<APlayer>();
 }
 void URestAreaLevel::LevelEnd(ULevel* _Level)
 {

@@ -3,6 +3,8 @@
 #include "ContentsHelper.h"
 #include <EngineCore/EngineCore.h>
 
+APlayer* Kirby = nullptr;
+
 APlayer::APlayer()
 {
 }
@@ -25,12 +27,31 @@ void APlayer::AutoCreateAnimation(std::string_view _AnimationName, int _Start, i
 void APlayer::BeginPlay() {
 	AActor::BeginPlay();
 
-	SetActorLocation({ 100,100 });
+
+ 	if (nullptr != Kirby)
+	{
+		// 커비가 이미 있던 경우
+		// 새로 생기기 전의 커비에 저장되어있는 BeforePos를 받아야 함.
+		// 근데 RestAreaLevel에서도 BeforePos가 들어가면 안 됨...
+		BeforePos = Kirby->BeforePos;
+		Kirby->Destroy();
+		SetActorLocation(BeforePos);
+	}
+	else
+	{
+		SetActorLocation({ 100, 100 });
+	}
+	std::string name = GetWorld()->GetName();
+	if (GetWorld()->GetName() == "RESTAREALEVEL")
+	{
+		SetActorLocation({ 100, 100 });
+	}
+	Kirby = this;
 
 	PlayerRenderer = CreateImageRenderer(0);
 	PlayerRenderer->SetImage("Kirby.png");
-
 	PlayerRenderer->SetTransform({ {0,0}, {300, 300} });
+	
 	PlayerRenderer->SetTransColor(Color8Bit::Magenta);
 
 	AutoCreateAnimation("Move", { 0,1,1,2,3,4,5,6,6,7,8,9 }, 0.07f, true);
@@ -47,16 +68,21 @@ void APlayer::BeginPlay() {
 	PlayerRenderer->CreateAnimation("JumpStart_Left", "Jump_Left.png", 0, 0, 0.1f, false);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
-	StateChange(EPlayState::Idle);
+
 
 	BodyCollision = CreateCollision(KirbyCollisionOrder::Player);
 	BodyCollision->SetScale({ 10, 100 });
 	BodyCollision->SetColType(ECollisionType::CirCle);
+
+	StateChange(EPlayState::Idle);
 }
 
 void APlayer::Tick(float _DeltaTime) {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
+
+	FVector PlayerPos = GetActorLocation();
+	int  a = 0;
 }
 
 void APlayer::StateChange(EPlayState _State) 
@@ -547,6 +573,11 @@ std::string APlayer::GetAnimationName(std::string _Name)
 {
 	std::string DirName = "";
 
+	if (_Name == "None")
+	{
+		int a = 0;
+	}
+
 	switch (DirState)
 	{
 	case EActorDir::Left:
@@ -729,7 +760,8 @@ bool APlayer::IsPlayerBottomYellow()
 
 bool APlayer::IsPlayerDoor()
 {
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() - 10, Color8Bit::MagentaA);
+	FVector ActorLoc = GetActorLocation();
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorLoc.iX(), ActorLoc.iY() - 10, Color8Bit::MagentaA);
 	if (Color == Color8Bit::GreenA)
 	{
 		return true;
