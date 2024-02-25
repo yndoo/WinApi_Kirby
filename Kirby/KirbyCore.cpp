@@ -45,7 +45,10 @@ void KirbyCore::BeginPlay() {
 }
 
 void KirbyCore::Tick(float _DeltaTime) {
-	int a = 0;
+	if (true == UEngineInput::IsDown(VK_F2))
+	{
+		GEngine->EngineDebugSwitch();
+	}
 }
 
 void KirbyCore::End() {

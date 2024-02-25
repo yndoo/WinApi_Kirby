@@ -70,7 +70,7 @@ void UPlayLevel::Tick(float _DeltaTime)
 void UPlayLevel::LevelStart(ULevel* _Level)
 {
 	Map->SetMapImage("1_3_foreground");
-	Map->SetColMapImage("level1-3_foreground01_col_magenta.png");
+	Map->SetColMapImage("level1-3_foreground01_col.png");
 	Map->SetBackMapImage("level1-3_background.png");
 
 	//(background 크기 - 윈도우 창 X크기) / (foreground 크기 - 윈도우 창 X크기)

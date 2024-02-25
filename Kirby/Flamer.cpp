@@ -26,7 +26,7 @@ void AFlamer::BeginPlay() {
 	while (true)
 	{
 		Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
-		if (Color != Color8Bit(255, 0, 255, 0))
+		if (Color != Color8Bit::YellowA)
 		{
 			AddActorLocation(FVector::Down);
 		}
@@ -38,7 +38,7 @@ void AFlamer::BeginPlay() {
 	StateChange(EEnemyState::Idle);
 
 	FlamerCollision = CreateCollision(KirbyCollisionOrder::Monster);
-	FlamerCollision->SetScale({ 100, 100 });
+	FlamerCollision->SetScale({ 40, 40 });
 	FlamerCollision->SetColType(ECollisionType::Rect);
 
 	MapSize = UContentsHelper::ColMapImage->GetScale();
@@ -106,7 +106,7 @@ void AFlamer::MoveStart()
 
 void AFlamer::Idle(float _DeltaTime)
 {
-	ColorMove(_DeltaTime, Color8Bit::MagentaA);
+	ColorMove(_DeltaTime, Color8Bit::YellowA);
 
 	std::vector<UCollision*> Result;
 	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::Player, Result))
@@ -133,9 +133,11 @@ void AFlamer::Move(float _DeltaTime)
 void AFlamer::Hurt(float _DeltaTime)
 {
 	// 나중에 체력 넣으면 체력이 0될 때 죽어야 함(미완)
+
+	// 바닥에 떨어진 후 Move
 	FVector MyPos = GetActorLocation();
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(MyPos.iX(), MyPos.iY(), Color8Bit::MagentaA);
-	if (Color != Color8Bit(255, 0, 255, 0))
+	if (Color != Color8Bit::MagentaA)
 	{
 		AddActorLocation(FVector::Down * 100.0f * _DeltaTime);
 	}

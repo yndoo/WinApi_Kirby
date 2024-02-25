@@ -71,7 +71,8 @@ void APlayer::BeginPlay() {
 
 
 	BodyCollision = CreateCollision(KirbyCollisionOrder::Player);
-	BodyCollision->SetScale({ 10, 100 });
+	BodyCollision->SetScale({ 50, 0 });
+	BodyCollision->SetPosition({ 0, -20 });
 	BodyCollision->SetColType(ECollisionType::CirCle);
 
 	StateChange(EPlayState::Idle);
