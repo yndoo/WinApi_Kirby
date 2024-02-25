@@ -101,15 +101,10 @@ private:
 	float JumpMaxSpeed = 600.0f;
 	FVector GravityVector = FVector::Zero;
 	FVector GravityAcc = FVector::Down * 1000.0f;
-
 	FVector FinalMoveVector = FVector::Zero;
-	
-	
-	// 보조 변수들
-	float Gravity = 500.0f;
 	float FreeMoveSpeed = 1000.0f;
 
-	
+	float InhaleScaleVar = 30.f;
 };
 
 extern APlayer* Kirby;

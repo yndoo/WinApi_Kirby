@@ -118,6 +118,9 @@ void APlayer::StateChange(EPlayState _State)
 		case EPlayState::Break:
 			BreakStart();
 			break;
+		case EPlayState::Inhale:
+			InhaleStart();
+			break;
 		default:
 			break;
 		}
@@ -154,6 +157,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EPlayState::Break:
 		// 브레이크
 		Break(_DeltaTime);
+		break;
+	case EPlayState::Inhale:
+		// 흡입
+		Inhale(_DeltaTime);
 		break;
 	case EPlayState::FreeMove:
 		// 자유 이동
@@ -222,9 +229,18 @@ void APlayer::BreakStart()
 void APlayer::InhaleStart()
 {
 	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Break")); // 임시
-	//if(DirState)
-	InhaleCollision->SetPosition({ 0, -20 });
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Break")); // 임시 애니메이션
+	InhaleScaleVar = 30.f;
+	// 커비 방향에 따라 흡입 충돌체 위치 다름
+	if (DirState == EActorDir::Left)
+	{
+		InhaleCollision->SetPosition({ -40, -20 });
+	}
+	else
+	{
+		InhaleCollision->SetPosition({ 40, -20 });
+	}
+	
 }
 
 // Idle : 가만히 있는 상태
@@ -530,8 +546,14 @@ void APlayer::Inhale(float _DeltaTime)
 {
 	if (true == UEngineInput::IsPress('X'))
 	{
-		InhaleCollision->SetScale({ 100, 0 });
+		InhaleScaleVar += 10 * _DeltaTime;
+		InhaleCollision->SetScale({ InhaleScaleVar, 0.f });
 		
+	}
+	if (true == UEngineInput::IsFree('X'))
+	{
+		StateChange(EPlayState::Idle);
+		return;
 	}
 }
 
