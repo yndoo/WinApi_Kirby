@@ -10,7 +10,7 @@ enum class KirbyRenderOrder
 
 enum class KirbyCollisionOrder
 {
-	PlayerBullet,
+	PlayerBullet,	// 흡입 충돌체, 공격 충돌체
 	Monster,
 	Player
 };
@@ -33,6 +33,7 @@ enum class EPlayState
 	Run,
 	Jump,
 	Break,
+	Inhale,
 };
 
 enum class EEnemyState

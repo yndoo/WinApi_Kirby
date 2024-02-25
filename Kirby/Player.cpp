@@ -75,6 +75,11 @@ void APlayer::BeginPlay() {
 	BodyCollision->SetPosition({ 0, -20 });
 	BodyCollision->SetColType(ECollisionType::CirCle);
 
+	InhaleCollision = CreateCollision(KirbyCollisionOrder::PlayerBullet);
+	InhaleCollision->SetScale({ 100, 0 });		// 흡입 충돌체 크기는 흡입 입력 시간에 따라 달라진다.
+	InhaleCollision->SetPosition({ 0, -20 });	// 흡입 충돌체 위치는 흡입 시마다 바뀌어야 한다.
+	InhaleCollision->SetColType(ECollisionType::CirCle);
+
 	StateChange(EPlayState::Idle);
 }
 
@@ -214,6 +219,14 @@ void APlayer::BreakStart()
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Break"));
 }
 
+void APlayer::InhaleStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Break")); // 임시
+	//if(DirState)
+	InhaleCollision->SetPosition({ 0, -20 });
+}
+
 // Idle : 가만히 있는 상태
 void  APlayer::Idle(float _DeltaTime) {
 	MoveVector = FVector::Zero;
@@ -247,6 +260,12 @@ void  APlayer::Idle(float _DeltaTime) {
 	{
 		BeforeJumpState = EPlayState::Idle;
 		StateChange(EPlayState::Jump);
+		return;
+	}
+
+	if (true == UEngineInput::IsPress('X'))
+	{
+		StateChange(EPlayState::Inhale);
 		return;
 	}
 
@@ -504,6 +523,15 @@ void APlayer::Break(float _DeltaTime)
 	{
 		StateChange(EPlayState::Idle);
 		return;
+	}
+}
+
+void APlayer::Inhale(float _DeltaTime)
+{
+	if (true == UEngineInput::IsPress('X'))
+	{
+		InhaleCollision->SetScale({ 100, 0 });
+		
 	}
 }
 
