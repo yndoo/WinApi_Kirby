@@ -25,7 +25,7 @@ public:
 	FVector BeforePos = { 100, 100 };
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
-	FVector MapSize = UContentsHelper::ColMapImage->GetScale();
+	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();
 
 protected:
 	void BeginPlay() override;
@@ -72,6 +72,7 @@ protected:
 
 private:
 	UCollision* BodyCollision = nullptr;
+	UCollision* InhaleCollision = nullptr;
 	UImageRenderer* PlayerRenderer = nullptr;
 
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);	// ¹æÇâ º¤ÅÍ¿¡ DeltaTime °öÇÑ °ªÀ¸·Î µé¾î¿È

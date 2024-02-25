@@ -320,7 +320,7 @@ void APlayer::Move(float _DeltaTime)
 		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 
 		// 일정 속도 이하면 멈추기
-		if (FinalMoveVector.X > -80.0f)
+		if (FinalMoveVector.X > -100.0f)
 		{
 			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Idle);
@@ -334,7 +334,7 @@ void APlayer::Move(float _DeltaTime)
 		MoveUpdate(_DeltaTime, MoveMaxSpeed, MoveAcc);
 
 		// 일정 속도 이하면 멈추기
-		if (FinalMoveVector.X < 80.0f)
+		if (FinalMoveVector.X < 100.0f)
 		{
 			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Idle);
@@ -716,6 +716,8 @@ void APlayer::CalFinalMoveVector(float _DeltaTime)
 // 최종 계산된 방향과 힘으로 이동시키는 함수
 void APlayer::FinalMove(float _DeltaTime) 
 {
+	MapSize = UContentsHelper::ColMapImage->GetScale();
+
 	FVector MovePos = FinalMoveVector * _DeltaTime;					// 플레이어 이동량 (걷기의 Move가 아님)
 
 	// 플레이어 이동

@@ -26,7 +26,7 @@ void AFlamer::BeginPlay() {
 	while (true)
 	{
 		Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
-		if (Color != Color8Bit(255, 255, 0, 0))
+		if (Color != Color8Bit(255, 0, 255, 0))
 		{
 			AddActorLocation(FVector::Down);
 		}
@@ -40,6 +40,8 @@ void AFlamer::BeginPlay() {
 	FlamerCollision = CreateCollision(KirbyCollisionOrder::Monster);
 	FlamerCollision->SetScale({ 100, 100 });
 	FlamerCollision->SetColType(ECollisionType::Rect);
+
+	MapSize = UContentsHelper::ColMapImage->GetScale();
 }
 
 void AFlamer::Tick(float _DeltaTime) {
@@ -104,7 +106,7 @@ void AFlamer::MoveStart()
 
 void AFlamer::Idle(float _DeltaTime)
 {
-	ColorMove(_DeltaTime, Color8Bit({ 255, 255, 0,0 }));
+	ColorMove(_DeltaTime, Color8Bit::MagentaA);
 
 	std::vector<UCollision*> Result;
 	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::Player, Result))
@@ -120,20 +122,19 @@ void AFlamer::Move(float _DeltaTime)
 	CurDir = 0;
 	ColorMove(_DeltaTime, Color8Bit::MagentaA);
 
-	/*std::vector<UCollision*> Result;
-	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::Player, Result))
+	// 맵 넘어가면 없애기
+	FVector MyPos = GetActorLocation();
+	if (MyPos.X < -10 || MyPos.X > MapSize.X)
 	{
-		StateChange(EEnemyState::Hurt);
-
-		return;
-	}*/
+		Destroy();
+	}
 }
 
 void AFlamer::Hurt(float _DeltaTime)
 {
 	// 나중에 체력 넣으면 체력이 0될 때 죽어야 함(미완)
-	FVector MyTransform = GetActorLocation();
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(MyTransform.iX(), MyTransform.iY(), Color8Bit::MagentaA);
+	FVector MyPos = GetActorLocation();
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(MyPos.iX(), MyPos.iY(), Color8Bit::MagentaA);
 	if (Color != Color8Bit(255, 0, 255, 0))
 	{
 		AddActorLocation(FVector::Down * 100.0f * _DeltaTime);
@@ -173,7 +174,7 @@ void AFlamer::ColorMove(float _DeltaTime, Color8Bit _Color)
 			if (Color == _Color)
 			{
 				// 방향이 바뀌는 순간
-				AddActorLocation({ dx[i] * 0.17f, dy[i] * 0.17f });
+				AddActorLocation({ dx[i] * MoveSpeed , dy[i] * MoveSpeed });
 				CurDir = i;
 				break;
 			}
@@ -183,6 +184,6 @@ void AFlamer::ColorMove(float _DeltaTime, Color8Bit _Color)
 	{
 		// _Color에 닿아있을 경우
 		// 현재 방향대로 이동
-		AddActorLocation({ dx[CurDir] * 0.17f, dy[CurDir] * 0.17f });
+		AddActorLocation({ dx[CurDir] * MoveSpeed , dy[CurDir] * MoveSpeed });
 	}
 }
