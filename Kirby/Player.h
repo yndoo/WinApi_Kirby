@@ -34,6 +34,8 @@ protected:
 
 	void AutoCreateAnimation(std::string_view _AnimationName, std::vector<int> _Indexs, float _Inter, bool _Loop);
 	void AutoCreateAnimation(std::string_view _AnimationName, int _Start, int _End, float _Inter, bool _Loop);
+	void AutoCreateAnimation(std::string_view _AnimationName, std::string_view _ImageName, std::vector<int> _Indexs, float _Inter, bool _Loop);
+	void AutoCreateAnimation(std::string_view _AnimationName, std::string_view _ImageName, int _Start, int _End, float _Inter, bool _Loop);
 
 	// 상태 보조 함수
 	bool DirCheck(); // 방향 체크하고, 방향이 바뀌었는지를 리턴
@@ -98,16 +100,18 @@ private:
 	FVector SlideAcc = FVector::Right * 2000.0f;
 	float SlideMaxSpeed = 800.0f;
 	FVector JumpVector = FVector::Zero;
-	FVector JumpPower = FVector::Up * 500.0f;
-	float JumpMaxSpeed = 600.0f;
+	FVector JumpPower = FVector::Up * 600.0f;
+	float JumpMaxSpeed = 500.0f;
 	FVector GravityVector = FVector::Zero;
-	FVector GravityAcc = FVector::Down * 1000.0f;
+	FVector GravityAcc = FVector::Down * 2000.0f;
 	FVector FinalMoveVector = FVector::Zero;
 	float FreeMoveSpeed = 1000.0f;
 
 	float InhaleScaleVar = 50.f;
-	float InhaleScaleAdd = 50.f;
-	float InhaleMaxScale = 100.f;
+	float InhaleScaleAdd = 100.f;
+	float InhaleFirstMax = 60.f;
+	float InhaleSecondMax = 100.f;
+	float InhaleMaxScale = 200.f;
 };
 
 extern APlayer* Kirby;

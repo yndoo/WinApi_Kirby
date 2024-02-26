@@ -53,7 +53,12 @@ void AFlamer::Tick(float _DeltaTime) {
 	if (true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::PlayerBullet, Result))
 	{
 		// 커비쪽으로 당겨지기
-		// 커비 방향을 어캐알지?
+		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
+		FVector test = InhaleDir.Normalize2DReturn();
+		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
+		int a = 0;
+		StateChange(EEnemyState::Hurt);
+		return;
 	}
 }
 
@@ -120,7 +125,6 @@ void AFlamer::Idle(float _DeltaTime)
 	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::Player, Result))
 	{
 		StateChange(EEnemyState::Hurt);
-		
 		return;
 	}
 }

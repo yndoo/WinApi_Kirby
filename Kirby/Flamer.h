@@ -43,10 +43,13 @@ private:
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();
+
 	// ¿Þ, ¾Æ, ¿À, À§
 	int dx[4] = { -1, 0, 1, 0 };
 	int dy[4] = { 0, 1, 0, -1 };
 	int CurDir = 0; // dx[0], dy[0] : ¿Þ
 	float MoveSpeed = 0.17f;
+
+	FVector InhaleDir = FVector::Zero;
 };
 

@@ -48,6 +48,8 @@ void UPlayLevel::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("Break_Left.png", 1, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Inhale_Right.png", 13, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Inhale_Left.png", 13, 1);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
 	Map = SpawnActor<AMap>();

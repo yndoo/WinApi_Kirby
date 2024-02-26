@@ -23,6 +23,16 @@ void APlayer::AutoCreateAnimation(std::string_view _AnimationName, int _Start, i
 	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Right"), std::string(_AnimationName) + std::string("_Right.png"), _Start, _End, _Inter, _Loop);
 	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Left"), std::string(_AnimationName) + std::string("_Left.png"), _Start, _End, _Inter, _Loop);
 }
+void APlayer::AutoCreateAnimation(std::string_view _AnimationName, std::string_view _ImageName, std::vector<int> _Indexs, float _Inter, bool _Loop)
+{
+	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Right"), std::string(_ImageName) + std::string("_Right.png"), _Indexs, _Inter, _Loop);
+	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Left"), std::string(_ImageName) + std::string("_Left.png"), _Indexs, _Inter, _Loop);
+}
+void APlayer::AutoCreateAnimation(std::string_view _AnimationName, std::string_view _ImageName, int _Start, int _End, float _Inter, bool _Loop)
+{
+	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Right"), std::string(_ImageName) + std::string("_Right.png"), _Start, _End, _Inter, _Loop);
+	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Left"), std::string(_ImageName) + std::string("_Left.png"), _Start, _End, _Inter, _Loop);
+}
 
 void APlayer::BeginPlay() {
 	AActor::BeginPlay();
@@ -60,12 +70,18 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
 	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
+	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.03f, false);
+	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
+	AutoCreateAnimation("InhaleStart", "Inhale", 4, 4, 0.1f, false);
+	AutoCreateAnimation("InhaleSmall", "Inhale", 5, 6, 0.1f, true);
+	AutoCreateAnimation("InhaleLarge", "Inhale", 7, 8, 0.1f, true);
+	AutoCreateAnimation("InhaleFail", "Inhale", 9, 12, 0.1f, false);
 
 	// 같은 이미지로 여러 애니메이션을 제작하기 때문에 직접 해줌
-	PlayerRenderer->CreateAnimation("JumpTurn_Right", "Jump_Right.png", 1, 8, 0.05f, false);	// 공중 회전
-	PlayerRenderer->CreateAnimation("JumpTurn_Left", "Jump_Left.png", 1, 8, 0.05f, false);
-	PlayerRenderer->CreateAnimation("JumpStart_Right", "Jump_Right.png", 0, 0, 0.1f, false);	// 점프 시작
-	PlayerRenderer->CreateAnimation("JumpStart_Left", "Jump_Left.png", 0, 0, 0.1f, false);
+	//PlayerRenderer->CreateAnimation("JumpTurn_Right", "Jump_Right.png", 1, 8, 0.03f, false);	// 공중 회전
+	//PlayerRenderer->CreateAnimation("JumpTurn_Left", "Jump_Left.png", 1, 8, 0.03f, false);
+	//PlayerRenderer->CreateAnimation("JumpStart_Right", "Jump_Right.png", 0, 0, 0.1f, false);	// 점프 시작
+	//PlayerRenderer->CreateAnimation("JumpStart_Left", "Jump_Left.png", 0, 0, 0.1f, false);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
 
@@ -232,8 +248,10 @@ void APlayer::BreakStart()
 
 void APlayer::InhaleStart()
 {
+	InhaleCollision->ActiveOn();
+
 	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Break")); // 임시 애니메이션
+	PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleStart")); // 임시 애니메이션
 	InhaleScaleVar = 50.f;
 	// 커비 방향에 따라 흡입 충돌체 위치 다름
 	if (DirState == EActorDir::Left)
@@ -551,10 +569,24 @@ void APlayer::Inhale(float _DeltaTime)
 	// 흡입 충돌체 크기, 위치 업데이트
 	if (true == UEngineInput::IsPress('X') && InhaleScaleVar <= InhaleMaxScale)
 	{
+		FTransform ColTrans = InhaleCollision->GetTransform();
+		FVector ColScale = ColTrans.GetScale();
+
+		if (InhaleScaleVar >= InhaleFirstMax && InhaleScaleVar < InhaleSecondMax)
+		{
+			PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleSmall"));
+		}
+		else if (InhaleScaleVar > InhaleSecondMax)
+		{
+			PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleLarge"));
+		}
+
 		InhaleScaleVar += InhaleScaleAdd * _DeltaTime;
 		InhaleCollision->SetScale({ InhaleScaleVar + 10.f, InhaleScaleVar });
+
+		// Scale 일정 이상 지나면 InhaleLarge 애니메이션으로 변경해줘야 함. (아직 안 함)
 		
-		FVector ColPos = InhaleCollision->GetTransform().GetPosition();
+		FVector ColPos = ColTrans.GetPosition();
 		if (DirState == EActorDir::Left)
 		{
 			InhaleCollision->SetPosition({ ColPos.X - _DeltaTime * InhaleScaleAdd / 2, -20.f });
@@ -572,9 +604,11 @@ void APlayer::Inhale(float _DeltaTime)
 		// 몬스터 먹어버리기
 	}
 
+	// 몇 초동안 흡입에 뭐 안 들어오면 흡입 그냥 끝남.. 나중에 수정.
 	// 흡입 끝남
 	if (true == UEngineInput::IsFree('X'))
 	{
+		InhaleCollision->ActiveOff();
 		StateChange(EPlayState::Idle);
 		return;
 	}
