@@ -13,7 +13,7 @@ void AFlamer::BeginPlay() {
 
 	SetActorLocation({ 500,250 });
 
-	FlamerRenderer = CreateImageRenderer(0);
+	FlamerRenderer = CreateImageRenderer(KirbyRenderOrder::Monster);
 	FlamerRenderer->SetImage("Flamer_Spin.png");
 	FlamerRenderer->SetTransform({ {0,0}, {220, 220} });
 	FlamerRenderer->SetTransColor(Color8Bit::Magenta);

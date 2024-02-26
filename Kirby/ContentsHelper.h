@@ -4,8 +4,8 @@
 enum class KirbyRenderOrder
 {
 	Map,
+	Player,
 	Monster,
-	Player
 };
 
 enum class KirbyCollisionOrder

@@ -58,7 +58,7 @@ void APlayer::BeginPlay() {
 	}
 	Kirby = this;
 
-	PlayerRenderer = CreateImageRenderer(0);
+	PlayerRenderer = CreateImageRenderer(KirbyRenderOrder::Player);
 	PlayerRenderer->SetImage("Kirby.png");
 	PlayerRenderer->SetTransform({ {0,0}, {300, 300} });
 	
