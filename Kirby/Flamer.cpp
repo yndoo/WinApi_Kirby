@@ -26,7 +26,7 @@ void AFlamer::BeginPlay() {
 	while (true)
 	{
 		Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
-		if (Color != Color8Bit::YellowA)
+		if (Color != StartColor)
 		{
 			AddActorLocation(FVector::Down);
 		}
@@ -55,7 +55,7 @@ void AFlamer::Tick(float _DeltaTime) {
 		// 커비쪽으로 당겨지기
 		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
 		FVector test = InhaleDir.Normalize2DReturn();
-		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
+		AddActorLocation(InhaleDir.Normalize2DReturn() * 80.f * _DeltaTime);
 		StateChange(EEnemyState::Inhaled);
 		return;
 	}
@@ -129,7 +129,7 @@ void AFlamer::InhaledStart()
 
 void AFlamer::Idle(float _DeltaTime)
 {
-	ColorMove(_DeltaTime, Color8Bit::YellowA);
+	ColorMove(_DeltaTime, StartColor);
 
 	std::vector<UCollision*> Result;
 	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))

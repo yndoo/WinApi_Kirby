@@ -52,8 +52,8 @@ void UPlayLevel::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("Inhale_Left.png", 13, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Eating_Right.png", 7, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Eating_Left.png", 7, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("EatingRun_Right.png", 15, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("EatingRun_Left.png", 15, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("EatingMove_Right.png", 15, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("EatingMove_Left.png", 15, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Swallow_Right.png",5, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Swallow_Left.png", 5, 1);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
@@ -88,8 +88,12 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Map->Renderer->ChangeAnimation("MapAnimation");
 
 	this->SpawnActor<APlayer>();
-	this->SpawnActor<AFlamer>();
-
+	AFlamer* Flamer1 = this->SpawnActor<AFlamer>();
+	Flamer1->SetActorLocation({ 500,250 });
+	Flamer1->StartColor = Color8Bit::YellowA;
+	//AFlamer* Flamer2 = this->SpawnActor<AFlamer>();
+	//Flamer2->SetActorLocation({ 1000,300 });
+	//Flamer2->StartColor = Color8Bit::MagentaA;
 }
 
 void UPlayLevel::LevelEnd(ULevel* _Level)

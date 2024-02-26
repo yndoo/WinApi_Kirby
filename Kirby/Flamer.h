@@ -28,6 +28,7 @@ public:
 	void MoveStart();
 	void InhaledStart();
 
+	Color8Bit StartColor = Color8Bit::YellowA;
 	ECopyType CopyAbilityType = ECopyType::Fire;
 protected:
 	void BeginPlay() override;

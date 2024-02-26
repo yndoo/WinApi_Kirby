@@ -54,7 +54,7 @@ void APlayer::BeginPlay() {
 	std::string name = GetWorld()->GetName();
 	if (GetWorld()->GetName() == "RESTAREALEVEL")
 	{
-		SetActorLocation({ 100, 100 });
+		SetActorLocation({ 60, 300 });
 	}
 
 	Kirby = this;
@@ -71,7 +71,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
 	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
-	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.02f, false);
+	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.03f, false);
 	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
 	AutoCreateAnimation("InhaleStart", "Inhale", 4, 4, 0.1f, false);
 	AutoCreateAnimation("InhaleSmall", "Inhale", 5, 6, 0.1f, true);
@@ -79,8 +79,8 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("InhaleFail", "Inhale", 9, 12, 0.1f, false);
 	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
 	AutoCreateAnimation("EatingIdle", "Eating", 6, 6, 0.1f, false);
-	AutoCreateAnimation("EatingRun", "EatingRun", 0, 14, 0.05f, true);
-	AutoCreateAnimation("EatingMove", "EatingRun", 0, 14, 0.1f, true);
+	AutoCreateAnimation("EatingRun", "EatingMove", 0, 14, 0.05f, true);
+	AutoCreateAnimation("EatingMove", "EatingMove", 0, 14, 0.1f, true);
 	AutoCreateAnimation("Swallow", "Swallow", 0, 4, 0.1f, false);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
@@ -95,6 +95,7 @@ void APlayer::BeginPlay() {
 	InhaleCollision->SetScale({ 100, 0 });		// 흡입 충돌체 크기는 흡입 입력 시간에 따라 달라진다.
 	InhaleCollision->SetPosition({ 0, -20 });	// 흡입 충돌체 위치는 흡입 시마다 바뀌어야 한다.
 	InhaleCollision->SetColType(ECollisionType::Rect);
+	InhaleCollision->ActiveOff();
 
 	StateChange(EPlayState::Idle);
 }
@@ -292,12 +293,6 @@ void APlayer::EatingStart()
 	DirCheck();
 	IsEating = true;
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Eating"));
-}
-
-void APlayer::EatingRunStart()
-{
-	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("EatingRun"));
 }
 
 void APlayer::SwallowStart()
@@ -592,7 +587,7 @@ void APlayer::Jump(float _DeltaTime)
 
 	MoveUpdate(_DeltaTime, JumpMaxSpeed);
 
-	if (abs(FinalMoveVector.Y) < 40.f)
+	if (abs(FinalMoveVector.Y) < 50.f)
 	{
 		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpTurn"));
 	}
@@ -660,6 +655,7 @@ void APlayer::Inhale(float _DeltaTime)
 		int a = 0;
 		
 		//if(Result[0]->GetOwner()->CopyAbilityType)
+		InhaleCollision->ActiveOff();
 		StateChange(EPlayState::Eating);
 		return;
 	}
@@ -678,14 +674,9 @@ void APlayer::Inhale(float _DeltaTime)
 // Eating : 입에 몬스터 넣은 상태
 void APlayer::Eating(float _DeltaTime)
 {
+	// Idle로 넘겨주면 애니메이션은 자동으로 EatingIdle이 됨.
 	StateChange(EPlayState::Idle);
 	return;
-}
-
-// EatingRun : 입에 몬스터 넣은 상태로 걷기
-void APlayer::EatingRun(float _DeltaTime)
-{
-	int a = 0;
 }
 
 // Swallow : 삼키기

@@ -53,7 +53,6 @@ protected:
 	void Break(float _DeltaTime);
 	void Inhale(float _DeltaTime);
 	void Eating(float _DeltaTime);
-	void EatingRun(float _DeltaTime);
 	void Swallow(float _DeltaTime);
 
 	void FreeMove(float _DeltaTime);	
@@ -69,7 +68,6 @@ protected:
 	void BreakStart();
 	void InhaleStart();
 	void EatingStart();
-	void EatingRunStart();
 	void SwallowStart();
 
 	// 상태 업데이트
