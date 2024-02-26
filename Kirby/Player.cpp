@@ -188,7 +188,7 @@ void APlayer::MoveStart()
 
 	if (MoveVector.X == 0.f) 
 	{
-		MoveVector = { static_cast<float>(DirState) * 50, 0.f };
+		MoveVector = { static_cast<float>(DirState) * 100, 0.f };
 	}
 }
 
@@ -196,6 +196,10 @@ void APlayer::RunStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
+	if (MoveVector.X == 0.f)
+	{
+		MoveVector = { static_cast<float>(DirState) * 100, 0.f };
+	}
 }
 
 void APlayer::SlideStart()
