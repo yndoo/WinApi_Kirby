@@ -56,9 +56,10 @@ void APlayer::BeginPlay() {
 	{
 		SetActorLocation({ 100, 100 });
 	}
+
 	Kirby = this;
 
-	PlayerRenderer = CreateImageRenderer(KirbyRenderOrder::Player);
+	PlayerRenderer = CreateImageRenderer(EKirbyRenderOrder::Player);
 	PlayerRenderer->SetImage("Kirby.png");
 	PlayerRenderer->SetTransform({ {0,0}, {300, 300} });
 	
@@ -70,28 +71,26 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
 	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
-	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.03f, false);
+	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.02f, false);
 	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
 	AutoCreateAnimation("InhaleStart", "Inhale", 4, 4, 0.1f, false);
 	AutoCreateAnimation("InhaleSmall", "Inhale", 5, 6, 0.1f, true);
 	AutoCreateAnimation("InhaleLarge", "Inhale", 7, 8, 0.1f, true);
 	AutoCreateAnimation("InhaleFail", "Inhale", 9, 12, 0.1f, false);
-
-	// 같은 이미지로 여러 애니메이션을 제작하기 때문에 직접 해줌
-	//PlayerRenderer->CreateAnimation("JumpTurn_Right", "Jump_Right.png", 1, 8, 0.03f, false);	// 공중 회전
-	//PlayerRenderer->CreateAnimation("JumpTurn_Left", "Jump_Left.png", 1, 8, 0.03f, false);
-	//PlayerRenderer->CreateAnimation("JumpStart_Right", "Jump_Right.png", 0, 0, 0.1f, false);	// 점프 시작
-	//PlayerRenderer->CreateAnimation("JumpStart_Left", "Jump_Left.png", 0, 0, 0.1f, false);
+	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
+	AutoCreateAnimation("EatingIdle", "Eating", 6, 6, 0.1f, false);
+	AutoCreateAnimation("EatingRun", "EatingRun", 0, 14, 0.1f, true);
+	AutoCreateAnimation("EatingMove", "EatingMove", 0, 14, 0.1f, true);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
 
 
-	BodyCollision = CreateCollision(KirbyCollisionOrder::Player);
-	BodyCollision->SetScale({ 50, 0 });
+	BodyCollision = CreateCollision(EKirbyCollisionOrder::Player);
+	BodyCollision->SetScale({ 45, 0 });
 	BodyCollision->SetPosition({ 0, -20 });
 	BodyCollision->SetColType(ECollisionType::CirCle);
 
-	InhaleCollision = CreateCollision(KirbyCollisionOrder::PlayerBullet);
+	InhaleCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);
 	InhaleCollision->SetScale({ 100, 0 });		// 흡입 충돌체 크기는 흡입 입력 시간에 따라 달라진다.
 	InhaleCollision->SetPosition({ 0, -20 });	// 흡입 충돌체 위치는 흡입 시마다 바뀌어야 한다.
 	InhaleCollision->SetColType(ECollisionType::Rect);
@@ -137,6 +136,9 @@ void APlayer::StateChange(EPlayState _State)
 		case EPlayState::Inhale:
 			InhaleStart();
 			break;
+		case EPlayState::Eating:
+			EatingStart();
+			break;
 		default:
 			break;
 		}
@@ -177,6 +179,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EPlayState::Inhale:
 		// 흡입
 		Inhale(_DeltaTime);
+		break;
+	case EPlayState::Eating:
+		// 먹는 중
+		Eating(_DeltaTime);
 		break;
 	case EPlayState::FreeMove:
 		// 자유 이동
@@ -251,7 +257,7 @@ void APlayer::InhaleStart()
 	InhaleCollision->ActiveOn();
 
 	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleStart")); // 임시 애니메이션
+	PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleStart"));
 	InhaleScaleVar = 50.f;
 	// 커비 방향에 따라 흡입 충돌체 위치 다름
 	if (DirState == EActorDir::Left)
@@ -263,6 +269,19 @@ void APlayer::InhaleStart()
 		InhaleCollision->SetPosition({ 40, -20 });
 	}
 	
+}
+
+void APlayer::EatingStart()
+{
+	DirCheck();
+	IsEating = true;
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Eating"));
+}
+
+void APlayer::EatingRunStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("EatingRun"));
 }
 
 // Idle : 가만히 있는 상태
@@ -301,7 +320,7 @@ void  APlayer::Idle(float _DeltaTime) {
 		return;
 	}
 
-	if (true == UEngineInput::IsPress('X'))
+	if (true == UEngineInput::IsPress('X') && false == IsEating)
 	{
 		StateChange(EPlayState::Inhale);
 		return;
@@ -325,7 +344,7 @@ void APlayer::Move(float _DeltaTime)
 {
 	if (DirCheck())	// 방향 전환됐을 경우
 	{
-		if (IsPlayerBottomMagentaA())
+		if (IsPlayerBottomMagentaA() && false == IsEating)
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
 			MoveVector = FVector::Zero;
@@ -452,7 +471,7 @@ void APlayer::Run(float _DeltaTime)
 {	
 	if (DirCheck())
 	{
-		if (IsPlayerBottomMagentaA())
+		if (IsPlayerBottomMagentaA() && false == IsEating)
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
 			StateChange(EPlayState::Break);
@@ -555,6 +574,7 @@ void APlayer::Jump(float _DeltaTime)
 	}
 }
 
+// Break : 이동 멈추는 상태
 void APlayer::Break(float _DeltaTime)
 {
 	if (PlayerRenderer->IsCurAnimationEnd()) 
@@ -564,6 +584,7 @@ void APlayer::Break(float _DeltaTime)
 	}
 }
 
+// Inhale : 흡입 중 상태
 void APlayer::Inhale(float _DeltaTime)
 {
 	// 흡입 충돌체 크기, 위치 업데이트
@@ -582,7 +603,7 @@ void APlayer::Inhale(float _DeltaTime)
 		}
 
 		InhaleScaleVar += InhaleScaleAdd * _DeltaTime;
-		InhaleCollision->SetScale({ InhaleScaleVar + 10.f, InhaleScaleVar });
+		InhaleCollision->SetScale({ InhaleScaleVar, InhaleScaleVar + 20.f });
 
 		// Scale 일정 이상 지나면 InhaleLarge 애니메이션으로 변경해줘야 함. (아직 안 함)
 		
@@ -599,9 +620,16 @@ void APlayer::Inhale(float _DeltaTime)
 
 	// 흡입 중에 커비와 몬스터의 충돌 확인
 	std::vector<UCollision*> Result;
-	if (true == BodyCollision->CollisionCheck(KirbyCollisionOrder::Monster, Result))
+	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
 	{
 		// 몬스터 먹어버리기
+		
+		AActor* temp = Result[0]->GetOwner();
+		int a = 0;
+		
+		//if(Result[0]->GetOwner()->CopyAbilityType)
+		StateChange(EPlayState::Eating);
+		return;
 	}
 
 	// 몇 초동안 흡입에 뭐 안 들어오면 흡입 그냥 끝남.. 나중에 수정.
@@ -609,9 +637,23 @@ void APlayer::Inhale(float _DeltaTime)
 	if (true == UEngineInput::IsFree('X'))
 	{
 		InhaleCollision->ActiveOff();
+		IsEating = false;
 		StateChange(EPlayState::Idle);
 		return;
 	}
+}
+
+// Eating : 입에 몬스터 넣은 상태
+void APlayer::Eating(float _DeltaTime)
+{
+	StateChange(EPlayState::Idle);
+	return;
+}
+
+// EatingRun : 입에 몬스터 넣은 상태로 걷기
+void APlayer::EatingRun(float _DeltaTime)
+{
+
 }
 
 // FreeMove : 디버깅용 캐릭터 자유 이동
@@ -694,6 +736,11 @@ std::string APlayer::GetAnimationName(std::string _Name)
 	}
 
 	CurAnimationName = _Name;
+
+	if (IsEating == true) 
+	{
+		return std::string("Eating") + _Name + DirName;
+	}
 
 	return _Name + DirName;
 

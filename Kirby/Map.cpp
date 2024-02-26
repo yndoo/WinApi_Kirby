@@ -60,8 +60,8 @@ void AMap::Tick(float _DeltaTime) {
 }
 
 void AMap::BeginPlay() {
-	BackRenderer = CreateImageRenderer(KirbyRenderOrder::Map);
-	Renderer = CreateImageRenderer(KirbyRenderOrder::Map);
-	ColRenderer = CreateImageRenderer(KirbyRenderOrder::Map);
+	BackRenderer = CreateImageRenderer(EKirbyRenderOrder::Map);
+	Renderer = CreateImageRenderer(EKirbyRenderOrder::Map);
+	ColRenderer = CreateImageRenderer(EKirbyRenderOrder::Map);
 	ColRenderer->ActiveOff();
 }

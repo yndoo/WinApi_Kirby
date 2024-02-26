@@ -50,6 +50,12 @@ void UPlayLevel::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Inhale_Right.png", 13, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Inhale_Left.png", 13, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Eating_Right.png", 7, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Eating_Left.png", 7, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("EatingRun_Right.png", 15, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("EatingRun_Left.png", 15, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("EatingMove_Right.png", 15, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("EatingMove_Left.png", 15, 1);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
 	Map = SpawnActor<AMap>();

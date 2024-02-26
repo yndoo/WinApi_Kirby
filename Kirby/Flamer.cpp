@@ -13,7 +13,7 @@ void AFlamer::BeginPlay() {
 
 	SetActorLocation({ 500,250 });
 
-	FlamerRenderer = CreateImageRenderer(KirbyRenderOrder::Monster);
+	FlamerRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
 	FlamerRenderer->SetImage("Flamer_Spin.png");
 	FlamerRenderer->SetTransform({ {0,0}, {220, 220} });
 	FlamerRenderer->SetTransColor(Color8Bit::Magenta);
@@ -37,7 +37,7 @@ void AFlamer::BeginPlay() {
 	}
 	StateChange(EEnemyState::Idle);
 
-	FlamerCollision = CreateCollision(KirbyCollisionOrder::Monster);
+	FlamerCollision = CreateCollision(EKirbyCollisionOrder::Monster);
 	FlamerCollision->SetScale({ 40, 40 });
 	FlamerCollision->SetColType(ECollisionType::Rect);
 
@@ -50,14 +50,13 @@ void AFlamer::Tick(float _DeltaTime) {
 
 	// 커비 흡입 충돌체와 몬스터의 충돌 확인
 	std::vector<UCollision*> Result;
-	if (true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::PlayerBullet, Result))
+	if (true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
 	{
 		// 커비쪽으로 당겨지기
 		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
 		FVector test = InhaleDir.Normalize2DReturn();
 		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
-		int a = 0;
-		StateChange(EEnemyState::Hurt);
+		StateChange(EEnemyState::Inhaled);
 		return;
 	}
 }
@@ -76,6 +75,9 @@ void AFlamer::StateChange(EEnemyState _State)
 			break;
 		case EEnemyState::Move:
 			MoveStart();
+			break;
+		case EEnemyState::Inhaled:
+			InhaledStart();
 			break;
 		default:
 			break;
@@ -97,6 +99,9 @@ void AFlamer::StateUpdate(float _DeltaTime)
 	case EEnemyState::Move:
 		Move(_DeltaTime);
 		break;
+	case EEnemyState::Inhaled:
+		Inhaled(_DeltaTime);
+		break;
 	default:
 		break;
 	}
@@ -117,12 +122,17 @@ void AFlamer::MoveStart()
 	FlamerRenderer->ChangeAnimation("Spin");
 }
 
+void AFlamer::InhaledStart()
+{
+	FlamerRenderer->ChangeAnimation("Hurt");
+}
+
 void AFlamer::Idle(float _DeltaTime)
 {
 	ColorMove(_DeltaTime, Color8Bit::YellowA);
 
 	std::vector<UCollision*> Result;
-	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(KirbyCollisionOrder::Player, Result))
+	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
 		StateChange(EEnemyState::Hurt);
 		return;
@@ -157,6 +167,16 @@ void AFlamer::Hurt(float _DeltaTime)
 	{
 		StateChange(EEnemyState::Move);
 		return;
+	}
+}
+
+void AFlamer::Inhaled(float _DeltaTime)
+{
+	// 흡입되다가 커비 몸과 충돌됐을 경우
+	std::vector<UCollision*> Result;
+	if (true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	{
+		Destroy();
 	}
 }
 

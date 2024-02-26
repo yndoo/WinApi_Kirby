@@ -52,6 +52,8 @@ protected:
 	void Jump(float _DeltaTime);
 	void Break(float _DeltaTime);
 	void Inhale(float _DeltaTime);
+	void Eating(float _DeltaTime);
+	void EatingRun(float _DeltaTime);
 
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
@@ -65,6 +67,8 @@ protected:
 	void JumpStart();
 	void BreakStart();
 	void InhaleStart();
+	void EatingStart();
+	void EatingRunStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
@@ -76,6 +80,7 @@ protected:
 	EActorDir MyDir = EActorDir::Right;							// Move, Run 함수에서 쓸 Dir
 	std::string CurAnimationName = "Idle";
 
+	bool IsEating = false;
 private:
 	UCollision* BodyCollision = nullptr;
 	UCollision* InhaleCollision = nullptr;
@@ -107,11 +112,11 @@ private:
 	FVector FinalMoveVector = FVector::Zero;
 	float FreeMoveSpeed = 1000.0f;
 
-	float InhaleScaleVar = 50.f;
+	float InhaleScaleVar = 40.f;
 	float InhaleScaleAdd = 100.f;
-	float InhaleFirstMax = 60.f;
-	float InhaleSecondMax = 100.f;
-	float InhaleMaxScale = 200.f;
+	float InhaleFirstMax = 50.f;
+	float InhaleSecondMax = 80.f;
+	float InhaleMaxScale = 100.f;
 };
 
 extern APlayer* Kirby;

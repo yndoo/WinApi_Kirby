@@ -20,13 +20,15 @@ public:
 	void Idle(float _DeltaTime);
 	void Hurt(float _DeltaTime);
 	void Move(float _DeltaTime);
+	void Inhaled(float _DeltaTime);
 	void ColorMove(float _DeltaTime, Color8Bit _Color);
 
 	void IdleStart();
 	void HurtStart();
 	void MoveStart();
+	void InhaledStart();
 
-
+	ECopyType CopyAbilityType = ECopyType::Fire;
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -37,7 +39,7 @@ protected:
 	EEnemyState State = EEnemyState::None;
 
 private:
-	UCollision* FlamerCollision;
+	UCollision* FlamerCollision = nullptr;
 	UImageRenderer* FlamerRenderer = nullptr;
 	//FVector ActorImgScale = FVector({ 10, 10 }); // Flmer의 눈으로 보이는 크기 대충
 

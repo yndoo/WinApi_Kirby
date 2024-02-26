@@ -1,14 +1,13 @@
 #pragma once
 #include <EngineCore\ImageRenderer.h>
-
-enum class KirbyRenderOrder
+enum class EKirbyRenderOrder
 {
 	Map,
 	Player,
 	Monster,
 };
 
-enum class KirbyCollisionOrder
+enum class EKirbyCollisionOrder
 {
 	PlayerBullet,	// 흡입 충돌체, 공격 충돌체
 	Monster,
@@ -34,6 +33,8 @@ enum class EPlayState
 	Jump,
 	Break,
 	Inhale,
+	Eating,
+	EatingRun,
 };
 
 enum class EEnemyState
@@ -42,6 +43,13 @@ enum class EEnemyState
 	Idle,
 	Hurt,
 	Move,
+	Inhaled,
+};
+
+enum class ECopyType
+{
+	None,
+	Fire,
 };
 
 // 설명 :
