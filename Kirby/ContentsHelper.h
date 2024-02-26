@@ -35,6 +35,7 @@ enum class EPlayState
 	Inhale,
 	Eating,
 	EatingRun,
+	Swallow,
 };
 
 enum class EEnemyState

@@ -81,6 +81,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("EatingIdle", "Eating", 6, 6, 0.1f, false);
 	AutoCreateAnimation("EatingRun", "EatingRun", 0, 14, 0.05f, true);
 	AutoCreateAnimation("EatingMove", "EatingRun", 0, 14, 0.1f, true);
+	AutoCreateAnimation("Swallow", "Swallow", 0, 4, 0.1f, false);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
 
@@ -139,6 +140,9 @@ void APlayer::StateChange(EPlayState _State)
 		case EPlayState::Eating:
 			EatingStart();
 			break;
+		case EPlayState::Swallow:
+			SwallowStart();
+			break;
 		default:
 			break;
 		}
@@ -183,6 +187,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EPlayState::Eating:
 		// 먹는 중
 		Eating(_DeltaTime);
+		break;
+	case EPlayState::Swallow:
+		// 삼키기
+		Swallow(_DeltaTime);
 		break;
 	case EPlayState::FreeMove:
 		// 자유 이동
@@ -292,6 +300,12 @@ void APlayer::EatingRunStart()
 	PlayerRenderer->ChangeAnimation(GetAnimationName("EatingRun"));
 }
 
+void APlayer::SwallowStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Swallow"));
+}
+
 // Idle : 가만히 있는 상태
 void  APlayer::Idle(float _DeltaTime) {
 	MoveVector = FVector::Zero;
@@ -325,7 +339,8 @@ void  APlayer::Idle(float _DeltaTime) {
 		else
 		{
 			// 삼키기
-			StateChange(EPlayState::Crouch);
+			IsEating = false;
+			StateChange(EPlayState::Swallow);
 			return;
 		}
 	}
@@ -670,7 +685,17 @@ void APlayer::Eating(float _DeltaTime)
 // EatingRun : 입에 몬스터 넣은 상태로 걷기
 void APlayer::EatingRun(float _DeltaTime)
 {
+	int a = 0;
+}
 
+// Swallow : 삼키기
+void APlayer::Swallow(float _DeltaTime)
+{
+	if (PlayerRenderer->IsCurAnimationEnd())
+	{
+		StateChange(EPlayState::Idle);
+		return;
+	}
 }
 
 // FreeMove : 디버깅용 캐릭터 자유 이동

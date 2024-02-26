@@ -54,6 +54,7 @@ protected:
 	void Inhale(float _DeltaTime);
 	void Eating(float _DeltaTime);
 	void EatingRun(float _DeltaTime);
+	void Swallow(float _DeltaTime);
 
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
@@ -69,6 +70,7 @@ protected:
 	void InhaleStart();
 	void EatingStart();
 	void EatingRunStart();
+	void SwallowStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
