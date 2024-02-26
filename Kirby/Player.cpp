@@ -79,8 +79,8 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("InhaleFail", "Inhale", 9, 12, 0.1f, false);
 	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
 	AutoCreateAnimation("EatingIdle", "Eating", 6, 6, 0.1f, false);
-	AutoCreateAnimation("EatingRun", "EatingRun", 0, 14, 0.1f, true);
-	AutoCreateAnimation("EatingMove", "EatingMove", 0, 14, 0.1f, true);
+	AutoCreateAnimation("EatingRun", "EatingRun", 0, 14, 0.05f, true);
+	AutoCreateAnimation("EatingMove", "EatingRun", 0, 14, 0.1f, true);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
 
@@ -249,7 +249,15 @@ void APlayer::JumpStart()
 void APlayer::BreakStart()
 {
 	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Break"));
+	if (false == IsEating)
+	{
+		PlayerRenderer->ChangeAnimation(GetAnimationName("Break"));
+	}
+	else
+	{
+		StateChange(EPlayState::Idle);
+		return;
+	}
 }
 
 void APlayer::InhaleStart()
@@ -309,8 +317,17 @@ void  APlayer::Idle(float _DeltaTime) {
 
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
-		StateChange(EPlayState::Crouch);
-		return;
+		if (false == IsEating)
+		{
+			StateChange(EPlayState::Crouch);
+			return;
+		}
+		else
+		{
+			// 삼키기
+			StateChange(EPlayState::Crouch);
+			return;
+		}
 	}
 
 	if (true == UEngineInput::IsDown('Z'))
@@ -344,10 +361,9 @@ void APlayer::Move(float _DeltaTime)
 {
 	if (DirCheck())	// 방향 전환됐을 경우
 	{
-		if (IsPlayerBottomMagentaA() && false == IsEating)
+		if (IsPlayerBottomMagentaA())
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
-			MoveVector = FVector::Zero;
 			StateChange(EPlayState::Break);
 		}
 		else
@@ -471,7 +487,7 @@ void APlayer::Run(float _DeltaTime)
 {	
 	if (DirCheck())
 	{
-		if (IsPlayerBottomMagentaA() && false == IsEating)
+		if (IsPlayerBottomMagentaA())
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
 			StateChange(EPlayState::Break);
@@ -577,6 +593,7 @@ void APlayer::Jump(float _DeltaTime)
 // Break : 이동 멈추는 상태
 void APlayer::Break(float _DeltaTime)
 {
+	MoveVector = FVector::Zero;
 	if (PlayerRenderer->IsCurAnimationEnd()) 
 	{
 		StateChange(EPlayState::Idle);
