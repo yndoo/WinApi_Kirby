@@ -78,7 +78,7 @@ void APlayer::BeginPlay() {
 	InhaleCollision = CreateCollision(KirbyCollisionOrder::PlayerBullet);
 	InhaleCollision->SetScale({ 100, 0 });		// 흡입 충돌체 크기는 흡입 입력 시간에 따라 달라진다.
 	InhaleCollision->SetPosition({ 0, -20 });	// 흡입 충돌체 위치는 흡입 시마다 바뀌어야 한다.
-	InhaleCollision->SetColType(ECollisionType::CirCle);
+	InhaleCollision->SetColType(ECollisionType::Rect);
 
 	StateChange(EPlayState::Idle);
 }
@@ -234,7 +234,7 @@ void APlayer::InhaleStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Break")); // 임시 애니메이션
-	InhaleScaleVar = 30.f;
+	InhaleScaleVar = 50.f;
 	// 커비 방향에 따라 흡입 충돌체 위치 다름
 	if (DirState == EActorDir::Left)
 	{
@@ -548,12 +548,31 @@ void APlayer::Break(float _DeltaTime)
 
 void APlayer::Inhale(float _DeltaTime)
 {
-	if (true == UEngineInput::IsPress('X'))
+	// 흡입 충돌체 크기, 위치 업데이트
+	if (true == UEngineInput::IsPress('X') && InhaleScaleVar <= InhaleMaxScale)
 	{
-		InhaleScaleVar += 10 * _DeltaTime;
-		InhaleCollision->SetScale({ InhaleScaleVar, 0.f });
+		InhaleScaleVar += InhaleScaleAdd * _DeltaTime;
+		InhaleCollision->SetScale({ InhaleScaleVar + 10.f, InhaleScaleVar });
 		
+		FVector ColPos = InhaleCollision->GetTransform().GetPosition();
+		if (DirState == EActorDir::Left)
+		{
+			InhaleCollision->SetPosition({ ColPos.X - _DeltaTime * InhaleScaleAdd / 2, -20.f });
+		}
+		else
+		{
+			InhaleCollision->SetPosition({ ColPos.X + _DeltaTime * InhaleScaleAdd / 2, -20.f });
+		}
 	}
+
+	// 흡입 중에 커비와 몬스터의 충돌 확인
+	std::vector<UCollision*> Result;
+	if (true == BodyCollision->CollisionCheck(KirbyCollisionOrder::Monster, Result))
+	{
+		// 몬스터 먹어버리기
+	}
+
+	// 흡입 끝남
 	if (true == UEngineInput::IsFree('X'))
 	{
 		StateChange(EPlayState::Idle);
@@ -627,11 +646,6 @@ void APlayer::CameraFreeMove(float _DeltaTime)
 std::string APlayer::GetAnimationName(std::string _Name)
 {
 	std::string DirName = "";
-
-	if (_Name == "None")
-	{
-		int a = 0;
-	}
 
 	switch (DirState)
 	{
@@ -809,6 +823,19 @@ bool APlayer::IsPlayerBottomYellow()
 {
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
 	if (Color == Color8Bit::YellowA)
+	{
+		return true;
+	}
+	return false;
+}
+
+// 실험 중인 함수.. (사용 X)
+bool APlayer::IsPlayerOnYellow()
+{
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
+	Color8Bit ColorLeft = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX() - 15, GetActorLocation().iY() + 1, Color8Bit::MagentaA);
+	Color8Bit ColorRight = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX() + 15, GetActorLocation().iY() + 1, Color8Bit::MagentaA);
+	if (Color == Color8Bit::YellowA || ColorLeft == Color8Bit::YellowA || ColorRight == Color8Bit::YellowA)
 	{
 		return true;
 	}

@@ -20,6 +20,7 @@ public:
 
 	bool IsPlayerBottomMagentaA();
 	bool IsPlayerBottomYellow();
+	bool IsPlayerOnYellow();
 	bool IsPlayerDoor();
 
 	FVector BeforePos = { 100, 100 };
@@ -104,7 +105,9 @@ private:
 	FVector FinalMoveVector = FVector::Zero;
 	float FreeMoveSpeed = 1000.0f;
 
-	float InhaleScaleVar = 30.f;
+	float InhaleScaleVar = 50.f;
+	float InhaleScaleAdd = 50.f;
+	float InhaleMaxScale = 100.f;
 };
 
 extern APlayer* Kirby;

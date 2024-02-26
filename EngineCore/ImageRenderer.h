@@ -19,11 +19,13 @@ public:
 	int Update(float _DeltaTime);
 };
 
+class AActor;
 class UWindowImage;
 // Ό³Έν :
 class UImageRenderer : public USceneComponent
 {
 public:
+	friend AActor;
 
 public:
 	// constrcuter destructer
@@ -133,6 +135,11 @@ public:
 		return CurAnimation->CurTime;
 	}
 
+	UAnimationInfo* GetCurAnimation() const
+	{
+		return CurAnimation;
+	}
+
 	void TextRender(float _DeltaTime);
 	void ImageRender(float _DeltaTime);
 
@@ -168,6 +175,7 @@ public:
 
 protected:
 	void BeginPlay() override;
+	void Tick(float _Time) override;
 
 private:
 	int InfoIndex = 0;
