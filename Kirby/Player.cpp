@@ -80,7 +80,10 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
 	AutoCreateAnimation("EatingIdle", "Eating", 6, 6, 0.1f, false);
 	AutoCreateAnimation("EatingRun", "EatingMove", 0, 14, 0.05f, true);
-	AutoCreateAnimation("EatingMove", "EatingMove", 0, 14, 0.1f, true);
+	AutoCreateAnimation("EatingMove", "EatingMove", 0, 14, 0.07f, true);
+
+	AutoCreateAnimation("EatingJumpStart", "EatingJump", {0,1,2,3,4,5,6}, 0.08f, false);
+	AutoCreateAnimation("EatingJumpEnd", "EatingJump", 7, 8, 0.1f, false);
 	AutoCreateAnimation("Swallow", "Swallow", 0, 4, 0.1f, false);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
@@ -219,7 +222,7 @@ void APlayer::MoveStart()
 
 	if (MoveVector.X == 0.f) 
 	{
-		MoveVector = { static_cast<float>(DirState) * 100, 0.f };
+		MoveVector = { static_cast<float>(DirState) * MovePower, 0.f };
 	}
 }
 
@@ -229,7 +232,7 @@ void APlayer::RunStart()
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
 	if (MoveVector.X == 0.f)
 	{
-		MoveVector = { static_cast<float>(DirState) * 100, 0.f };
+		MoveVector = { static_cast<float>(DirState) * MovePower, 0.f };
 	}
 }
 
@@ -587,7 +590,7 @@ void APlayer::Jump(float _DeltaTime)
 
 	MoveUpdate(_DeltaTime, JumpMaxSpeed);
 
-	if (abs(FinalMoveVector.Y) < 50.f)
+	if (abs(FinalMoveVector.Y) < 50.f && false == IsEating)
 	{
 		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpTurn"));
 	}
@@ -595,8 +598,20 @@ void APlayer::Jump(float _DeltaTime)
 	if (IsPlayerBottomMagentaA() || IsPlayerBottomYellow())
 	{
 		JumpVector = FVector::Zero;
-		StateChange(BeforeJumpState);
-		return;
+		if (true == IsEating && BeforeJumpState == EPlayState::Idle)
+		{
+			if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpEnd")) && PlayerRenderer->IsCurAnimationEnd() == true)
+			{
+				StateChange(BeforeJumpState);
+				return;
+			}
+			PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
+		}
+		else 
+		{
+			StateChange(BeforeJumpState);
+			return;
+		}
 	}
 }
 

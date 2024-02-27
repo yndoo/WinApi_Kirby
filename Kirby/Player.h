@@ -97,6 +97,7 @@ private:
 	// 가속 운동 관련 변수
 	FVector MoveVector = FVector::Zero;
 	FVector MoveAcc = FVector::Right * 200.0f;
+	float MovePower = 150.f;
 	float MoveMaxSpeed = 200.0f;
 	FVector RunVector = FVector::Zero;
 	FVector RunAcc = FVector::Right * 2000.0f;
@@ -105,7 +106,7 @@ private:
 	FVector SlideAcc = FVector::Right * 2000.0f;
 	float SlideMaxSpeed = 800.0f;
 	FVector JumpVector = FVector::Zero;
-	FVector JumpPower = FVector::Up * 600.0f;
+	FVector JumpPower = FVector::Up * 800.0f;
 	float JumpMaxSpeed = 500.0f;
 	FVector GravityVector = FVector::Zero;
 	FVector GravityAcc = FVector::Down * 2000.0f;
