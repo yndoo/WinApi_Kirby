@@ -2,6 +2,7 @@
 #include "TitleLevel.h"
 #include "PlayLevel.h"
 #include "RestAreaLevel.h"
+#include "BossLevel.h"
 #include <EngineBase/EngineDirectory.h>
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
@@ -39,9 +40,10 @@ void KirbyCore::BeginPlay() {
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");
 	CreateLevel<URestAreaLevel>("RestAreaLevel");
+	CreateLevel<UBossLevel>("BossLevel");
 
 	ChangeLevel("PlayLevel");
-	//ChangeLevel("TitleLevel");
+	//ChangeLevel("TitleLevel");	// ¿·Ω√ ª©µ“
 }
 
 void KirbyCore::Tick(float _DeltaTime) {

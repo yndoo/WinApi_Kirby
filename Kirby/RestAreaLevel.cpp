@@ -32,8 +32,6 @@ void URestAreaLevel::BeginPlay()
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\restarea_foreground"));
 
 	Map = SpawnActor<AMap>();
-
-
 	Map->Renderer->CreateAnimation("RestAreaMapAnimation", "restarea_foreground", 0, 3, 0.5f, true);
 }
 

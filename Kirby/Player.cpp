@@ -2,6 +2,7 @@
 #include<EnginePlatform/EngineInput.h>
 #include "ContentsHelper.h"
 #include <EngineCore/EngineCore.h>
+#include <EngineCore\EngineDebug.h>
 
 APlayer* Kirby = nullptr;
 
@@ -108,7 +109,7 @@ void APlayer::Tick(float _DeltaTime) {
 	StateUpdate(_DeltaTime);
 
 	FVector PlayerPos = GetActorLocation();
-	int  a = 0;
+	UEngineDebug::DebugTextPrint("X : " + std::to_string(PlayerPos.X) + ", Y : " + std::to_string(PlayerPos.Y), 30.0f);
 }
 
 void APlayer::StateChange(EPlayState _State) 

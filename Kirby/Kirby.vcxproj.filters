@@ -5,9 +5,6 @@
     <ClInclude Include="PlayLevel.h">
       <Filter>PlayLevel</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>PlayLevel</Filter>
-    </ClInclude>
     <ClInclude Include="TitleLogo.h">
       <Filter>TitleLevel</Filter>
     </ClInclude>
@@ -15,20 +12,23 @@
       <Filter>TitleLevel</Filter>
     </ClInclude>
     <ClInclude Include="ContentsHelper.h" />
-    <ClInclude Include="Flamer.h">
-      <Filter>PlayLevel</Filter>
-    </ClInclude>
     <ClInclude Include="RestAreaLevel.h">
       <Filter>RestAreaLevel</Filter>
     </ClInclude>
     <ClInclude Include="Map.h" />
+    <ClInclude Include="BossLevel.h">
+      <Filter>BossLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="Flamer.h">
+      <Filter>PlayLevel\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>PlayLevel\Actor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
     <ClCompile Include="PlayLevel.cpp">
-      <Filter>PlayLevel</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
       <Filter>PlayLevel</Filter>
     </ClCompile>
     <ClCompile Include="TitleLogo.cpp">
@@ -38,13 +38,19 @@
       <Filter>TitleLevel</Filter>
     </ClCompile>
     <ClCompile Include="ContentsHelper.cpp" />
-    <ClCompile Include="Flamer.cpp">
-      <Filter>PlayLevel</Filter>
-    </ClCompile>
     <ClCompile Include="RestAreaLevel.cpp">
       <Filter>RestAreaLevel</Filter>
     </ClCompile>
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="BossLevel.cpp">
+      <Filter>BossLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="Flamer.cpp">
+      <Filter>PlayLevel\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>PlayLevel\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PlayLevel">
@@ -55,6 +61,12 @@
     </Filter>
     <Filter Include="RestAreaLevel">
       <UniqueIdentifier>{a3ab6508-127a-4090-8775-b5fda92db73e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BossLevel">
+      <UniqueIdentifier>{930e3b63-64d1-4fa3-89a8-05be6967633b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayLevel\Actor">
+      <UniqueIdentifier>{3e6f5bd0-5648-45cc-a4f7-ae6b68f56930}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -13,6 +13,12 @@ UPlayLevel::~UPlayLevel()
 {
 }
 
+void UPlayLevel::CuttingLR(std::string_view _Name, int _X, int _Y)
+{
+	UEngineResourcesManager::GetInst().CuttingImage(std::string(_Name) + "_Left.png", _X, _Y);
+	UEngineResourcesManager::GetInst().CuttingImage(std::string(_Name) + "_Right.png", _X, _Y);
+}
+
 void UPlayLevel::BeginPlay() {
 	ULevel::BeginPlay();
 	UEngineDirectory NewPath;
@@ -32,34 +38,26 @@ void UPlayLevel::BeginPlay() {
 
 	// 이 레벨에서 필요한 애니메이션을 위한 이미지들 커팅
 	UEngineResourcesManager::GetInst().CuttingImage("Kirby.png", 40, 13);
-	UEngineResourcesManager::GetInst().CuttingImage("Move_Right.png", 10, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Move_Left.png", 10, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Idle_Right.png", 3, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Idle_Left.png", 3, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Crouch_Right.png", 2, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Crouch_Left.png", 2, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Slide_Right.png", 2, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Slide_Left.png", 2, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Run_Right.png", 8, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Run_Left.png", 8, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Jump_Right.png", 9, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Jump_Left.png", 9, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Break_Right.png", 1, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Break_Left.png", 1, 1);
+	CuttingLR("Move", 10, 1);
+	CuttingLR("Idle", 3, 1);
+	CuttingLR("Crouch", 2, 1);
+	CuttingLR("Slide", 2, 1);
+	CuttingLR("Run", 8, 1);
+	CuttingLR("Jump", 9, 1);
+	CuttingLR("Inhale", 13, 1);
+	CuttingLR("Eating", 7, 1);
+	CuttingLR("EatingMove", 15, 1);
+	CuttingLR("EatingJump", 9, 1);
+	CuttingLR("Swallow", 5, 1);
+
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Inhale_Right.png", 13, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Inhale_Left.png", 13, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Eating_Right.png", 7, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Eating_Left.png", 7, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("EatingMove_Right.png", 15, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("EatingMove_Left.png", 15, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("EatingJump_Right.png", 9, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("EatingJump_Left.png", 9, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Swallow_Right.png",5, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Swallow_Left.png", 5, 1);
+
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
+
+	
+	
 	Map = SpawnActor<AMap>();
 
 	Map->Renderer->CreateAnimation("MapAnimation", "1_3_foreground", 0, 3, 0.5f, true);
@@ -73,7 +71,15 @@ void UPlayLevel::Tick(float _DeltaTime)
 	{
 		// 레벨 넘어가기 전에 위치를 저장해둬야함.
 		Kirby->BeforePos = Kirby->GetTransform().GetPosition();
-		GEngine->ChangeLevel("RestAreaLevel");
+		// 문 위치에 따라 다른 레벨로 이동하도록.
+		if (Kirby->BeforePos.X > 3350 && Kirby->BeforePos.X < 3400)
+		{
+			GEngine->ChangeLevel("RestAreaLevel");
+		}
+		else if (Kirby->BeforePos.X > 4550)
+		{
+			GEngine->ChangeLevel("BossLevel");
+		}
 	}
 }
 
