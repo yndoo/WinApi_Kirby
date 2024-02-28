@@ -127,9 +127,8 @@ void AFlamer::Idle(float _DeltaTime)
 {
 	if (LateStart == true)
 	{
-		// 나중에 Start함수를 돌려줘야하는 객체의 경우
-		IdleStart();
-		LateStart = false;
+		// 나중에 Start함수를 돌려줘야하는 객체의 경우 FallDown을 다시 해줌.
+		FallDown(MoveColor);
 	}
 	ColorLineMove(_DeltaTime, MoveColor);
 

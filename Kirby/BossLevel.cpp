@@ -3,6 +3,7 @@
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
 #include <EngineCore/EngineCore.h>
+#include <EngineCore/EngineDebug.h>
 
 UBossLevel::UBossLevel()
 {
@@ -33,7 +34,13 @@ void UBossLevel::BeginPlay()
 }
 void UBossLevel::Tick(float _DeltaTime)
 {
-
+	ULevel::Tick(_DeltaTime);
+	//FVector CamPos = GetCameraPos();
+	//UEngineDebug::DebugTextPrint("X : " + std::to_string(CamPos.X) + ", Y : " + std::to_string(CamPos.Y), 30.0f);
+	if (true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
+	{
+		GEngine->ChangeLevel("PlayLevel");
+	}
 }
 void UBossLevel::LevelStart(ULevel* _Level)
 {
@@ -41,10 +48,11 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	Map->SetColMapImage("bosslevel_colmap.png");
 	Map->BackRenderer->ActiveOff();
 	
-	FVector MapSize = Map->Renderer->GetTransform().GetScale();
-	FVector WinScale = GEngine->MainWindow.GetWindowScale();
+	MapSize = Map->Renderer->GetTransform().GetScale();
+	WinScale = GEngine->MainWindow.GetWindowScale();
 
 	SetCameraPos({ 0.f, MapSize.Y - WinScale.Y});
+	this->SpawnActor<APlayer>();
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {

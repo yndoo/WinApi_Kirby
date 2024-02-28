@@ -26,5 +26,8 @@ protected:
 private:
 	APlayer* NewKirby = nullptr;
 	AMap* Map = nullptr;
+
+	FVector MapSize = FVector::Zero;
+	FVector WinScale = FVector::Zero;
 };
 

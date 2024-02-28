@@ -2,7 +2,7 @@
 #include<EnginePlatform/EngineInput.h>
 #include "ContentsHelper.h"
 #include <EngineCore/EngineCore.h>
-#include <EngineCore\EngineDebug.h>
+#include <EngineCore/EngineDebug.h>
 
 APlayer* Kirby = nullptr;
 
@@ -52,10 +52,15 @@ void APlayer::BeginPlay() {
 		KirbyCopy();
 		Kirby->Destroy();
 
-		std::string name = GetWorld()->GetName();
-		if (GetWorld()->GetName() == "RESTAREALEVEL")
+		std::string LevelName = GetWorld()->GetName();
+
+		if (LevelName == "RESTAREALEVEL")
 		{
 			SetActorLocation({ 60, 300 });
+		}
+		else if (LevelName == "BOSSLEVEL")
+		{
+			SetActorLocation({ 100, 1050 });
 		}
 		else
 		{
