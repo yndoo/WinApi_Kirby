@@ -17,32 +17,35 @@ public:
 	AFlamer& operator=(const AFlamer& _Other) = delete;
 	AFlamer& operator=(AFlamer&& _Other) noexcept = delete;
 
+	Color8Bit MoveColor = Color8Bit::YellowA;
+	ECopyType CopyAbilityType = ECopyType::Fire;
+
+	bool LateStart = false;
+protected:
+	void BeginPlay() override;
+	void Tick(float _DeltaTime) override;
+	void StateUpdate(float _DeltaTime);
+	void StateChange(EEnemyState _State);
+
 	void Idle(float _DeltaTime);
 	void Hurt(float _DeltaTime);
 	void Move(float _DeltaTime);
 	void Inhaled(float _DeltaTime);
-	void ColorMove(float _DeltaTime, Color8Bit _Color);
 
 	void IdleStart();
 	void HurtStart();
 	void MoveStart();
 	void InhaledStart();
 
-	Color8Bit StartColor = Color8Bit::YellowA;
-	ECopyType CopyAbilityType = ECopyType::Fire;
-protected:
-	void BeginPlay() override;
-	void Tick(float _DeltaTime) override;
-
-	void StateUpdate(float _DeltaTime);
-	void StateChange(EEnemyState _State);
+	void FallDown(Color8Bit _Color);
+	void ColorLineMove(float _DeltaTime, Color8Bit _Color);
 
 	EEnemyState State = EEnemyState::None;
 
 private:
 	UCollision* FlamerCollision = nullptr;
 	UImageRenderer* FlamerRenderer = nullptr;
-	//FVector ActorImgScale = FVector({ 10, 10 }); // Flmer의 눈으로 보이는 크기 대충
+	//FVector ActorImgScale = FVector({ 10, 10 }); // Flamer의 눈으로 보이는 크기 대충
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();
@@ -51,7 +54,7 @@ private:
 	int dx[4] = { -1, 0, 1, 0 };
 	int dy[4] = { 0, 1, 0, -1 };
 	int CurDir = 0; // dx[0], dy[0] : 왼
-	float MoveSpeed = 0.17f;
+	float MoveSpeed = 100.f;
 
 	FVector InhaleDir = FVector::Zero;
 };

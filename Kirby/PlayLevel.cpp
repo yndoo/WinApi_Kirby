@@ -13,7 +13,7 @@ UPlayLevel::~UPlayLevel()
 {
 }
 
-void UPlayLevel::CuttingLR(std::string_view _Name, int _X, int _Y)
+void UPlayLevel::CuttingImgLR(std::string_view _Name, int _X, int _Y)
 {
 	UEngineResourcesManager::GetInst().CuttingImage(std::string(_Name) + "_Left.png", _X, _Y);
 	UEngineResourcesManager::GetInst().CuttingImage(std::string(_Name) + "_Right.png", _X, _Y);
@@ -38,17 +38,17 @@ void UPlayLevel::BeginPlay() {
 
 	// 이 레벨에서 필요한 애니메이션을 위한 이미지들 커팅
 	UEngineResourcesManager::GetInst().CuttingImage("Kirby.png", 40, 13);
-	CuttingLR("Move", 10, 1);
-	CuttingLR("Idle", 3, 1);
-	CuttingLR("Crouch", 2, 1);
-	CuttingLR("Slide", 2, 1);
-	CuttingLR("Run", 8, 1);
-	CuttingLR("Jump", 9, 1);
-	CuttingLR("Inhale", 13, 1);
-	CuttingLR("Eating", 7, 1);
-	CuttingLR("EatingMove", 15, 1);
-	CuttingLR("EatingJump", 9, 1);
-	CuttingLR("Swallow", 5, 1);
+	CuttingImgLR("Move", 10, 1);
+	CuttingImgLR("Idle", 3, 1);
+	CuttingImgLR("Crouch", 2, 1);
+	CuttingImgLR("Slide", 2, 1);
+	CuttingImgLR("Run", 8, 1);
+	CuttingImgLR("Jump", 9, 1);
+	CuttingImgLR("Inhale", 13, 1);
+	CuttingImgLR("Eating", 7, 1);
+	CuttingImgLR("EatingMove", 15, 1);
+	CuttingImgLR("EatingJump", 9, 1);
+	CuttingImgLR("Swallow", 5, 1);
 
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);
@@ -96,12 +96,15 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Map->Renderer->ChangeAnimation("MapAnimation");
 
 	this->SpawnActor<APlayer>();
+
 	AFlamer* Flamer1 = this->SpawnActor<AFlamer>();
 	Flamer1->SetActorLocation({ 500,250 });
-	Flamer1->StartColor = Color8Bit::YellowA;
-	//AFlamer* Flamer2 = this->SpawnActor<AFlamer>();
-	//Flamer2->SetActorLocation({ 1000,300 });
-	//Flamer2->StartColor = Color8Bit::MagentaA;
+	Flamer1->MoveColor = Color8Bit::YellowA;
+
+	AFlamer* Flamer2 = this->SpawnActor<AFlamer>();
+	Flamer2->SetActorLocation({ 1000,300 });
+	Flamer2->MoveColor = Color8Bit::MagentaA;
+	Flamer2->LateStart = true;
 }
 
 void UPlayLevel::LevelEnd(ULevel* _Level)

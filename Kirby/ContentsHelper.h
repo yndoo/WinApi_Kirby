@@ -38,19 +38,20 @@ enum class EPlayState
 	Swallow,
 };
 
-enum class EEnemyState
-{
-	None,
-	Idle,
-	Hurt,
-	Move,
-	Inhaled,
-};
-
 enum class ECopyType
 {
 	None,
 	Fire,
+};
+
+enum class EEnemyState
+{
+	None,
+	Loading,
+	Idle,
+	Hurt,
+	Move,
+	Inhaled,
 };
 
 // Ό³Έν :

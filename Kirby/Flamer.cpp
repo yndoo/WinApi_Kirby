@@ -1,4 +1,5 @@
 #include "Flamer.h"
+#include <EngineBase/EngineDebug.h>
 
 AFlamer::AFlamer()
 {
@@ -22,26 +23,15 @@ void AFlamer::BeginPlay() {
 	FlamerRenderer->CreateAnimation("Hurt", "Flamer_Hurt.png", { 0,0,0,0,1 }, 0.2f, false);
 	FlamerRenderer->ChangeAnimation("Spin");
 
-	// 일단 잔디블록에 떨어지게 함...
-	while (true)
-	{
-		Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
-		if (Color != StartColor)
-		{
-			AddActorLocation(FVector::Down);
-		}
-		else
-		{
-			break;
-		}
-	}
-	StateChange(EEnemyState::Idle);
-
 	FlamerCollision = CreateCollision(EKirbyCollisionOrder::Monster);
 	FlamerCollision->SetScale({ 40, 40 });
 	FlamerCollision->SetColType(ECollisionType::Rect);
 
 	MapSize = UContentsHelper::ColMapImage->GetScale();
+
+	FallDown(MoveColor);
+	StateChange(EEnemyState::Idle);
+
 }
 
 void AFlamer::Tick(float _DeltaTime) {
@@ -109,6 +99,12 @@ void AFlamer::StateUpdate(float _DeltaTime)
 
 void AFlamer::IdleStart()
 {
+	FVector ActorPos = GetActorLocation();
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorPos.iX(), ActorPos.iY(), Color8Bit::MagentaA);
+	if (Color != MoveColor)
+	{
+		FallDown(MoveColor);
+	}
 	FlamerRenderer->ChangeAnimation("Spin");
 }
 
@@ -129,7 +125,13 @@ void AFlamer::InhaledStart()
 
 void AFlamer::Idle(float _DeltaTime)
 {
-	ColorMove(_DeltaTime, StartColor);
+	if (LateStart == true)
+	{
+		// 나중에 Start함수를 돌려줘야하는 객체의 경우
+		IdleStart();
+		LateStart = false;
+	}
+	ColorLineMove(_DeltaTime, MoveColor);
 
 	std::vector<UCollision*> Result;
 	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
@@ -142,7 +144,7 @@ void AFlamer::Idle(float _DeltaTime)
 void AFlamer::Move(float _DeltaTime)
 {
 	CurDir = 0;
-	ColorMove(_DeltaTime, Color8Bit::MagentaA);
+	ColorLineMove(_DeltaTime, Color8Bit::MagentaA);
 
 	// 맵 넘어가면 없애기
 	FVector MyPos = GetActorLocation();
@@ -180,14 +182,15 @@ void AFlamer::Inhaled(float _DeltaTime)
 	}
 }
 
-void AFlamer::ColorMove(float _DeltaTime, Color8Bit _Color)
+void AFlamer::ColorLineMove(float _DeltaTime, Color8Bit _Color)
 {
 	// _Color에 붙어있는지 확인하기 위해 붙어있는 방향 확인
 	int i = CurDir;
 	i = (i + 1) % 4;
 
-	int X = GetActorLocation().iX() + dx[i];
-	int Y = GetActorLocation().iY() + dy[i];
+	FVector Pos = GetActorLocation();
+	int X = Pos.iX() + dx[i];
+	int Y = Pos.iY() + dy[i];
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(X, Y, Color8Bit::MagentaA);
 
 	if (Color != _Color)
@@ -208,7 +211,7 @@ void AFlamer::ColorMove(float _DeltaTime, Color8Bit _Color)
 			if (Color == _Color)
 			{
 				// 방향이 바뀌는 순간
-				AddActorLocation({ dx[i] * MoveSpeed , dy[i] * MoveSpeed });
+				AddActorLocation({ dx[i] * MoveSpeed * _DeltaTime , dy[i] * MoveSpeed * _DeltaTime });
 				CurDir = i;
 				break;
 			}
@@ -218,6 +221,22 @@ void AFlamer::ColorMove(float _DeltaTime, Color8Bit _Color)
 	{
 		// _Color에 닿아있을 경우
 		// 현재 방향대로 이동
-		AddActorLocation({ dx[CurDir] * MoveSpeed , dy[CurDir] * MoveSpeed });
+		AddActorLocation({ dx[CurDir] * MoveSpeed * _DeltaTime, dy[CurDir] * MoveSpeed * _DeltaTime });
+	}
+}
+
+void AFlamer::FallDown(Color8Bit _Color)
+{
+	while (true)
+	{
+		Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
+		if (Color != _Color)
+		{
+			AddActorLocation(FVector::Down);
+		}
+		else
+		{
+			break;
+		}
 	}
 }

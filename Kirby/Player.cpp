@@ -35,27 +35,38 @@ void APlayer::AutoCreateAnimation(std::string_view _AnimationName, std::string_v
 	PlayerRenderer->CreateAnimation(std::string(_AnimationName) + std::string("_Left"), std::string(_ImageName) + std::string("_Left.png"), _Start, _End, _Inter, _Loop);
 }
 
+// 새로운 커비로 상태를 카피해주는 함수.
+// 현재 커비 객체를 전역 Kirby로 바꾸기 전에 실행시켜야 함.
+void APlayer::KirbyCopy()
+{
+	BeforePos = Kirby->BeforePos;
+	IsEating = Kirby->IsEating;
+}
+
 void APlayer::BeginPlay() {
 	AActor::BeginPlay();
-
 
  	if (nullptr != Kirby)
 	{
 		// 커비가 이미 있던 경우
-		// 새로 생기기 전의 커비에 저장되어있는 BeforePos를 받아야 함.
-		// 근데 RestAreaLevel에서도 BeforePos가 들어가면 안 됨...
-		BeforePos = Kirby->BeforePos;
+		KirbyCopy();
 		Kirby->Destroy();
-		SetActorLocation(BeforePos);
+
+		std::string name = GetWorld()->GetName();
+		if (GetWorld()->GetName() == "RESTAREALEVEL")
+		{
+			SetActorLocation({ 60, 300 });
+		}
+		else
+		{
+			// 이전 레벨(현재 경우의 수로는 PlayLevel밖에 없음)로 돌아온 경우에 해당
+			SetActorLocation(BeforePos);
+		}
 	}
 	else
 	{
+		// 커비 찐 최초 생성
 		SetActorLocation({ 100, 100 });
-	}
-	std::string name = GetWorld()->GetName();
-	if (GetWorld()->GetName() == "RESTAREALEVEL")
-	{
-		SetActorLocation({ 60, 300 });
 	}
 
 	Kirby = this;

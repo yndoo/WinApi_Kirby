@@ -32,10 +32,14 @@ protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 
+	// 애니메이션 LR 자동 함수들
 	void AutoCreateAnimation(std::string_view _AnimationName, std::vector<int> _Indexs, float _Inter, bool _Loop);
 	void AutoCreateAnimation(std::string_view _AnimationName, int _Start, int _End, float _Inter, bool _Loop);
 	void AutoCreateAnimation(std::string_view _AnimationName, std::string_view _ImageName, std::vector<int> _Indexs, float _Inter, bool _Loop);
 	void AutoCreateAnimation(std::string_view _AnimationName, std::string_view _ImageName, int _Start, int _End, float _Inter, bool _Loop);
+
+	// 커비 상태 복사해주는 함수
+	void KirbyCopy();
 
 	// 상태 보조 함수
 	bool DirCheck(); // 방향 체크하고, 방향이 바뀌었는지를 리턴
@@ -80,6 +84,7 @@ protected:
 	EActorDir MyDir = EActorDir::Right;							// Move, Run 함수에서 쓸 Dir
 	std::string CurAnimationName = "Idle";
 
+	// 변신 관련 상태 변수
 	bool IsEating = false;
 private:
 	UCollision* BodyCollision = nullptr;

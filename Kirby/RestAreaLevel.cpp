@@ -40,7 +40,6 @@ void URestAreaLevel::Tick(float _DeltaTime)
 	ULevel::Tick(_DeltaTime);
 	if (true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
 	{
-		// 다시 나갈 때 갖고있던 BeforePos를 넘겨줘야 함.
 		GEngine->ChangeLevel("PlayLevel");
 	}
 }
