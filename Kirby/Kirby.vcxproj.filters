@@ -25,6 +25,9 @@
     <ClInclude Include="Player.h">
       <Filter>PlayLevel\Actor</Filter>
     </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>PlayLevel\Actor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -49,6 +52,9 @@
       <Filter>PlayLevel\Actor</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
+      <Filter>PlayLevel\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
       <Filter>PlayLevel\Actor</Filter>
     </ClCompile>
   </ItemGroup>

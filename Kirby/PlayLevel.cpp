@@ -56,6 +56,7 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("FireRun", 8, 1);
 	CuttingImgLR("FireBreak", 2, 1);
 	CuttingImgLR("FireCrouch", 8, 1);
+	CuttingImgLR("FireJump", 11, 1);
 
 
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);

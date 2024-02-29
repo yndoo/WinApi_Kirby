@@ -88,27 +88,31 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
 	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
-	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
-	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.03f, false);
-	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
+	AutoCreateAnimation("Swallow", "Swallow", 0, 4, 0.1f, false);
 	AutoCreateAnimation("InhaleStart", "Inhale", 4, 4, 0.1f, false);
 	AutoCreateAnimation("InhaleSmall", "Inhale", 5, 6, 0.1f, true);
 	AutoCreateAnimation("InhaleLarge", "Inhale", 7, 8, 0.1f, true);
 	AutoCreateAnimation("InhaleFail", "Inhale", 9, 12, 0.1f, false);
+	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.03f, false);
+	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
+
+	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
 	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
 	AutoCreateAnimation("EatingIdle", "Eating", 6, 6, 0.1f, false);
 	AutoCreateAnimation("EatingRun", "EatingMove", 0, 14, 0.05f, true);
 	AutoCreateAnimation("EatingMove", "EatingMove", 0, 14, 0.07f, true);
+	AutoCreateAnimation("EatingJumpStart", "EatingJump", {0,1,2,3,4,5,6}, 0.08f, false);
+	AutoCreateAnimation("EatingJumpEnd", "EatingJump", 7, 8, 0.1f, false);
+
 	AutoCreateAnimation("FireIdle", {0,1,2,3,0,1,2,3,4,5,6,7}, 0.09f, true);
 	AutoCreateAnimation("FireMove", 0, 19, 0.04f, true);
 	AutoCreateAnimation("FireSlide", 0, 4, 0.06f, false);
 	AutoCreateAnimation("FireBreak", 0, 1, 0.1f, false);
 	AutoCreateAnimation("FireRun", 0, 7, 0.05f, true);
 	AutoCreateAnimation("FireCrouch", 0, 7, 0.15f, true);
+	AutoCreateAnimation("FireJumpTurn", "FireJump", 2, 8, 0.03f, false);
+	AutoCreateAnimation("FireJumpStart", "FireJump", 0, 1, 0.1f, false);
 
-	AutoCreateAnimation("EatingJumpStart", "EatingJump", {0,1,2,3,4,5,6}, 0.08f, false);
-	AutoCreateAnimation("EatingJumpEnd", "EatingJump", 7, 8, 0.1f, false);
-	AutoCreateAnimation("Swallow", "Swallow", 0, 4, 0.1f, false);
 
 	PlayerRenderer->ChangeAnimation("Idle_Right");
 
@@ -389,6 +393,10 @@ void  APlayer::Idle(float _DeltaTime) {
 
 	if (true == UEngineInput::IsPress('X') && false == IsEating)
 	{
+		if (true == IsFireKirby)
+		{
+
+		}
 		StateChange(EKirbyState::Inhale);
 		return;
 	}
@@ -399,7 +407,7 @@ void  APlayer::Idle(float _DeltaTime) {
 		return;
 	}
 
-	// 이 아래로는 디버깅용
+	// ************* 이 아래로는 테스트용 *************
 	if (true == UEngineInput::IsDown('1'))
 	{
 		StateChange(EKirbyState::FreeMove);
