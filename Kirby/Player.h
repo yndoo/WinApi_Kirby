@@ -58,6 +58,8 @@ protected:
 	void Inhale(float _DeltaTime);
 	void Eating(float _DeltaTime);
 	void Swallow(float _DeltaTime);
+	void Attack(float _DeltaTime);
+	//void Fly(float _DeltaTime);
 
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
@@ -73,19 +75,22 @@ protected:
 	void InhaleStart();
 	void EatingStart();
 	void SwallowStart();
+	void AttackStart();
+	//void FlyStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
-	void StateChange(EPlayState _State);
+	void StateChange(EKirbyState _State);
 
-	EPlayState State = EPlayState::None;
-	EPlayState BeforeJumpState = EPlayState::None;				// 점프 이전 State가 무엇인지 저장
-	EActorDir DirState = EActorDir::Right;						// DirCheck에 쓰이는 DirState
+	EKirbyState State = EKirbyState::None;
+	EKirbyState BeforeJumpState = EKirbyState::None;				// 점프 이전 State가 무엇인지 저장
+	EActorDir DirState = EActorDir::Left;						// DirCheck에 쓰이는 DirState
 	EActorDir MyDir = EActorDir::Right;							// Move, Run 함수에서 쓸 Dir
 	std::string CurAnimationName = "Idle";
 
 	// 변신 관련 상태 변수
 	bool IsEating = false;
+	bool IsFireKirby = false;
 private:
 	UCollision* BodyCollision = nullptr;
 	UCollision* InhaleCollision = nullptr;

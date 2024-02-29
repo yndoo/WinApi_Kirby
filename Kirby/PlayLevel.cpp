@@ -49,6 +49,14 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("EatingMove", 15, 1);
 	CuttingImgLR("EatingJump", 9, 1);
 	CuttingImgLR("Swallow", 5, 1);
+	CuttingImgLR("Attack", 5, 1);
+	CuttingImgLR("FireIdle", 8, 1);
+	CuttingImgLR("FireSlide", 5, 1);
+	CuttingImgLR("FireMove", 10, 2);
+	CuttingImgLR("FireRun", 8, 1);
+	CuttingImgLR("FireBreak", 2, 1);
+	CuttingImgLR("FireCrouch", 8, 1);
+
 
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);

@@ -20,7 +20,7 @@ enum class EActorDir
 	Right = 1,
 };
 
-enum class EPlayState
+enum class EKirbyState
 {
 	None,
 	CameraFreeMove,
@@ -36,6 +36,9 @@ enum class EPlayState
 	Eating,
 	EatingRun,
 	Swallow,
+	Fly,
+	Attack,
+
 };
 
 enum class ECopyType

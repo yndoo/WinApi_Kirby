@@ -84,10 +84,11 @@ void APlayer::BeginPlay() {
 
 	AutoCreateAnimation("Move", { 0,1,1,2,3,4,5,6,6,7,8,9 }, 0.07f, true);
 	AutoCreateAnimation("Idle", { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 }, 0.09f, true);
-	AutoCreateAnimation("Crouch", 1, 1, 0.3f, true);
+	AutoCreateAnimation("Crouch", 1, 1, 0.3f, false);
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
 	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
+	AutoCreateAnimation("Attack", 0, 4, 0.2f, false);
 	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.03f, false);
 	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
 	AutoCreateAnimation("InhaleStart", "Inhale", 4, 4, 0.1f, false);
@@ -98,6 +99,12 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("EatingIdle", "Eating", 6, 6, 0.1f, false);
 	AutoCreateAnimation("EatingRun", "EatingMove", 0, 14, 0.05f, true);
 	AutoCreateAnimation("EatingMove", "EatingMove", 0, 14, 0.07f, true);
+	AutoCreateAnimation("FireIdle", {0,1,2,3,0,1,2,3,4,5,6,7}, 0.09f, true);
+	AutoCreateAnimation("FireMove", 0, 19, 0.04f, true);
+	AutoCreateAnimation("FireSlide", 0, 4, 0.06f, false);
+	AutoCreateAnimation("FireBreak", 0, 1, 0.1f, false);
+	AutoCreateAnimation("FireRun", 0, 7, 0.05f, true);
+	AutoCreateAnimation("FireCrouch", 0, 7, 0.15f, true);
 
 	AutoCreateAnimation("EatingJumpStart", "EatingJump", {0,1,2,3,4,5,6}, 0.08f, false);
 	AutoCreateAnimation("EatingJumpEnd", "EatingJump", 7, 8, 0.1f, false);
@@ -117,7 +124,7 @@ void APlayer::BeginPlay() {
 	InhaleCollision->SetColType(ECollisionType::Rect);
 	InhaleCollision->ActiveOff();
 
-	StateChange(EPlayState::Idle);
+	StateChange(EKirbyState::Idle);
 }
 
 void APlayer::Tick(float _DeltaTime) {
@@ -128,41 +135,44 @@ void APlayer::Tick(float _DeltaTime) {
 	UEngineDebug::DebugTextPrint("X : " + std::to_string(PlayerPos.X) + ", Y : " + std::to_string(PlayerPos.Y), 30.0f);
 }
 
-void APlayer::StateChange(EPlayState _State) 
+void APlayer::StateChange(EKirbyState _State) 
 {
 	if (State != _State)
 	{
 		switch (_State)
 		{
-		case EPlayState::Idle:
+		case EKirbyState::Idle:
 			IdleStart();
 			break;
-		case EPlayState::Move:
+		case EKirbyState::Move:
 			MoveStart();
 			break;
-		case EPlayState::Run:
+		case EKirbyState::Run:
 			RunStart();
 			break;
-		case EPlayState::Slide:
+		case EKirbyState::Slide:
 			SlideStart();
 			break;
-		case EPlayState::Crouch:
+		case EKirbyState::Crouch:
 			CrouchStart();
 			break;
-		case EPlayState::Jump:
+		case EKirbyState::Jump:
 			JumpStart();
 			break;
-		case EPlayState::Break:
+		case EKirbyState::Break:
 			BreakStart();
 			break;
-		case EPlayState::Inhale:
+		case EKirbyState::Inhale:
 			InhaleStart();
 			break;
-		case EPlayState::Eating:
+		case EKirbyState::Eating:
 			EatingStart();
 			break;
-		case EPlayState::Swallow:
+		case EKirbyState::Swallow:
 			SwallowStart();
+			break;
+		case EKirbyState::Attack:
+			AttackStart();
 			break;
 		default:
 			break;
@@ -173,51 +183,55 @@ void APlayer::StateChange(EPlayState _State)
 
 void APlayer::StateUpdate(float _DeltaTime) {
 	switch (State) {
-	case EPlayState::Idle:
+	case EKirbyState::Idle:
 		// 가만히
 		Idle(_DeltaTime);
 		break;
-	case EPlayState::Move:
+	case EKirbyState::Move:
 		// 이동
 		Move(_DeltaTime);
 		break;
-	case EPlayState::Crouch:
+	case EKirbyState::Crouch:
 		// 웅크리기
 		Crouch(_DeltaTime);
 		break;
-	case EPlayState::Slide:
+	case EKirbyState::Slide:
 		// 슬라이드
 		Slide(_DeltaTime);
 		break;
-	case EPlayState::Run:
+	case EKirbyState::Run:
 		// 달리기
 		Run(_DeltaTime);
 		break;
-	case EPlayState::Jump:
+	case EKirbyState::Jump:
 		// 점프
 		Jump(_DeltaTime);
 		break;
-	case EPlayState::Break:
+	case EKirbyState::Break:
 		// 브레이크
 		Break(_DeltaTime);
 		break;
-	case EPlayState::Inhale:
+	case EKirbyState::Inhale:
 		// 흡입
 		Inhale(_DeltaTime);
 		break;
-	case EPlayState::Eating:
+	case EKirbyState::Eating:
 		// 먹는 중
 		Eating(_DeltaTime);
 		break;
-	case EPlayState::Swallow:
+	case EKirbyState::Swallow:
 		// 삼키기
 		Swallow(_DeltaTime);
 		break;
-	case EPlayState::FreeMove:
+	case EKirbyState::Attack:
+		// 공격
+		Attack(_DeltaTime);
+		break;
+	case EKirbyState::FreeMove:
 		// 자유 이동
 		FreeMove(_DeltaTime);
 		break;
-	case EPlayState::CameraFreeMove:
+	case EKirbyState::CameraFreeMove:
 		// 카메라 자유 이동
 		CameraFreeMove(_DeltaTime);
 		break;
@@ -284,7 +298,7 @@ void APlayer::BreakStart()
 	}
 	else
 	{
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 		return;
 	}
 }
@@ -321,6 +335,11 @@ void APlayer::SwallowStart()
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Swallow"));
 }
 
+void APlayer::AttackStart()
+{
+
+}
+
 // Idle : 가만히 있는 상태
 void  APlayer::Idle(float _DeltaTime) {
 	MoveVector = FVector::Zero;
@@ -328,19 +347,19 @@ void  APlayer::Idle(float _DeltaTime) {
 
 	if (true == UEngineInput::IsDoubleClick(VK_RIGHT, 0.3f))
 	{
-		StateChange(EPlayState::Run);
+		StateChange(EKirbyState::Run);
 		return;
 	}
 	if (true == UEngineInput::IsDoubleClick(VK_LEFT, 0.3f))
 	{
-		StateChange(EPlayState::Run);
+		StateChange(EKirbyState::Run);
 		return;
 	}
 
 	if (true == UEngineInput::IsPress(VK_LEFT) || true == UEngineInput::IsPress(VK_RIGHT))
 	{
 		// 그냥 Move
-		StateChange(EPlayState::Move);
+		StateChange(EKirbyState::Move);
 		return;
 	}
 
@@ -348,40 +367,54 @@ void  APlayer::Idle(float _DeltaTime) {
 	{
 		if (false == IsEating)
 		{
-			StateChange(EPlayState::Crouch);
+			StateChange(EKirbyState::Crouch);
 			return;
 		}
 		else
 		{
 			// 삼키기
 			IsEating = false;
-			StateChange(EPlayState::Swallow);
+			StateChange(EKirbyState::Swallow);
 			return;
 		}
 	}
 
 	if (true == UEngineInput::IsDown('Z'))
 	{
-		BeforeJumpState = EPlayState::Idle;
-		StateChange(EPlayState::Jump);
+		BeforeJumpState = EKirbyState::Idle;
+		StateChange(EKirbyState::Jump);
 		return;
 	}
 
 	if (true == UEngineInput::IsPress('X') && false == IsEating)
 	{
-		StateChange(EPlayState::Inhale);
+		if (true == IsFireKirby)
+		{
+			// FireKirby 변신 상태에서의 X키는 공격
+		}
+		StateChange(EKirbyState::Inhale);
 		return;
 	}
 
+	
+
+	// 이 아래로는 디버깅용
 	if (true == UEngineInput::IsDown('1'))
 	{
-		StateChange(EPlayState::FreeMove);
+		StateChange(EKirbyState::FreeMove);
 		return;
 	}
 
 	if (true == UEngineInput::IsDown('2'))
 	{
-		StateChange(EPlayState::CameraFreeMove);
+		StateChange(EKirbyState::CameraFreeMove);
+		return;
+	}
+
+	if (true == UEngineInput::IsDown('F'))
+	{
+		IsFireKirby = !IsFireKirby;
+		IdleStart();
 		return;
 	}
 }
@@ -391,10 +424,10 @@ void APlayer::Move(float _DeltaTime)
 {
 	if (DirCheck())	// 방향 전환됐을 경우
 	{
-		if (IsPlayerBottomMagentaA())
+		if (IsPlayerBottomMagentaA())	
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
-			StateChange(EPlayState::Break);
+			StateChange(EKirbyState::Break);
 		}
 		else
 		{
@@ -406,7 +439,7 @@ void APlayer::Move(float _DeltaTime)
 	if (true == UEngineInput::IsPress(VK_LEFT) && true == UEngineInput::IsPress(VK_RIGHT))
 	{
 		// 동시에 입력됐을 때는 Idle
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 		return;
 	}
 
@@ -427,12 +460,12 @@ void APlayer::Move(float _DeltaTime)
 	// 걷는 중에 연타 시 달리기
 	if (true == UEngineInput::IsDown(VK_LEFT))
 	{
-		StateChange(EPlayState::Run);
+		StateChange(EKirbyState::Run);
 		return;
 	}
 	if (true == UEngineInput::IsDown(VK_RIGHT))
 	{
-		StateChange(EPlayState::Run);
+		StateChange(EKirbyState::Run);
 		return;
 	}
 
@@ -446,7 +479,7 @@ void APlayer::Move(float _DeltaTime)
 		if (FinalMoveVector.X > -100.0f)
 		{
 			MoveVector = FVector::Zero;
-			StateChange(EPlayState::Idle);
+			StateChange(EKirbyState::Idle);
 			return;
 		}
 	}
@@ -460,15 +493,15 @@ void APlayer::Move(float _DeltaTime)
 		if (FinalMoveVector.X < 100.0f)
 		{
 			MoveVector = FVector::Zero;
-			StateChange(EPlayState::Idle);
+			StateChange(EKirbyState::Idle);
 			return;
 		}
 	}
 
 	if (true == UEngineInput::IsDown('Z'))
 	{
-		BeforeJumpState = EPlayState::Move;
-		StateChange(EPlayState::Jump);
+		BeforeJumpState = EKirbyState::Move;
+		StateChange(EKirbyState::Jump);
 		return;
 	}
 }
@@ -483,13 +516,13 @@ void APlayer::Crouch(float _DeltaTime)
 	// 웅크리기 상태에서 점프키 누르면 슬라이드
 	if (true == UEngineInput::IsDown('Z'))
 	{
-		StateChange(EPlayState::Slide);
+		StateChange(EKirbyState::Slide);
 		return;
 	}
 
 	if (true == UEngineInput::IsFree(VK_DOWN))
 	{
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 		return;
 	}
 }
@@ -501,7 +534,7 @@ void APlayer::Slide(float _DeltaTime)
 	if (abs(MoveVector.X) < 10.0f)
 	{
 		MoveVector = FVector::Zero;
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 		return;
 	}
 	else 
@@ -520,7 +553,7 @@ void APlayer::Run(float _DeltaTime)
 		if (IsPlayerBottomMagentaA())
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
-			StateChange(EPlayState::Break);
+			StateChange(EKirbyState::Break);
 		}
 		else
 		{
@@ -532,7 +565,7 @@ void APlayer::Run(float _DeltaTime)
 	if (true == UEngineInput::IsPress(VK_LEFT) && true == UEngineInput::IsPress(VK_RIGHT))
 	{
 		// 동시에 입력됐을 때는 Idle
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 		return;
 	}
 
@@ -560,7 +593,7 @@ void APlayer::Run(float _DeltaTime)
 		if (FinalMoveVector.X > -80.0f)
 		{
 			MoveVector = FVector::Zero;
-			StateChange(EPlayState::Idle);
+			StateChange(EKirbyState::Idle);
 			return;
 		}
 	}
@@ -574,15 +607,15 @@ void APlayer::Run(float _DeltaTime)
 		if (FinalMoveVector.X < 80.0f)
 		{
 			MoveVector = FVector::Zero;
-			StateChange(EPlayState::Idle);
+			StateChange(EKirbyState::Idle);
 			return;
 		}
 	}
 
 	if (true == UEngineInput::IsDown('Z'))
 	{
-		BeforeJumpState = EPlayState::Run;
-		StateChange(EPlayState::Jump);
+		BeforeJumpState = EKirbyState::Run;
+		StateChange(EKirbyState::Jump);
 		return;
 	}
 }
@@ -615,7 +648,7 @@ void APlayer::Jump(float _DeltaTime)
 	if (IsPlayerBottomMagentaA() || IsPlayerBottomYellow())
 	{
 		JumpVector = FVector::Zero;
-		if (true == IsEating && BeforeJumpState == EPlayState::Idle)
+		if (true == IsEating && BeforeJumpState == EKirbyState::Idle)
 		{
 			if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpEnd")) && PlayerRenderer->IsCurAnimationEnd() == true)
 			{
@@ -638,7 +671,7 @@ void APlayer::Break(float _DeltaTime)
 	MoveVector = FVector::Zero;
 	if (PlayerRenderer->IsCurAnimationEnd()) 
 	{
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 		return;
 	}
 }
@@ -688,7 +721,7 @@ void APlayer::Inhale(float _DeltaTime)
 		
 		//if(Result[0]->GetOwner()->CopyAbilityType)
 		InhaleCollision->ActiveOff();
-		StateChange(EPlayState::Eating);
+		StateChange(EKirbyState::Eating);
 		return;
 	}
 
@@ -698,7 +731,7 @@ void APlayer::Inhale(float _DeltaTime)
 	{
 		InhaleCollision->ActiveOff();
 		IsEating = false;
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 		return;
 	}
 }
@@ -707,7 +740,7 @@ void APlayer::Inhale(float _DeltaTime)
 void APlayer::Eating(float _DeltaTime)
 {
 	// Idle로 넘겨주면 애니메이션은 자동으로 EatingIdle이 됨.
-	StateChange(EPlayState::Idle);
+	StateChange(EKirbyState::Idle);
 	return;
 }
 
@@ -716,9 +749,15 @@ void APlayer::Swallow(float _DeltaTime)
 {
 	if (PlayerRenderer->IsCurAnimationEnd())
 	{
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 		return;
 	}
+}
+
+// Attack : 공격(별 쏘기 등등)
+void APlayer::Attack(float _DeltaTime)
+{
+
 }
 
 // FreeMove : 디버깅용 캐릭터 자유 이동
@@ -751,7 +790,7 @@ void APlayer::FreeMove(float _DeltaTime)
 
 	if (UEngineInput::IsDown('1'))
 	{
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 	}
 }
 
@@ -780,7 +819,7 @@ void APlayer::CameraFreeMove(float _DeltaTime)
 
 	if (UEngineInput::IsDown('2'))
 	{
-		StateChange(EPlayState::Idle);
+		StateChange(EKirbyState::Idle);
 	}
 }
 
@@ -805,6 +844,10 @@ std::string APlayer::GetAnimationName(std::string _Name)
 	if (IsEating == true) 
 	{
 		return std::string("Eating") + _Name + DirName;
+	}
+	else if (IsFireKirby == true)
+	{
+		return std::string("Fire") + _Name + DirName;
 	}
 
 	return _Name + DirName;
