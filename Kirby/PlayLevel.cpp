@@ -49,7 +49,7 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("EatingMove", 15, 1);
 	CuttingImgLR("EatingJump", 9, 1);
 	CuttingImgLR("Swallow", 5, 1);
-	CuttingImgLR("Attack", 5, 1);
+	CuttingImgLR("EatingAttack", 5, 1);
 	CuttingImgLR("FireIdle", 8, 1);
 	CuttingImgLR("FireSlide", 5, 1);
 	CuttingImgLR("FireMove", 10, 2);

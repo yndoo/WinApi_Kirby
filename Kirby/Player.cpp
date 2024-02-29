@@ -88,7 +88,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
 	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
-	AutoCreateAnimation("Attack", 0, 4, 0.2f, false);
+	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
 	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.03f, false);
 	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
 	AutoCreateAnimation("InhaleStart", "Inhale", 4, 4, 0.1f, false);
@@ -337,7 +337,8 @@ void APlayer::SwallowStart()
 
 void APlayer::AttackStart()
 {
-
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Attack"));
 }
 
 // Idle : 가만히 있는 상태
@@ -388,15 +389,15 @@ void  APlayer::Idle(float _DeltaTime) {
 
 	if (true == UEngineInput::IsPress('X') && false == IsEating)
 	{
-		if (true == IsFireKirby)
-		{
-			// FireKirby 변신 상태에서의 X키는 공격
-		}
 		StateChange(EKirbyState::Inhale);
 		return;
 	}
 
-	
+	if (true == UEngineInput::IsDown('X') && true== IsEating)
+	{
+		StateChange(EKirbyState::Attack);
+		return;
+	}
 
 	// 이 아래로는 디버깅용
 	if (true == UEngineInput::IsDown('1'))
@@ -757,7 +758,13 @@ void APlayer::Swallow(float _DeltaTime)
 // Attack : 공격(별 쏘기 등등)
 void APlayer::Attack(float _DeltaTime)
 {
-
+	// 뱉고 다시 Idle로 가게 해둠 일단.
+	if (PlayerRenderer->IsCurAnimationEnd())
+	{
+		IsEating = false;
+		StateChange(EKirbyState::Idle);
+		return;
+	}
 }
 
 // FreeMove : 디버깅용 캐릭터 자유 이동
