@@ -41,6 +41,7 @@ void APlayer::KirbyCopy()
 {
 	BeforePos = Kirby->BeforePos;
 	IsEating = Kirby->IsEating;
+	IsFireKirby = Kirby->IsFireKirby;
 }
 
 void APlayer::BeginPlay() {
