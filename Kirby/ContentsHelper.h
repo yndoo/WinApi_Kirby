@@ -5,6 +5,7 @@ enum class EKirbyRenderOrder
 	Map,
 	Player,
 	Monster,
+	Bullet,
 };
 
 enum class EKirbyCollisionOrder

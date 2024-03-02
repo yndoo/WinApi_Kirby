@@ -21,23 +21,22 @@ void UPlayLevel::CuttingImgLR(std::string_view _Name, int _X, int _Y)
 
 void UPlayLevel::BeginPlay() {
 	ULevel::BeginPlay();
+
+	// 이 레벨에서 필요한 이미지들 커팅 및 로딩 : 커비(로딩은 커비코어에서 함), 몬스터, 불렛, 맵
 	UEngineDirectory NewPath;
 
 	NewPath.MoveParent();
-
 	NewPath.Move("KirbyResources");
 	NewPath.Move("PlayLevel");
 
 	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
-
 	for (UEngineFile& File : AllFileList)
 	{
 		std::string FullPath = File.GetFullPath();
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
 
-	// 이 레벨에서 필요한 애니메이션을 위한 이미지들 커팅
-	UEngineResourcesManager::GetInst().CuttingImage("Kirby.png", 40, 13);
+	//UEngineResourcesManager::GetInst().CuttingImage("Kirby.png", 40, 13);
 	CuttingImgLR("Move", 10, 1);
 	CuttingImgLR("Idle", 3, 1);
 	CuttingImgLR("Crouch", 2, 1);
@@ -58,14 +57,12 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("FireCrouch", 8, 1);
 	CuttingImgLR("FireJump", 11, 1);
 
-
+	UEngineResourcesManager::GetInst().CuttingImage("Bullet.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);
 
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
-
-	
 	
 	Map = SpawnActor<AMap>();
 

@@ -22,15 +22,12 @@ void KirbyCore::BeginPlay() {
 
 	MainWindow.SetWindowScale({ 255 * MyX, 208 * MyY });
 
+	// 커비는 어디서나 등장하므로 커비코어에서 이미지 로드
 	UEngineDirectory NewPath;
-
 	NewPath.MoveParent();
-
 	NewPath.Move("KirbyResources");
 	NewPath.Move("Kirby");
-
 	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
-
 	for (UEngineFile& File : AllFileList)
 	{
 		std::string FullPath = File.GetFullPath();

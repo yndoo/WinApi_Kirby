@@ -20,13 +20,13 @@
       <Filter>BossLevel</Filter>
     </ClInclude>
     <ClInclude Include="Flamer.h">
-      <Filter>PlayLevel\Actor</Filter>
+      <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>PlayLevel\Actor</Filter>
+      <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="Bullet.h">
-      <Filter>PlayLevel\Actor</Filter>
+      <Filter>Actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -49,13 +49,13 @@
       <Filter>BossLevel</Filter>
     </ClCompile>
     <ClCompile Include="Flamer.cpp">
-      <Filter>PlayLevel\Actor</Filter>
+      <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>PlayLevel\Actor</Filter>
+      <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
-      <Filter>PlayLevel\Actor</Filter>
+      <Filter>Actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -71,7 +71,7 @@
     <Filter Include="BossLevel">
       <UniqueIdentifier>{930e3b63-64d1-4fa3-89a8-05be6967633b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PlayLevel\Actor">
+    <Filter Include="Actor">
       <UniqueIdentifier>{3e6f5bd0-5648-45cc-a4f7-ae6b68f56930}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

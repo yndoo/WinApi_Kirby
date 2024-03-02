@@ -3,6 +3,7 @@
 #include "ContentsHelper.h"
 #include <EngineCore/EngineCore.h>
 #include <EngineCore/EngineDebug.h>
+#include "Bullet.h"
 
 APlayer* Kirby = nullptr;
 
@@ -344,6 +345,9 @@ void APlayer::AttackStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Attack"));
+	ABullet* bullet = GetWorld()->SpawnActor<ABullet>();
+	bullet->SetActorLocation(GetActorLocation() + FVector({0, -20}));
+	bullet->Destroy(3.f);
 }
 
 // Idle : 가만히 있는 상태
