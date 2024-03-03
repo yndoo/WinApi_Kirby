@@ -4,6 +4,7 @@
 #include <EngineCore/EngineResourcesManager.h>
 #include "RestAreaLevel.h"
 #include <EngineCore/EngineCore.h>
+#include "Bullet.h"
 
 UPlayLevel::UPlayLevel()
 {
@@ -111,6 +112,9 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Flamer2->SetActorLocation({ 1000,300 });
 	Flamer2->MoveColor = Color8Bit::MagentaA;
 	Flamer2->LateStart = true;
+
+	ABullet* Bullet = SpawnActor<ABullet>();
+	Bullet->SetActorLocation({ 800, 400 });
 }
 
 void UPlayLevel::LevelEnd(ULevel* _Level)
