@@ -27,12 +27,26 @@ void KirbyCore::BeginPlay() {
 	NewPath.MoveParent();
 	NewPath.Move("KirbyResources");
 	NewPath.Move("Kirby");
-	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
-	for (UEngineFile& File : AllFileList)
+	std::list<UEngineFile> AllFileList_K = NewPath.AllFile({ ".png", ".bmp" }, true);
+	for (UEngineFile& File : AllFileList_K)
 	{
 		std::string FullPath = File.GetFullPath();
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
+	NewPath.MoveParent();
+	NewPath.Move("Monster");
+	std::list<UEngineFile> AllFileList_M = NewPath.AllFile({ ".png", ".bmp" }, true);
+	for (UEngineFile& File : AllFileList_M)
+	{
+		std::string FullPath = File.GetFullPath();
+		UEngineResourcesManager::GetInst().LoadImg(FullPath);
+	}
+
+	UEngineResourcesManager::GetInst().CuttingImage("Bullet.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("WaddleDee_Right.png", 5, 2);
+	UEngineResourcesManager::GetInst().CuttingImage("WaddleDee_Left.png", 5, 2);
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");

@@ -58,10 +58,6 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("FireCrouch", 8, 1);
 	CuttingImgLR("FireJump", 11, 1);
 
-	UEngineResourcesManager::GetInst().CuttingImage("Bullet.png", 2, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);
-
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
 	

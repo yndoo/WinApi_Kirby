@@ -347,6 +347,7 @@ void APlayer::AttackStart()
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Attack"));
 	ABullet* bullet = GetWorld()->SpawnActor<ABullet>();
 	bullet->SetActorLocation(GetActorLocation() + FVector({0, -20}));
+	bullet->SetDir(DirState);
 	bullet->Destroy(3.f);
 }
 

@@ -15,6 +15,11 @@ public:
 	ABullet(ABullet&& _Other) noexcept = delete;
 	ABullet& operator=(const ABullet& _Other) = delete;
 	ABullet& operator=(ABullet&& _Other) noexcept = delete;
+	
+	void SetDir(EActorDir _Dir)
+	{
+		Dir = _Dir;
+	}
 
 protected:
 	void BeginPlay() override;
@@ -24,5 +29,6 @@ private:
 	UCollision* BulletCollision = nullptr;
 	UImageRenderer* BulletRenderer = nullptr;
 
+	EActorDir Dir = EActorDir::Left;
 };
 
