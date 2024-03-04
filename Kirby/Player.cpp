@@ -248,104 +248,13 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	}
 }
 
+// Idle : 가만히 있는 상태
 void APlayer::IdleStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
 }
-
-void APlayer::MoveStart()
-{
-	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
-
-	if (MoveVector.X == 0.f) 
-	{
-		MoveVector = { static_cast<float>(DirState) * MovePower, 0.f };
-	}
-}
-
-void APlayer::RunStart()
-{
-	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
-	if (MoveVector.X == 0.f)
-	{
-		MoveVector = { static_cast<float>(DirState) * MovePower, 0.f };
-	}
-}
-
-void APlayer::SlideStart()
-{
-	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Slide"));
-
-	MoveVector = { static_cast<float>(DirState) * SlideMaxSpeed, 0.f};
-}
-
-void APlayer::CrouchStart()
-{
-	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
-}
-
-void APlayer::JumpStart()
-{
-	DirCheck();
-	
-	JumpVector = JumpPower;
-	PlayerRenderer->ChangeAnimation(GetAnimationName("JumpStart"));
-}
-
-void APlayer::BreakStart()
-{
-	DirCheck();
-	if (false == IsEating)
-	{
-		PlayerRenderer->ChangeAnimation(GetAnimationName("Break"));
-	}
-	else
-	{
-		StateChange(EKirbyState::Idle);
-		return;
-	}
-}
-
-void APlayer::InhaleStart()
-{
-	InhaleCollision->ActiveOn();
-
-	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleStart"));
-	InhaleScaleVar = 50.f;
-	// 커비 방향에 따라 흡입 충돌체 위치 다름
-	if (DirState == EActorDir::Left)
-	{
-		InhaleCollision->SetPosition({ -40, -20 });
-	}
-	else
-	{
-		InhaleCollision->SetPosition({ 40, -20 });
-	}
-	
-}
-
-void APlayer::EatingStart()
-{
-	DirCheck();
-	IsEating = true;
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Eating"));
-}
-
-void APlayer::SwallowStart()
-{
-	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Swallow"));
-}
-
-
-// Idle : 가만히 있는 상태
-void  APlayer::Idle(float _DeltaTime) 
+void  APlayer::Idle(float _DeltaTime)
 {
 	MoveVector = FVector::Zero;
 	MoveUpdate(_DeltaTime);
@@ -402,7 +311,7 @@ void  APlayer::Idle(float _DeltaTime)
 		return;
 	}
 
-	if (true == UEngineInput::IsDown('X') && true== IsEating)
+	if (true == UEngineInput::IsDown('X') && true == IsEating)
 	{
 		StateChange(EKirbyState::Attack);
 		return;
@@ -430,11 +339,21 @@ void  APlayer::Idle(float _DeltaTime)
 }
 
 // Move : 플레이어 이동(오른쪽 왼쪽)
+void APlayer::MoveStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Move"));
+
+	if (MoveVector.X == 0.f) 
+	{
+		MoveVector = { static_cast<float>(DirState) * MovePower, 0.f };
+	}
+}
 void APlayer::Move(float _DeltaTime)
 {
 	if (DirCheck())	// 방향 전환됐을 경우
 	{
-		if (IsPlayerBottomMagentaA())	
+		if (IsPlayerBottomMagentaA())
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
 			StateChange(EKirbyState::Break);
@@ -516,48 +435,18 @@ void APlayer::Move(float _DeltaTime)
 	}
 }
 
-// Crouch : 웅크리기
-void APlayer::Crouch(float _DeltaTime)
-{
-	// 웅크린 상태에서의 방향 전환때문에 해줘야 함.
-	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
-
-	// 웅크리기 상태에서 점프키 누르면 슬라이드
-	if (true == UEngineInput::IsDown('Z'))
-	{
-		StateChange(EKirbyState::Slide);
-		return;
-	}
-
-	if (true == UEngineInput::IsFree(VK_DOWN))
-	{
-		StateChange(EKirbyState::Idle);
-		return;
-	}
-}
-
-// Slide : 슬라이딩
-void APlayer::Slide(float _DeltaTime)
-{
-	// 슬라이딩은 MoveVector로 체크
-	if (abs(MoveVector.X) < 10.0f)
-	{
-		MoveVector = FVector::Zero;
-		StateChange(EKirbyState::Idle);
-		return;
-	}
-	else 
-	{
-		AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, SlideAcc);
-		MoveUpdate(_DeltaTime, SlideMaxSpeed, SlideAcc);
-		return;
-	}
-}
-
 // Run : 달리기
+void APlayer::RunStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Run"));
+	if (MoveVector.X == 0.f)
+	{
+		MoveVector = { static_cast<float>(DirState) * MovePower, 0.f };
+	}
+}
 void APlayer::Run(float _DeltaTime)
-{	
+{
 	if (DirCheck())
 	{
 		if (IsPlayerBottomMagentaA())
@@ -630,7 +519,66 @@ void APlayer::Run(float _DeltaTime)
 	}
 }
 
+
+// Slide : 슬라이딩
+void APlayer::SlideStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Slide"));
+
+	MoveVector = { static_cast<float>(DirState) * SlideMaxSpeed, 0.f};
+}
+void APlayer::Slide(float _DeltaTime)
+{
+	// 슬라이딩은 MoveVector로 체크
+	if (abs(MoveVector.X) < 10.0f)
+	{
+		MoveVector = FVector::Zero;
+		StateChange(EKirbyState::Idle);
+		return;
+	}
+	else
+	{
+		AddMoveVector({ (-1.0f) * static_cast<float>(DirState) * _DeltaTime, 0.f }, SlideAcc);
+		MoveUpdate(_DeltaTime, SlideMaxSpeed, SlideAcc);
+		return;
+	}
+}
+
+// Crouch : 웅크리기
+void APlayer::CrouchStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
+}
+void APlayer::Crouch(float _DeltaTime)
+{
+	// 웅크린 상태에서의 방향 전환때문에 해줘야 함.
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
+
+	// 웅크리기 상태에서 점프키 누르면 슬라이드
+	if (true == UEngineInput::IsDown('Z'))
+	{
+		StateChange(EKirbyState::Slide);
+		return;
+	}
+
+	if (true == UEngineInput::IsFree(VK_DOWN))
+	{
+		StateChange(EKirbyState::Idle);
+		return;
+	}
+}
+
 // Jump : 점프
+void APlayer::JumpStart()
+{
+	DirCheck();
+	
+	JumpVector = JumpPower;
+	PlayerRenderer->ChangeAnimation(GetAnimationName("JumpStart"));
+}
 void APlayer::Jump(float _DeltaTime)
 {
 	if (DirCheck())	// 공중에서 방향 전환됐을 경우 남은 속도 초기화
@@ -667,7 +615,7 @@ void APlayer::Jump(float _DeltaTime)
 			}
 			PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
 		}
-		else 
+		else
 		{
 			StateChange(BeforeJumpState);
 			return;
@@ -676,10 +624,23 @@ void APlayer::Jump(float _DeltaTime)
 }
 
 // Break : 이동 멈추는 상태
+void APlayer::BreakStart()
+{
+	DirCheck();
+	if (false == IsEating)
+	{
+		PlayerRenderer->ChangeAnimation(GetAnimationName("Break"));
+	}
+	else
+	{
+		StateChange(EKirbyState::Idle);
+		return;
+	}
+}
 void APlayer::Break(float _DeltaTime)
 {
 	MoveVector = FVector::Zero;
-	if (PlayerRenderer->IsCurAnimationEnd()) 
+	if (PlayerRenderer->IsCurAnimationEnd())
 	{
 		StateChange(EKirbyState::Idle);
 		return;
@@ -687,6 +648,24 @@ void APlayer::Break(float _DeltaTime)
 }
 
 // Inhale : 흡입 중 상태
+void APlayer::InhaleStart()
+{
+	InhaleCollision->ActiveOn();
+
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleStart"));
+	InhaleScaleVar = 50.f;
+	// 커비 방향에 따라 흡입 충돌체 위치 다름
+	if (DirState == EActorDir::Left)
+	{
+		InhaleCollision->SetPosition({ -40, -20 });
+	}
+	else
+	{
+		InhaleCollision->SetPosition({ 40, -20 });
+	}
+	
+}
 void APlayer::Inhale(float _DeltaTime)
 {
 	// 흡입 충돌체 크기, 위치 업데이트
@@ -708,7 +687,7 @@ void APlayer::Inhale(float _DeltaTime)
 		InhaleCollision->SetScale({ InhaleScaleVar, InhaleScaleVar + 20.f });
 
 		// Scale 일정 이상 지나면 InhaleLarge 애니메이션으로 변경해줘야 함. (아직 안 함)
-		
+
 		FVector ColPos = ColTrans.GetPosition();
 		if (DirState == EActorDir::Left)
 		{
@@ -725,10 +704,10 @@ void APlayer::Inhale(float _DeltaTime)
 	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
 	{
 		// 몬스터 먹어버리기
-		
+
 		AActor* temp = Result[0]->GetOwner();
 		int a = 0;
-		
+
 		//if(Result[0]->GetOwner()->CopyAbilityType)
 		InhaleCollision->ActiveOff();
 		StateChange(EKirbyState::Eating);
@@ -747,14 +726,24 @@ void APlayer::Inhale(float _DeltaTime)
 }
 
 // Eating : 입에 몬스터 넣은 상태
+void APlayer::EatingStart()
+{
+	DirCheck();
+	IsEating = true;
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Eating"));
+}
 void APlayer::Eating(float _DeltaTime)
 {
 	// Idle로 넘겨주면 애니메이션은 자동으로 EatingIdle이 됨.
 	StateChange(EKirbyState::Idle);
 	return;
 }
-
 // Swallow : 삼키기
+void APlayer::SwallowStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Swallow"));
+}
 void APlayer::Swallow(float _DeltaTime)
 {
 	if (PlayerRenderer->IsCurAnimationEnd())
@@ -764,8 +753,8 @@ void APlayer::Swallow(float _DeltaTime)
 	}
 }
 
+// Attack : 공격(별 쏘기 등등)
 const float FireMaxTime = 0.15f;
-
 void APlayer::AttackStart()
 {
 	DirCheck();
@@ -801,9 +790,6 @@ void APlayer::AttackStart()
 		}
 	}
 }
-
-
-// Attack : 공격(별 쏘기 등등)
 void APlayer::Attack(float _DeltaTime)
 {
 	// 별 뱉고 다시 Idle.
@@ -873,7 +859,7 @@ void APlayer::FreeMove(float _DeltaTime)
 	}
 }
 
-
+// FreeMove : 디버깅용 카메라 자유 이동
 void APlayer::CameraFreeMove(float _DeltaTime)
 {
 	if (UEngineInput::IsPress(VK_LEFT))
