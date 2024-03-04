@@ -1,5 +1,6 @@
 #pragma once
 #include <EngineCore/Actor.h>
+#include <EngineCore/EngineCore.h>
 #include "ContentsHelper.h"
 
 // Ό³Έν :
@@ -17,6 +18,9 @@ public:
 	MonsterHelper& operator=(MonsterHelper&& _Other) noexcept = delete;
 
 protected:
+	UCollision* MonsterCollision = nullptr;
+	UImageRenderer* MonsterRenderer = nullptr;
+
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 	void StateUpdate(float _DeltaTime);
@@ -26,14 +30,18 @@ protected:
 	virtual void Damaged(float _DeltaTime);
 	virtual void Move(float _DeltaTime);
 	virtual void Inhaled(float _DeltaTime);
-	virtual void Die(float _DeltaTime);
+	//virtual void Die(float _DeltaTime);
 	
 	virtual void IdleStart();
 	virtual void DamagedStart();
 	virtual void MoveStart();
 	virtual void InhaledStart();
-	virtual void DieStart();
+	//virtual void DieStart();
 
+	EEnemyState State = EEnemyState::None;
+
+	FVector WinScale = GEngine->MainWindow.GetWindowScale();
+	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();
 private:
 
 };

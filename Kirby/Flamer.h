@@ -2,9 +2,10 @@
 #include <EngineCore/Actor.h>
 #include "ContentsHelper.h"
 #include <EngineCore/EngineCore.h>
+#include "MonsterHelper.h"
 
 // 설명 :
-class AFlamer : public AActor
+class AFlamer : public MonsterHelper
 {
 public:
 	// constrcuter destructer
@@ -22,18 +23,17 @@ public:
 
 	bool LateStart = false;
 protected:
-	UCollision* MonsterCollision = nullptr;
-	UImageRenderer* MonsterRenderer = nullptr;
+
 
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
-	void StateUpdate(float _DeltaTime);
-	void StateChange(EEnemyState _State);
+	//void StateUpdate(float _DeltaTime);
+	//void StateChange(EEnemyState _State);
 
-	void Idle(float _DeltaTime);
-	void Damaged(float _DeltaTime);
-	void Move(float _DeltaTime);
-	void Inhaled(float _DeltaTime);
+	void Idle(float _DeltaTime) override;
+	void Damaged(float _DeltaTime) override;
+	void Move(float _DeltaTime) override;
+	void Inhaled(float _DeltaTime) override;
 
 	void IdleStart();
 	void DamagedStart();
@@ -43,10 +43,6 @@ protected:
 	void FallDown(Color8Bit _Color);
 	void ColorLineMove(float _DeltaTime, Color8Bit _Color);
 
-	EEnemyState State = EEnemyState::None;
-
-	FVector WinScale = GEngine->MainWindow.GetWindowScale();
-	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();
 private:
 	//FVector ActorImgScale = FVector({ 10, 10 }); // Flamer의 눈으로 보이는 크기 대충
 

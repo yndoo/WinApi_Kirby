@@ -814,12 +814,6 @@ void APlayer::Attack(float _DeltaTime)
 		return;
 	}
 
-	if (true == UEngineInput::IsFree('X'))
-	{
-		StateChange(EKirbyState::Idle);
-		return;
-	}
-
 	FireTime -= _DeltaTime;
 
 	if (true == IsFireKirby && UEngineInput::IsPress('X') && 0.0f > FireTime)
