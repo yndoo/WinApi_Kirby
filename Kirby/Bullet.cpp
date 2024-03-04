@@ -27,6 +27,50 @@ void ABullet::BeginPlay()
 
 void ABullet::Tick(float _DeltaTime)
 {
+
+}
+
+void  ABullet::StateChange(EBulletState _State)
+{
+	if (State != _State)
+	{
+		switch (_State)
+		{
+		case EBulletState::Idle:
+			IdleStart();
+			break;
+		default:
+			break;
+		}
+	}
+	State = _State;
+}
+
+void  ABullet::StateUpdate(float _DeltaTime)
+{
+	switch (State) 
+	{
+	case EBulletState::Idle:
+		Idle(_DeltaTime);
+		break;
+	default:
+		break;
+	}
+}
+
+void ABullet::IdleStart()
+{
+	// 한 번 쏜 방향으로 가면 되므로 한 번 받아온 Dir로 충분함. (DirCheck 필요 없음)
+	BulletRenderer->ChangeAnimation("Bullet");
+}
+
+void ABullet::DamageStart()
+{
+
+}
+
+void ABullet::Idle(float _DeltaTime)
+{
 	switch (Dir)
 	{
 	case EActorDir::Left:
@@ -38,7 +82,7 @@ void ABullet::Tick(float _DeltaTime)
 	default:
 		break;
 	}
-	
+
 	// 공격이 Monster에 닿으면
 	std::vector<UCollision*> Result;
 	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
@@ -46,7 +90,12 @@ void ABullet::Tick(float _DeltaTime)
 		AActor* temp = Result[0]->GetOwner();
 		int a = 0;
 
-		//StateChange(EKirbyState::Eating);
+		StateChange(EBulletState::Damage);
 		return;
 	}
+}
+
+void ABullet::Damage(float _DeltaTime)
+{
+
 }

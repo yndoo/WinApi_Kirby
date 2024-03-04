@@ -26,8 +26,14 @@ protected:
 	void Tick(float _DeltaTime) override;
 
 	void StateUpdate(float _DeltaTime);
-	void StateChange(EKirbyState _State);
+	void StateChange(EBulletState _State);
 
+	EBulletState State = EBulletState::None;
+
+	void IdleStart();
+	void DamageStart();
+	void Idle(float _DeltaTime);
+	void Damage(float _DeltaTime);
 private:
 	UCollision* BulletCollision = nullptr;
 	UImageRenderer* BulletRenderer = nullptr;

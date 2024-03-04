@@ -61,7 +61,9 @@ enum class EEnemyState
 enum class EBulletState
 {
 	None,
-
+	Idle,
+	Damage,
+	Finish,
 };
 
 // Ό³Έν :
