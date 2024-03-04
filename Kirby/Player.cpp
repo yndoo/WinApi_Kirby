@@ -802,6 +802,12 @@ void APlayer::Attack(float _DeltaTime)
 
 	FireTime -= _DeltaTime;
 
+	if (true == IsFireKirby && UEngineInput::IsFree('X'))
+	{
+		StateChange(EKirbyState::Idle);
+		return;
+	}
+
 	if (true == IsFireKirby && UEngineInput::IsPress('X') && 0.0f > FireTime)
 	{
 		FireTime = FireMaxTime;
