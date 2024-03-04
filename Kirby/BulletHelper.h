@@ -31,15 +31,15 @@ protected:
 	void StateUpdate(float _DeltaTime);
 	void StateChange(EBulletState _State);
 
-	void IdleStart();
-	void DamageStart();
-	void FinishStart();
-	void Idle(float _DeltaTime);
+	virtual void IdleStart();
+	virtual void DamageStart();
+	virtual void FinishStart();
+	virtual void Idle(float _DeltaTime);
 	virtual void Damage(float _DeltaTime);
 	virtual void Finish(float _DeltaTime);
 
 	EBulletState State = EBulletState::None;
-	EActorDir Dir = EActorDir::None;
+	EActorDir Dir = EActorDir::Left;
 
 	std::string BulletName = "";	// ex) Fire, Star
 	std::string CurAnimationName = "Idle";

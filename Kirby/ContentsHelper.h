@@ -10,7 +10,8 @@ enum class EKirbyRenderOrder
 
 enum class EKirbyCollisionOrder
 {
-	PlayerBullet,	// 흡입 충돌체, 공격 충돌체
+	InhaleCol,		// 흡입 충돌체
+	PlayerBullet,	// 공격 충돌체
 	Monster,
 	Player
 };

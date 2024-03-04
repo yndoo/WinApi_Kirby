@@ -128,6 +128,7 @@ private:
 	float InhaleFirstMax = 50.f;
 	float InhaleSecondMax = 80.f;
 	float InhaleMaxScale = 100.f;
+	float FireTime = 0.0f;
 };
 
 extern APlayer* Kirby;

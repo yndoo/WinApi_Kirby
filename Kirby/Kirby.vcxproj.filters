@@ -29,6 +29,9 @@
     <ClInclude Include="Flamer.h">
       <Filter>Actor\Monsters</Filter>
     </ClInclude>
+    <ClInclude Include="FireBullet.h">
+      <Filter>Actor\Bullets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -60,6 +63,9 @@
     </ClCompile>
     <ClCompile Include="Flamer.cpp">
       <Filter>Actor\Monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="FireBullet.cpp">
+      <Filter>Actor\Bullets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

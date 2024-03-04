@@ -11,20 +11,21 @@ AStarBullet::~AStarBullet()
 void AStarBullet::BeginPlay()
 {
 	BulletRenderer = CreateImageRenderer(EKirbyRenderOrder::Bullet);
-	BulletRenderer->SetImage("StarIdle.png");
-	BulletRenderer->SetTransform({ {0,0}, {400, 400} });
+	//BulletRenderer->SetImage("StarBulletIdle.png");
+	BulletRenderer->SetTransform({ {0,-10}, {300, 300} });
 	BulletRenderer->SetTransColor(Color8Bit::Magenta);
 
-	BulletRenderer->CreateAnimation("StarIdle", "StarIdle.png", 0, 1, 0.2f, true);
-	BulletRenderer->ChangeAnimation("StarIdle");
+	BulletRenderer->CreateAnimation("StarBulletIdle_Right", "StarBulletIdle_Right.png", 0, 1, 0.2f, true);
+	BulletRenderer->CreateAnimation("StarBulletIdle_Left", "StarBulletIdle_Left.png", 0, 1, 0.2f, true);
+
+	BulletName = "StarBullet";
+	BulletRenderer->ChangeAnimation(GetAnimationName("Idle"));
 
 	BulletCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);
-	BulletCollision->SetScale({ 100, 100 });
-	BulletCollision->SetPosition({ 0, -20 });
+	BulletCollision->SetScale({ 60, 60 });
+	BulletCollision->SetPosition({ 0, -10 });
 	BulletCollision->SetColType(ECollisionType::Rect);
-	//BulletCollision->ActiveOn();
 
-	BulletName = "Star";
 	StateChange(EBulletState::Idle);
 }
 

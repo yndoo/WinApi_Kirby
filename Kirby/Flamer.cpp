@@ -40,13 +40,20 @@ void AFlamer::Tick(float _DeltaTime) {
 
 	// 커비 흡입 충돌체와 몬스터의 충돌 확인
 	std::vector<UCollision*> Result;
-	if (true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	if (true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
 	{
 		// 커비쪽으로 당겨지기
 		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
 		FVector test = InhaleDir.Normalize2DReturn();
 		AddActorLocation(InhaleDir.Normalize2DReturn() * 80.f * _DeltaTime);
 		StateChange(EEnemyState::Inhaled);
+		return;
+	}
+
+	if (true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	{
+		// Bullet종류로 공격 받았을 때
+		StateChange(EEnemyState::Hurt);
 		return;
 	}
 }

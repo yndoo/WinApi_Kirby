@@ -4,6 +4,7 @@
 #include <EngineCore/EngineCore.h>
 #include <EngineCore/EngineDebug.h>
 #include "StarBullet.h"
+#include "FireBullet.h"
 
 APlayer* Kirby = nullptr;
 
@@ -112,6 +113,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("FireBreak", 0, 1, 0.1f, false);
 	AutoCreateAnimation("FireRun", 0, 7, 0.05f, true);
 	AutoCreateAnimation("FireCrouch", 0, 7, 0.15f, true);
+	AutoCreateAnimation("FireAttack", 0, 3, 0.05f, true);
 	AutoCreateAnimation("FireJumpTurn", "FireJump", 2, 8, 0.03f, false);
 	AutoCreateAnimation("FireJumpStart", "FireJump", 0, 1, 0.1f, false);
 
@@ -124,7 +126,7 @@ void APlayer::BeginPlay() {
 	BodyCollision->SetPosition({ 0, -20 });
 	BodyCollision->SetColType(ECollisionType::CirCle);
 
-	InhaleCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);
+	InhaleCollision = CreateCollision(EKirbyCollisionOrder::InhaleCol);
 	InhaleCollision->SetScale({ 100, 0 });		// 흡입 충돌체 크기는 흡입 입력 시간에 따라 달라진다.
 	InhaleCollision->SetPosition({ 0, -20 });	// 흡입 충돌체 위치는 흡입 시마다 바뀌어야 한다.
 	InhaleCollision->SetColType(ECollisionType::Rect);
@@ -341,19 +343,10 @@ void APlayer::SwallowStart()
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Swallow"));
 }
 
-void APlayer::AttackStart()
-{
-	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Attack"));
-	AStarBullet* bullet = GetWorld()->SpawnActor<AStarBullet>();
-	bullet->SetActorLocation(GetActorLocation() + FVector({0, -20}));
-	bullet->SetDir(DirState);
-	// bullet이 땅이나 몬스터에 닿으면 없어지게 해야 함? 일단 Destroy로 해두기.
-	bullet->Destroy(3.f);
-}
 
 // Idle : 가만히 있는 상태
-void  APlayer::Idle(float _DeltaTime) {
+void  APlayer::Idle(float _DeltaTime) 
+{
 	MoveVector = FVector::Zero;
 	MoveUpdate(_DeltaTime);
 
@@ -402,7 +395,8 @@ void  APlayer::Idle(float _DeltaTime) {
 	{
 		if (true == IsFireKirby)
 		{
-
+			StateChange(EKirbyState::Attack);
+			return;
 		}
 		StateChange(EKirbyState::Inhale);
 		return;
@@ -770,15 +764,84 @@ void APlayer::Swallow(float _DeltaTime)
 	}
 }
 
+const float FireMaxTime = 0.15f;
+
+void APlayer::AttackStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Attack"));
+
+	if (true == IsEating)
+	{
+		AStarBullet* bullet = GetWorld()->SpawnActor<AStarBullet>();
+		bullet->SetActorLocation(GetActorLocation() + FVector({ 0, -20 }));
+		bullet->SetDir(DirState);
+		// bullet이 땅이나 몬스터에 닿으면 없어지게 해야 함? 일단 Destroy로 해두기.
+		bullet->Destroy(3.f);
+	}
+	else if (true == IsFireKirby)
+	{
+		FireTime = FireMaxTime;
+
+		// 파이어 커비 공격
+		AFireBullet* bullet = GetWorld()->SpawnActor<AFireBullet>();
+		bullet->SetDir(DirState);
+		bullet->SetActorLocation(GetActorLocation());
+		bullet->AddActorLocation(FVector::Down * 20.0f);
+		switch (DirState)
+		{
+		case EActorDir::Left:
+			bullet->AddActorLocation(FVector::Left * 80.0f);
+			break;
+		case EActorDir::Right:
+			bullet->AddActorLocation(FVector::Right * 80.0f);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+
 // Attack : 공격(별 쏘기 등등)
 void APlayer::Attack(float _DeltaTime)
 {
-	// 뱉고 다시 Idle로 가게 해둠 일단.
-	if (PlayerRenderer->IsCurAnimationEnd())
+	// 별 뱉고 다시 Idle.
+	if (true == IsEating && PlayerRenderer->IsCurAnimationEnd())
 	{
 		IsEating = false;
 		StateChange(EKirbyState::Idle);
 		return;
+	}
+
+	if (true == UEngineInput::IsFree('X'))
+	{
+		StateChange(EKirbyState::Idle);
+		return;
+	}
+
+	FireTime -= _DeltaTime;
+
+	if (true == IsFireKirby && UEngineInput::IsPress('X') && 0.0f > FireTime)
+	{
+		FireTime = FireMaxTime;
+
+		// 파이어 커비 공격
+		AFireBullet* bullet = GetWorld()->SpawnActor<AFireBullet>();
+		bullet->SetDir(DirState);
+		bullet->SetActorLocation(GetActorLocation());
+		bullet->AddActorLocation(FVector::Down * 20.0f);
+		switch (DirState)
+		{
+		case EActorDir::Left:
+			bullet->AddActorLocation(FVector::Left * 80.0f);
+			break;
+		case EActorDir::Right:
+			bullet->AddActorLocation(FVector::Right * 80.0f);
+			break;
+		default:
+			break;
+		};
 	}
 }
 

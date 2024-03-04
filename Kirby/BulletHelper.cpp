@@ -103,7 +103,9 @@ void BulletHelper::Idle(float _DeltaTime)
 
 void BulletHelper::Damage(float _DeltaTime)
 {
-
+	// 터지는 애니메이션 했다 치고~
+	// true == IsCurAnimationEnd() 면
+	Destroy();
 }
 
 void BulletHelper::Finish(float _DeltaTime)
