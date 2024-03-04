@@ -22,7 +22,7 @@ void ABullet::BeginPlay()
 	BulletCollision->SetScale({ 100, 100 });	
 	BulletCollision->SetPosition({ 0, -20 });
 	BulletCollision->SetColType(ECollisionType::Rect);
-	BulletCollision->ActiveOn();
+	//BulletCollision->ActiveOn();
 }
 
 void ABullet::Tick(float _DeltaTime)
@@ -39,4 +39,14 @@ void ABullet::Tick(float _DeltaTime)
 		break;
 	}
 	
+	// 공격이 Monster에 닿으면
+	std::vector<UCollision*> Result;
+	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
+	{
+		AActor* temp = Result[0]->GetOwner();
+		int a = 0;
+
+		//StateChange(EKirbyState::Eating);
+		return;
+	}
 }

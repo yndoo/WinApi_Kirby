@@ -25,6 +25,9 @@ protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 
+	void StateUpdate(float _DeltaTime);
+	void StateChange(EKirbyState _State);
+
 private:
 	UCollision* BulletCollision = nullptr;
 	UImageRenderer* BulletRenderer = nullptr;

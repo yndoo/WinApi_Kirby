@@ -58,6 +58,12 @@ enum class EEnemyState
 	Inhaled,
 };
 
+enum class EBulletState
+{
+	None,
+
+};
+
 // Ό³Έν :
 class UContentsHelper
 {
