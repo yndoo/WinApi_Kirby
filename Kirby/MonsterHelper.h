@@ -38,7 +38,13 @@ protected:
 	virtual void InhaledStart();
 	//virtual void DieStart();
 
+	void FallDown(Color8Bit _Color);
+	std::string GetAnimationName(std::string _Name);
+
+	EActorDir DirState = EActorDir::Left;
 	EEnemyState State = EEnemyState::None;
+	FVector InhaleDir = FVector::Zero;
+	std::string CurAnimationName = "Idle";
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();

@@ -15,8 +15,8 @@ void AStarBullet::BeginPlay()
 	BulletRenderer->SetTransform({ {0,-10}, {300, 300} });
 	BulletRenderer->SetTransColor(Color8Bit::Magenta);
 
-	BulletRenderer->CreateAnimation("StarBulletIdle_Right", "StarBulletIdle_Right.png", 0, 1, 0.2f, true);
-	BulletRenderer->CreateAnimation("StarBulletIdle_Left", "StarBulletIdle_Left.png", 0, 1, 0.2f, true);
+	BulletRenderer->CreateAnimation("StarBulletIdle_Right", "StarBulletIdle_Right.png", 0, 1, 0.1f, true);
+	BulletRenderer->CreateAnimation("StarBulletIdle_Left", "StarBulletIdle_Left.png", 0, 1, 0.1f, true);
 
 	BulletName = "StarBullet";
 	BulletRenderer->ChangeAnimation(GetAnimationName("Idle"));

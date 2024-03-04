@@ -33,28 +33,9 @@ void AFlamer::BeginPlay() {
 	StateChange(EEnemyState::Idle);
 }
 
-void AFlamer::Tick(float _DeltaTime) {
-	AActor::Tick(_DeltaTime);
-	StateUpdate(_DeltaTime);
-
-	// 커비 흡입 충돌체와 몬스터의 충돌 확인
-	std::vector<UCollision*> Result;
-	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
-	{
-		// 커비쪽으로 당겨지기
-		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
-		FVector test = InhaleDir.Normalize2DReturn();
-		AddActorLocation(InhaleDir.Normalize2DReturn() * 80.f * _DeltaTime);
-		StateChange(EEnemyState::Inhaled);
-		return;
-	}
-
-	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
-	{
-		// Bullet종류로 공격 받았을 때
-		StateChange(EEnemyState::Damaged);
-		return;
-	}
+void AFlamer::Tick(float _DeltaTime) 
+{
+	MonsterHelper::Tick(_DeltaTime);
 }
 
 
@@ -68,22 +49,6 @@ void AFlamer::IdleStart()
 	}
 	MonsterRenderer->ChangeAnimation("Spin");
 }
-
-void AFlamer::DamagedStart()
-{
-	MonsterRenderer->ChangeAnimation("Damaged");
-}
-
-void AFlamer::MoveStart()
-{
-	MonsterRenderer->ChangeAnimation("Spin");
-}
-
-void AFlamer::InhaledStart()
-{
-	MonsterRenderer->ChangeAnimation("Damaged");
-}
-
 void AFlamer::Idle(float _DeltaTime)
 {
 	if (LateStart == true)
@@ -101,19 +66,10 @@ void AFlamer::Idle(float _DeltaTime)
 	}
 }
 
-void AFlamer::Move(float _DeltaTime)
+void AFlamer::DamagedStart()
 {
-	CurDir = 0;
-	ColorLineMove(_DeltaTime, Color8Bit::MagentaA);
-
-	// 맵 넘어가면 없애기
-	FVector MyPos = GetActorLocation();
-	if (MyPos.X < -10 || MyPos.X > MapSize.X)
-	{
-		Destroy();
-	}
+	MonsterRenderer->ChangeAnimation("Damaged");
 }
-
 void AFlamer::Damaged(float _DeltaTime)
 {
 	// 나중에 체력 넣으면 체력이 0될 때 죽어야 함(미완)
@@ -128,6 +84,27 @@ void AFlamer::Damaged(float _DeltaTime)
 
 }
 
+void AFlamer::MoveStart()
+{
+	MonsterRenderer->ChangeAnimation("Spin");
+}
+void AFlamer::Move(float _DeltaTime)
+{
+	CurDir = 0;
+	ColorLineMove(_DeltaTime, Color8Bit::MagentaA);
+
+	// 맵 넘어가면 없애기
+	FVector MyPos = GetActorLocation();
+	if (MyPos.X < -10 || MyPos.X > MapSize.X)
+	{
+		Destroy();
+	}
+}
+
+void AFlamer::InhaledStart()
+{
+	MonsterRenderer->ChangeAnimation("Damaged");
+}
 void AFlamer::Inhaled(float _DeltaTime)
 {
 	// 흡입되다가 커비 몸과 충돌됐을 경우
@@ -181,18 +158,3 @@ void AFlamer::ColorLineMove(float _DeltaTime, Color8Bit _Color)
 	}
 }
 
-void AFlamer::FallDown(Color8Bit _Color)
-{
-	while (true)
-	{
-		Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
-		if (Color != _Color)
-		{
-			AddActorLocation(FVector::Down);
-		}
-		else
-		{
-			break;
-		}
-	}
-}

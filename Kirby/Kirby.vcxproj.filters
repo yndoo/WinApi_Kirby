@@ -39,6 +39,9 @@
     <ClInclude Include="ContentsHelper.h">
       <Filter>Helper</Filter>
     </ClInclude>
+    <ClInclude Include="WaddleDee.h">
+      <Filter>Actor\Monsters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -78,6 +81,9 @@
     </ClCompile>
     <ClCompile Include="MonsterHelper.cpp">
       <Filter>Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="WaddleDee.cpp">
+      <Filter>Actor\Monsters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,6 @@
 #include <EngineCore/EngineResourcesManager.h>
 #include "RestAreaLevel.h"
 #include <EngineCore/EngineCore.h>
-#include "StarBullet.h"
 
 UPlayLevel::UPlayLevel()
 {
@@ -110,9 +109,7 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Flamer2->MoveColor = Color8Bit::MagentaA;
 	Flamer2->LateStart = true;
 
-	//테스트용
-	//ABullet* Bullet = SpawnActor<ABullet>();
-	//Bullet->SetActorLocation({ 100, 100 });
+	AWaddleDee* WaddleDee1 = SpawnActor<AWaddleDee>();
 }
 
 void UPlayLevel::LevelEnd(ULevel* _Level)

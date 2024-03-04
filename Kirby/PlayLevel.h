@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Flamer.h"
 #include "Map.h"
+#include "WaddleDee.h"
 
 // Ό³Έν :
 class UPlayLevel : public ULevel

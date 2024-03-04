@@ -17,6 +17,25 @@ void MonsterHelper::Tick(float _DeltaTime)
 {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
+
+	// 커비 흡입 충돌체와 몬스터의 충돌 확인
+	std::vector<UCollision*> Result;
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
+	{
+		// 커비쪽으로 당겨지기
+		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
+		//FVector test = InhaleDir.Normalize2DReturn();
+		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
+		StateChange(EEnemyState::Inhaled);
+		return;
+	}
+
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	{
+		// Bullet종류로 공격 받았을 때
+		StateChange(EEnemyState::Damaged);
+		return;
+	}
 }
 
 void MonsterHelper::StateChange(EEnemyState _State)
@@ -103,4 +122,41 @@ void MonsterHelper::InhaledStart()
 void MonsterHelper::Inhaled(float _DeltaTime)
 {
 
+}
+
+void MonsterHelper::FallDown(Color8Bit _Color)
+{
+	while (true)
+	{
+		Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
+		if (Color != _Color)
+		{
+			AddActorLocation(FVector::Down);
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
+std::string MonsterHelper::GetAnimationName(std::string _Name)
+{
+	std::string DirName = "";
+
+	switch (DirState)
+	{
+	case EActorDir::Left:
+		DirName = "_Left";
+		break;
+	case EActorDir::Right:
+		DirName = "_Right";
+		break;
+	default:
+		break;
+	}
+
+	CurAnimationName = _Name;
+
+	return _Name + DirName;
 }

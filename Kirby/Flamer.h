@@ -35,12 +35,11 @@ protected:
 	void Move(float _DeltaTime) override;
 	void Inhaled(float _DeltaTime) override;
 
-	void IdleStart();
-	void DamagedStart();
-	void MoveStart();
-	void InhaledStart();
+	void IdleStart() override;
+	void DamagedStart() override;
+	void MoveStart() override;
+	void InhaledStart() override;
 
-	void FallDown(Color8Bit _Color);
 	void ColorLineMove(float _DeltaTime, Color8Bit _Color);
 
 private:

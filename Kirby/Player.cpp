@@ -86,7 +86,7 @@ void APlayer::BeginPlay() {
 	PlayerRenderer->SetTransColor(Color8Bit::Magenta);
 
 	AutoCreateAnimation("Move", { 0,1,1,2,3,4,5,6,6,7,8,9 }, 0.07f, true);
-	AutoCreateAnimation("Idle", { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 }, 0.09f, true);
+	AutoCreateAnimation("Idle", { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 }, 0.09f, true);
 	AutoCreateAnimation("Crouch", 1, 1, 0.3f, false);
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
@@ -107,7 +107,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("EatingJumpStart", "EatingJump", {0,1,2,3,4,5,6}, 0.08f, false);
 	AutoCreateAnimation("EatingJumpEnd", "EatingJump", 7, 8, 0.1f, false);
 
-	AutoCreateAnimation("FireIdle", {0,1,2,3,0,1,2,3,4,5,6,7}, 0.09f, true);
+	AutoCreateAnimation("FireIdle", { 0,1,2,3,0,1,2,3,0,1,2,3, 4, 5 }, 0.09f, true);
 	AutoCreateAnimation("FireMove", 0, 19, 0.04f, true);
 	AutoCreateAnimation("FireSlide", 0, 4, 0.06f, false);
 	AutoCreateAnimation("FireBreak", 0, 1, 0.1f, false);
