@@ -3,7 +3,7 @@
 #include "ContentsHelper.h"
 #include <EngineCore/EngineCore.h>
 #include <EngineCore/EngineDebug.h>
-#include "Bullet.h"
+#include "StarBullet.h"
 
 APlayer* Kirby = nullptr;
 

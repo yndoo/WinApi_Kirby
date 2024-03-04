@@ -4,7 +4,7 @@
 #include <EngineCore/EngineResourcesManager.h>
 #include "RestAreaLevel.h"
 #include <EngineCore/EngineCore.h>
-#include "Bullet.h"
+#include "StarBullet.h"
 
 UPlayLevel::UPlayLevel()
 {
