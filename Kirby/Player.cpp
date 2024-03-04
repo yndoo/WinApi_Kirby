@@ -345,7 +345,7 @@ void APlayer::AttackStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Attack"));
-	ABullet* bullet = GetWorld()->SpawnActor<ABullet>();
+	AStarBullet* bullet = GetWorld()->SpawnActor<AStarBullet>();
 	bullet->SetActorLocation(GetActorLocation() + FVector({0, -20}));
 	bullet->SetDir(DirState);
 	// bullet이 땅이나 몬스터에 닿으면 없어지게 해야 함? 일단 Destroy로 해두기.

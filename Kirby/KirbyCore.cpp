@@ -42,7 +42,7 @@ void KirbyCore::BeginPlay() {
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
 
-	UEngineResourcesManager::GetInst().CuttingImage("Bullet.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("StarIdle.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Hurt.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("WaddleDee_Right.png", 5, 2);

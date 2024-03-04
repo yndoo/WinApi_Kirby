@@ -1,0 +1,134 @@
+#include "BulletHelper.h"
+
+BulletHelper::BulletHelper()
+{
+}
+
+BulletHelper::~BulletHelper()
+{
+}
+
+void BulletHelper::BeginPlay()
+{
+	AActor::BeginPlay();
+}
+
+void BulletHelper::Tick(float _DeltaTime)
+{
+	AActor::Tick(_DeltaTime);
+	StateUpdate(_DeltaTime);
+}
+
+void  BulletHelper::StateChange(EBulletState _State)
+{
+	if (State != _State)
+	{
+		switch (_State)
+		{
+		case EBulletState::Idle:
+			IdleStart();
+			break;
+		case EBulletState::Damage:
+			DamageStart();
+			break;
+		case EBulletState::Finish:
+			FinishStart();
+			break;
+		default:
+			break;
+		}
+	}
+	State = _State;
+}
+
+void  BulletHelper::StateUpdate(float _DeltaTime)
+{
+	switch (State)
+	{
+	case EBulletState::Idle:
+		Idle(_DeltaTime);
+		break;
+	case EBulletState::Damage:
+		Damage(_DeltaTime);
+		break;
+	case EBulletState::Finish:
+		Finish(_DeltaTime);
+		break;
+	default:
+		break;
+	}
+}
+
+void BulletHelper::IdleStart()
+{
+	// Bullet은 한 번 쏜 방향으로 가면 되므로 한 번 받아온 Dir로 충분함. (== DirCheck 필요 없음)
+	BulletRenderer->ChangeAnimation(GetAnimationName("Idle"));
+}
+
+void BulletHelper::DamageStart()
+{
+
+}
+
+void BulletHelper::FinishStart()
+{
+
+}
+
+void BulletHelper::Idle(float _DeltaTime)
+{
+	switch (Dir)
+	{
+	case EActorDir::Left:
+		AddActorLocation(FVector::Left * 200.0f * _DeltaTime);
+		break;
+	case EActorDir::Right:
+		AddActorLocation(FVector::Right * 200.0f * _DeltaTime);
+		break;
+	default:
+		break;
+	}
+
+	// 공격이 Monster에 닿으면
+	std::vector<UCollision*> Result;
+	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
+	{
+		AActor* temp = Result[0]->GetOwner();
+		int a = 0;
+
+		StateChange(EBulletState::Damage);
+		return;
+	}
+}
+
+void BulletHelper::Damage(float _DeltaTime)
+{
+
+}
+
+void BulletHelper::Finish(float _DeltaTime)
+{
+
+}
+
+
+std::string BulletHelper::GetAnimationName(std::string _Name)
+{
+	std::string DirName = "";
+
+	switch (Dir)
+	{
+	case EActorDir::Left:
+		DirName = "_Left";
+		break;
+	case EActorDir::Right:
+		DirName = "_Right";
+		break;
+	default:
+		break;
+	}
+
+	CurAnimationName = _Name;
+
+	return BulletName + _Name + DirName;
+}

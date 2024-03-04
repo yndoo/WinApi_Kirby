@@ -19,14 +19,15 @@
     <ClInclude Include="BossLevel.h">
       <Filter>BossLevel</Filter>
     </ClInclude>
-    <ClInclude Include="Flamer.h">
-      <Filter>Actor</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Actor</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>Actor</Filter>
+    <ClInclude Include="BulletHelper.h" />
+    <ClInclude Include="StarBullet.h">
+      <Filter>Actor\Bullets</Filter>
+    </ClInclude>
+    <ClInclude Include="Flamer.h">
+      <Filter>Actor\Monsters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -40,7 +41,6 @@
     <ClCompile Include="TitleLevel.cpp">
       <Filter>TitleLevel</Filter>
     </ClCompile>
-    <ClCompile Include="ContentsHelper.cpp" />
     <ClCompile Include="RestAreaLevel.cpp">
       <Filter>RestAreaLevel</Filter>
     </ClCompile>
@@ -48,14 +48,18 @@
     <ClCompile Include="BossLevel.cpp">
       <Filter>BossLevel</Filter>
     </ClCompile>
-    <ClCompile Include="Flamer.cpp">
-      <Filter>Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Actor</Filter>
     </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>Actor</Filter>
+    <ClCompile Include="ContentsHelper.cpp">
+      <Filter>Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletHelper.cpp" />
+    <ClCompile Include="StarBullet.cpp">
+      <Filter>Actor\Bullets</Filter>
+    </ClCompile>
+    <ClCompile Include="Flamer.cpp">
+      <Filter>Actor\Monsters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +77,15 @@
     </Filter>
     <Filter Include="Actor">
       <UniqueIdentifier>{3e6f5bd0-5648-45cc-a4f7-ae6b68f56930}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Helper">
+      <UniqueIdentifier>{709f60fe-8a0b-4da1-b7c2-b2667c951e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Bullets">
+      <UniqueIdentifier>{482be0f0-d5a5-43e6-9d6f-f3752a503752}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Monsters">
+      <UniqueIdentifier>{54f14a6f-48ce-4345-903e-f78eb959f36b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

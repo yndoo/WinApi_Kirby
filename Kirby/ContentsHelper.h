@@ -17,6 +17,7 @@ enum class EKirbyCollisionOrder
 
 enum class EActorDir
 {
+	None = 0,
 	Left = -1,
 	Right = 1,
 };

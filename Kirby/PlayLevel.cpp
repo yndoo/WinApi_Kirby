@@ -109,8 +109,9 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Flamer2->MoveColor = Color8Bit::MagentaA;
 	Flamer2->LateStart = true;
 
-	ABullet* Bullet = SpawnActor<ABullet>();
-	Bullet->SetActorLocation({ 800, 400 });
+	//테스트용
+	//ABullet* Bullet = SpawnActor<ABullet>();
+	//Bullet->SetActorLocation({ 100, 100 });
 }
 
 void UPlayLevel::LevelEnd(ULevel* _Level)
