@@ -53,11 +53,11 @@ enum class ECopyType
 enum class EEnemyState
 {
 	None,
-	Loading,
 	Idle,
-	Hurt,
+	Damaged,
 	Move,
 	Inhaled,
+	Die,
 };
 
 enum class EBulletState

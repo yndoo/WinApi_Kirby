@@ -14,24 +14,23 @@ void AFlamer::BeginPlay() {
 
 	SetActorLocation({ 500,250 });
 
-	FlamerRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
-	FlamerRenderer->SetImage("Flamer_Spin.png");
-	FlamerRenderer->SetTransform({ {0,0}, {220, 220} });
-	FlamerRenderer->SetTransColor(Color8Bit::Magenta);
+	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
+	MonsterRenderer->SetImage("Flamer_Spin.png");
+	MonsterRenderer->SetTransform({ {0,0}, {220, 220} });
+	MonsterRenderer->SetTransColor(Color8Bit::Magenta);
 
-	FlamerRenderer->CreateAnimation("Spin", "Flamer_Spin.png", 0, 3, 0.2f, true);
-	FlamerRenderer->CreateAnimation("Hurt", "Flamer_Hurt.png", { 0,0,0,0,1 }, 0.2f, false);
-	FlamerRenderer->ChangeAnimation("Spin");
+	MonsterRenderer->CreateAnimation("Spin", "Flamer_Spin.png", 0, 3, 0.2f, true);
+	MonsterRenderer->CreateAnimation("Damaged", "Flamer_Damaged.png", { 0,0,0,0,1 }, 0.2f, false);
+	MonsterRenderer->ChangeAnimation("Spin");
 
-	FlamerCollision = CreateCollision(EKirbyCollisionOrder::Monster);
-	FlamerCollision->SetScale({ 40, 40 });
-	FlamerCollision->SetColType(ECollisionType::Rect);
+	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Monster);
+	MonsterCollision->SetScale({ 40, 40 });
+	MonsterCollision->SetColType(ECollisionType::Rect);
 
 	MapSize = UContentsHelper::ColMapImage->GetScale();
 
 	FallDown(MoveColor);
 	StateChange(EEnemyState::Idle);
-
 }
 
 void AFlamer::Tick(float _DeltaTime) {
@@ -40,7 +39,7 @@ void AFlamer::Tick(float _DeltaTime) {
 
 	// 커비 흡입 충돌체와 몬스터의 충돌 확인
 	std::vector<UCollision*> Result;
-	if (true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
 	{
 		// 커비쪽으로 당겨지기
 		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
@@ -50,10 +49,10 @@ void AFlamer::Tick(float _DeltaTime) {
 		return;
 	}
 
-	if (true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
 	{
 		// Bullet종류로 공격 받았을 때
-		StateChange(EEnemyState::Hurt);
+		StateChange(EEnemyState::Damaged);
 		return;
 	}
 }
@@ -67,8 +66,8 @@ void AFlamer::StateChange(EEnemyState _State)
 		case EEnemyState::Idle:
 			IdleStart();
 			break;
-		case EEnemyState::Hurt:
-			HurtStart();
+		case EEnemyState::Damaged:
+			DamagedStart();
 			break;
 		case EEnemyState::Move:
 			MoveStart();
@@ -90,8 +89,8 @@ void AFlamer::StateUpdate(float _DeltaTime)
 	case EEnemyState::Idle:
 		Idle(_DeltaTime);
 		break;
-	case EEnemyState::Hurt:
-		Hurt(_DeltaTime);
+	case EEnemyState::Damaged:
+		Damaged(_DeltaTime);
 		break;
 	case EEnemyState::Move:
 		Move(_DeltaTime);
@@ -112,22 +111,22 @@ void AFlamer::IdleStart()
 	{
 		FallDown(MoveColor);
 	}
-	FlamerRenderer->ChangeAnimation("Spin");
+	MonsterRenderer->ChangeAnimation("Spin");
 }
 
-void AFlamer::HurtStart()
+void AFlamer::DamagedStart()
 {
-	FlamerRenderer->ChangeAnimation("Hurt");
+	MonsterRenderer->ChangeAnimation("Damaged");
 }
 
 void AFlamer::MoveStart()
 {
-	FlamerRenderer->ChangeAnimation("Spin");
+	MonsterRenderer->ChangeAnimation("Spin");
 }
 
 void AFlamer::InhaledStart()
 {
-	FlamerRenderer->ChangeAnimation("Hurt");
+	MonsterRenderer->ChangeAnimation("Damaged");
 }
 
 void AFlamer::Idle(float _DeltaTime)
@@ -140,9 +139,9 @@ void AFlamer::Idle(float _DeltaTime)
 	ColorLineMove(_DeltaTime, MoveColor);
 
 	std::vector<UCollision*> Result;
-	if (nullptr != FlamerCollision && true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	if (nullptr != MonsterCollision && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
-		StateChange(EEnemyState::Hurt);
+		StateChange(EEnemyState::Damaged);
 		return;
 	}
 }
@@ -160,29 +159,25 @@ void AFlamer::Move(float _DeltaTime)
 	}
 }
 
-void AFlamer::Hurt(float _DeltaTime)
+void AFlamer::Damaged(float _DeltaTime)
 {
 	// 나중에 체력 넣으면 체력이 0될 때 죽어야 함(미완)
 
 	// 바닥에 떨어진 후 Move
-	FVector MyPos = GetActorLocation();
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(MyPos.iX(), MyPos.iY(), Color8Bit::MagentaA);
-	if (Color != Color8Bit::MagentaA)
+	if (MonsterRenderer->IsCurAnimationEnd() == true)
 	{
-		AddActorLocation(FVector::Down * 100.0f * _DeltaTime);
-	}
-	else
-	{
+		FallDown(Color8Bit::MagentaA);
 		StateChange(EEnemyState::Move);
 		return;
 	}
+
 }
 
 void AFlamer::Inhaled(float _DeltaTime)
 {
 	// 흡입되다가 커비 몸과 충돌됐을 경우
 	std::vector<UCollision*> Result;
-	if (true == FlamerCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
 		Destroy();
 	}
