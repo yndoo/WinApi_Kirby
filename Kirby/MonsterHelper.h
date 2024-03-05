@@ -17,6 +17,35 @@ public:
 	MonsterHelper& operator=(const MonsterHelper& _Other) = delete;
 	MonsterHelper& operator=(MonsterHelper&& _Other) noexcept = delete;
 
+	int GetMaxHp()
+	{
+		return MaxHp;
+	}
+
+	void SetMaxHp(int _MaxHp)
+	{
+		MaxHp = _MaxHp;
+		CurHp = MaxHp;
+	}
+
+	int GetCurHp()
+	{
+		return CurHp;
+	}
+
+	void SetCurHp(int _CurHp)
+	{
+		CurHp = _CurHp;
+	}
+
+	void AddDamageHp(int _Damage)
+	{
+		CurHp += _Damage;
+		if (CurHp > MaxHp)
+		{
+			CurHp = MaxHp;
+		}
+	}
 protected:
 	UCollision* MonsterCollision = nullptr;
 	UImageRenderer* MonsterRenderer = nullptr;
@@ -49,6 +78,7 @@ protected:
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();
 private:
-
+	int MaxHp = 200;
+	int CurHp = 200;
 };
 

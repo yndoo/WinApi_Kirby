@@ -13,6 +13,7 @@ void AFlamer::BeginPlay() {
 	AActor::BeginPlay();
 
 	SetActorLocation({ 500,250 });
+	SetMaxHp(100);
 
 	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
 	MonsterRenderer->SetImage("Flamer_Spin.png");

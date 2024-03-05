@@ -13,6 +13,7 @@ void AWaddleDee::BeginPlay()
 	AActor::BeginPlay();
 
 	SetActorLocation({ 1500, 200 });
+	SetMaxHp(100);
 
 	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
 	MonsterRenderer->SetImage("WaddleDee_Right.png");
@@ -23,13 +24,14 @@ void AWaddleDee::BeginPlay()
 	MonsterRenderer->CreateAnimation("Idle_Left", "WaddleDee_Left.png", 0, 4, 0.3f, true);
 	MonsterRenderer->CreateAnimation("Inhaled_Right", "WaddleDee_Right.png", 8, 8, 0.1f, false);
 	MonsterRenderer->CreateAnimation("Inhaled_Left", "WaddleDee_Left.png", 8, 8, 0.1f, false);
-	MonsterRenderer->CreateAnimation("Damaged_Right", "WaddleDee_Right.png", { 8,8,8,8 }, 0.1f, false);
-	MonsterRenderer->CreateAnimation("Damaged_Left", "WaddleDee_Left.png", { 8,8,8,8 }, 0.1f, false);
+	MonsterRenderer->CreateAnimation("Damaged_Right", "WaddleDee_Right.png", { 8,8,8,8 }, 0.3f, false);
+	MonsterRenderer->CreateAnimation("Damaged_Left", "WaddleDee_Left.png", { 8,8,8,8 }, 0.3f, false);
 	//MonsterRenderer->CreateAnimation("Damaged", "WaddleDee_Right.png", { 0,0,0,0,1 }, 0.2f, false);
 	//MonsterRenderer->ChangeAnimation("Idle_Left");
 
 	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Monster);
 	MonsterCollision->SetScale({ 40, 40 });
+	MonsterCollision->SetPosition({ 0, -20 });
 	MonsterCollision->SetColType(ECollisionType::Rect);
 
 	MapSize = UContentsHelper::ColMapImage->GetScale();
@@ -70,13 +72,20 @@ void AWaddleDee::Idle(float _DeltaTime)
 
 void AWaddleDee::DamagedStart()
 {
+	AddDamageHp(-60);
+	MonsterCollision->SetActive(true, 2.0f);
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 }
 void AWaddleDee::Damaged(float _DeltaTime)
 {
-	if (MonsterRenderer->IsCurAnimationEnd() == true)
+	if (GetCurHp() <= 0)
 	{
 		Destroy();
+	}
+	else if (MonsterRenderer->IsCurAnimationEnd())
+	{
+		StateChange(EEnemyState::Idle);
+		return;
 	}
 }
 
