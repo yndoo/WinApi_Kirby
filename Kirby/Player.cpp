@@ -96,8 +96,11 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("InhaleSmall", "Inhale", 5, 6, 0.1f, true);
 	AutoCreateAnimation("InhaleLarge", "Inhale", 7, 8, 0.1f, true);
 	AutoCreateAnimation("InhaleFail", "Inhale", 9, 12, 0.1f, false);
-	AutoCreateAnimation("JumpTurn", "Jump", 1, 8, 0.03f, false);
 	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
+	AutoCreateAnimation("JumpTurn", "Jump", 1, 6, 0.04f, false);
+	AutoCreateAnimation("JumpEnd", "Jump", 7, 8, 0.1f, false);
+	AutoCreateAnimation("Fly", "Fly", 0, 9, 0.1f, false);
+	AutoCreateAnimation("Exhale", "Fly", { 1, 0 }, 0.1f, false);
 
 	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
 	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
@@ -184,6 +187,9 @@ void APlayer::StateChange(EKirbyState _State)
 		case EKirbyState::Attack:
 			AttackStart();
 			break;
+		case EKirbyState::Fly:
+			FlyStart();
+			break;
 		case EKirbyState::LadderUp:
 			LadderUpStart();
 			break;
@@ -242,6 +248,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EKirbyState::Attack:
 		// 공격
 		Attack(_DeltaTime);
+		break;
+	case EKirbyState::Fly:
+		// 날기
+		Fly(_DeltaTime);
 		break;
 	case EKirbyState::LadderUp:
 		// 사다리 오르기
@@ -621,7 +631,13 @@ void APlayer::Jump(float _DeltaTime)
 		MoveVector = FVector::Zero;
 	}
 
-	// 점프 입력에 의한 이동 계산
+	if (true == UEngineInput::IsDown('Z'))
+	{
+		StateChange(EKirbyState::Fly);
+		return;
+	}
+
+	// 입력에 의한 이동 계산
 	if (true == UEngineInput::IsPress(VK_LEFT))
 	{
 		AddMoveVector(FVector::Left * _DeltaTime, MoveAcc);
@@ -635,7 +651,15 @@ void APlayer::Jump(float _DeltaTime)
 
 	if (abs(FinalMoveVector.Y) < 50.f && false == IsEating)
 	{
-		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpTurn"));
+		if (FinalMoveVector.Y < 0)
+		{
+			PlayerRenderer->ChangeAnimation(GetAnimationName("JumpTurn"));
+		}
+	}
+
+	if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpEnd")) && PlayerRenderer->IsCurAnimationEnd() == true && FinalMoveVector.Y > 50.f)
+	{
+		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
 	}
 
 	if (IsPlayerBottomMagentaA() || IsPlayerBottomYellow())
@@ -864,6 +888,16 @@ void APlayer::Attack(float _DeltaTime)
 			break;
 		};
 	}
+}
+
+void APlayer::FlyStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Fly"));
+}
+void APlayer::Fly(float _DeltaTime)
+{
+
 }
 
 void APlayer::LadderUpStart()

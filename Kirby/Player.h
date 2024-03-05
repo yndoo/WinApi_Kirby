@@ -59,7 +59,7 @@ protected:
 	void Eating(float _DeltaTime);
 	void Swallow(float _DeltaTime);
 	void Attack(float _DeltaTime);
-	//void Fly(float _DeltaTime);
+	void Fly(float _DeltaTime);
 	void LadderUp(float _DeltaTime);
 	void LadderDown(float _DeltaTime);
 
@@ -78,7 +78,7 @@ protected:
 	void EatingStart();
 	void SwallowStart();
 	void AttackStart();
-	//void FlyStart();
+	void FlyStart();
 	void LadderUpStart();
 	void LadderDownStart();
 

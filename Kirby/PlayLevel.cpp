@@ -44,6 +44,7 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("Run", 8, 1);
 	CuttingImgLR("Jump", 9, 1);
 	CuttingImgLR("Inhale", 13, 1);
+	CuttingImgLR("Fly", 10, 1);
 	CuttingImgLR("Eating", 7, 1);
 	CuttingImgLR("EatingMove", 15, 1);
 	CuttingImgLR("EatingJump", 9, 1);
