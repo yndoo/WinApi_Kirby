@@ -22,6 +22,7 @@ public:
 	bool IsPlayerBottomYellow();
 	bool IsPlayerOnYellow();
 	bool IsPlayerDoor();
+	bool IsPlayerLadder();
 
 	FVector BeforePos = { 100, 100 };
 
@@ -60,6 +61,8 @@ protected:
 	void Swallow(float _DeltaTime);
 	void Attack(float _DeltaTime);
 	//void Fly(float _DeltaTime);
+	void LadderUp(float _DeltaTime);
+	void LadderDown(float _DeltaTime);
 
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
@@ -77,6 +80,8 @@ protected:
 	void SwallowStart();
 	void AttackStart();
 	//void FlyStart();
+	void LadderUpStart();
+	void LadderDownStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);

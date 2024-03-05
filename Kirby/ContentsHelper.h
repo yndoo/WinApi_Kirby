@@ -41,7 +41,8 @@ enum class EKirbyState
 	Swallow,
 	Fly,
 	Attack,
-
+	LadderUp,
+	LadderDown,
 };
 
 enum class ECopyType

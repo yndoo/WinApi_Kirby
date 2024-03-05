@@ -57,7 +57,7 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("FireCrouch", 8, 1);
 	CuttingImgLR("FireJump", 11, 1);
 	CuttingImgLR("FireAttack", 4, 1);
-
+	UEngineResourcesManager::GetInst().CuttingImage("LadderMove.png", 13, 1);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
 	
@@ -85,6 +85,7 @@ void UPlayLevel::Tick(float _DeltaTime)
 		}
 	}
 
+	// 테스트용 레벨 전환
 	if (true == UEngineInput::IsDown(VK_F3))
 	{
 		GEngine->ChangeLevel("BossLevel");

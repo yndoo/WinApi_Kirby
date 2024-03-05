@@ -117,8 +117,10 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("FireJumpTurn", "FireJump", 2, 8, 0.03f, false);
 	AutoCreateAnimation("FireJumpStart", "FireJump", 0, 1, 0.1f, false);
 
+	PlayerRenderer->CreateAnimation("LadderUp", "LadderMove.png", 0, 9, 0.1f, true);
+	PlayerRenderer->CreateAnimation("LadderDown", "LadderMove.png", 10, 12, 0.1f, true);
 
-	PlayerRenderer->ChangeAnimation("Idle_Right");
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
 
 
 	BodyCollision = CreateCollision(EKirbyCollisionOrder::Player);
@@ -182,6 +184,9 @@ void APlayer::StateChange(EKirbyState _State)
 		case EKirbyState::Attack:
 			AttackStart();
 			break;
+		case EKirbyState::LadderUp:
+			LadderUpStart();
+			break;
 		default:
 			break;
 		}
@@ -234,6 +239,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EKirbyState::Attack:
 		// 공격
 		Attack(_DeltaTime);
+		break;
+	case EKirbyState::LadderUp:
+		// 사다리 오르기
+		LadderUp(_DeltaTime);
 		break;
 	case EKirbyState::FreeMove:
 		// 자유 이동
@@ -315,6 +324,16 @@ void  APlayer::Idle(float _DeltaTime)
 	{
 		StateChange(EKirbyState::Attack);
 		return;
+	}
+
+	if (true == UEngineInput::IsPress(VK_UP))
+	{
+		if (true == Kirby->IsPlayerLadder())
+		{
+			// 사다리 오르기
+			StateChange(EKirbyState::LadderUp);
+			return;
+		}
 	}
 
 	// ************* 이 아래로는 테스트용 *************
@@ -581,7 +600,7 @@ void APlayer::JumpStart()
 }
 void APlayer::Jump(float _DeltaTime)
 {
-	if (DirCheck())	// 공중에서 방향 전환됐을 경우 남은 속도 초기화
+   	if (DirCheck())	// 공중에서 방향 전환됐을 경우 남은 속도 초기화
 	{
 		MoveVector = FVector::Zero;
 	}
@@ -831,6 +850,32 @@ void APlayer::Attack(float _DeltaTime)
 	}
 }
 
+void APlayer::LadderUpStart()
+{
+	PlayerRenderer->ChangeAnimation("LadderUp");
+}
+void APlayer::LadderUp(float _DeltaTime)
+{
+	if (true == UEngineInput::IsPress(VK_UP))
+	{
+		// 액터 올리는 코드
+	}
+	if (false == IsPlayerLadder())
+	{
+		StateChange(EKirbyState::Idle);
+		return;
+	}
+}
+
+void APlayer::LadderDownStart()
+{
+
+}
+void APlayer::LadderDown(float _DeltaTime)
+{
+
+}
+
 // FreeMove : 디버깅용 캐릭터 자유 이동
 void APlayer::FreeMove(float _DeltaTime)
 {
@@ -962,6 +1007,10 @@ void APlayer::UpMoving(float _DeltaTime, Color8Bit _Color)
 			{
 				GetWorld()->AddCameraPos(FVector::Up);
 			}
+		}
+		else 
+		{
+			break;
 		}
 	}
 }
@@ -1132,6 +1181,17 @@ bool APlayer::IsPlayerDoor()
 	FVector ActorLoc = GetActorLocation();
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorLoc.iX(), ActorLoc.iY() - 10, Color8Bit::MagentaA);
 	if (Color == Color8Bit::GreenA)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool APlayer::IsPlayerLadder()
+{
+	FVector ActorLoc = GetActorLocation();
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorLoc.iX(), ActorLoc.iY() - 10, Color8Bit::MagentaA);
+	if (Color == Color8Bit::BlueA)
 	{
 		return true;
 	}
