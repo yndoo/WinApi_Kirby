@@ -84,6 +84,11 @@ void UPlayLevel::Tick(float _DeltaTime)
 			GEngine->ChangeLevel("BossLevel");
 		}
 	}
+
+	if (true == UEngineInput::IsDown(VK_F3))
+	{
+		GEngine->ChangeLevel("BossLevel");
+	}
 }
 
 void UPlayLevel::LevelStart(ULevel* _Level)

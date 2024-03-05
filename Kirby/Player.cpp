@@ -958,10 +958,10 @@ void APlayer::UpMoving(float _DeltaTime, Color8Bit _Color)
 		if (Color == _Color)
 		{
 			AddActorLocation(FVector::Up);
-		}
-		else
-		{
-			break;
+			if (GetWorld()->GetName() == "BOSSLEVEL")
+			{
+				GetWorld()->AddCameraPos(FVector::Up);
+			}
 		}
 	}
 }
@@ -1049,23 +1049,48 @@ void APlayer::FinalMove(float _DeltaTime)
 
 	FVector MovePos = FinalMoveVector * _DeltaTime;					// 플레이어 이동량 (걷기의 Move가 아님)
 
+	FVector PrevPlayerPos = GetActorLocation();
+
 	// 플레이어 이동
 	AddActorLocation(MovePos);
 
-	// 카메라 이동
-	FVector CameraPosLeft = GetWorld()->GetCameraPos();				// 카메라 왼쪽 좌표
-	FVector NextCameraPosLeft = CameraPosLeft + MovePos;			// 플레이어 이동 후 왼쪽 카메라 끝 
-	FVector NextCameraPosRight = WinScale + NextCameraPosLeft;		// 이동 후의 카메라 오른쪽 끝
-	FVector NextPlayerPos = GetActorLocation();						// 플레이어 위치
-
-	if (
-		NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&	// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-		NextPlayerPos.X <= MapSize.X - WinScale.hX() &&				// 플레이어 위치가 맵 오른쪽 끝에서 절반일 때까지만 카메라 따라오도록
-		NextCameraPosLeft.X >= 0 &&									// 카메라가 맵 밖으로 안 나오도록
-		NextCameraPosRight.X <= MapSize.X
-		)
 	{
-		GetWorld()->AddCameraPos(MoveVector * _DeltaTime);
+		// 카메라 이동
+		FVector CameraPosLeft = GetWorld()->GetCameraPos();				// 카메라 왼쪽 좌표
+		FVector NextCameraPosLeft = CameraPosLeft + MovePos;			// 플레이어 이동 후 왼쪽 카메라 끝 
+		FVector NextCameraPosRight = WinScale + NextCameraPosLeft;		// 이동 후의 카메라 오른쪽 끝
+		FVector NextPlayerPos = GetActorLocation();						// 플레이어 위치
+
+		if (
+			NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&	// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
+			NextPlayerPos.X <= MapSize.X - WinScale.hX() &&				// 플레이어 위치가 맵 오른쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			NextCameraPosLeft.X >= 0 &&									// 카메라가 맵 밖으로 안 나오도록
+			NextCameraPosRight.X <= MapSize.X
+			)
+		{
+			GetWorld()->AddCameraPos(MoveVector * _DeltaTime);
+		}
+	}
+
+	{
+		FVector CameraPos= GetWorld()->GetCameraPos();
+		FVector NextPlayerPos = GetActorLocation();
+		FVector YCam = { 0.f, MovePos.Y };
+		FVector NextCameraPos = CameraPos + YCam;
+		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
+		if (
+			NextPlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
+			NextPlayerPos.Y <= MapSize.Y - WinScale.hY() 				// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			)
+		{
+			//FVector CamPos = GetWorld()->GetCameraPos();
+			
+			GetWorld()->AddCameraPos(YCam);;
+		}
+		else 
+		{
+			int a = 0;
+		}
 	}
 }
 
