@@ -134,6 +134,9 @@ private:
 	float InhaleSecondMax = 80.f;
 	float InhaleMaxScale = 100.f;
 	float FireTime = 0.0f;
+
+	FVector LadderUpSpeed = FVector::Up * 100.f;
+	FVector LadderDownSpeed = FVector::Down * 100.f;
 };
 
 extern APlayer* Kirby;

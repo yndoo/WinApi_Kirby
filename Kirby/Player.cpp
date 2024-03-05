@@ -187,6 +187,9 @@ void APlayer::StateChange(EKirbyState _State)
 		case EKirbyState::LadderUp:
 			LadderUpStart();
 			break;
+		case EKirbyState::LadderDown:
+			LadderDownStart();
+			break;
 		default:
 			break;
 		}
@@ -243,6 +246,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EKirbyState::LadderUp:
 		// 사다리 오르기
 		LadderUp(_DeltaTime);
+		break;
+	case EKirbyState::LadderDown:
+		// 사다리 내려가기
+		LadderDown(_DeltaTime);
 		break;
 	case EKirbyState::FreeMove:
 		// 자유 이동
@@ -335,7 +342,15 @@ void  APlayer::Idle(float _DeltaTime)
 			return;
 		}
 	}
-
+	if (true == UEngineInput::IsPress(VK_DOWN))
+	{
+		if (true == Kirby->IsPlayerLadder())
+		{
+			// 사다리 내리기
+			StateChange(EKirbyState::LadderDown);
+			return;
+		}
+	}
 	// ************* 이 아래로는 테스트용 *************
 	if (true == UEngineInput::IsDown('1'))
 	{
@@ -859,21 +874,42 @@ void APlayer::LadderUp(float _DeltaTime)
 	if (true == UEngineInput::IsPress(VK_UP))
 	{
 		// 액터 올리는 코드
+		AddActorLocation(LadderUpSpeed * _DeltaTime);
+		GetWorld()->AddCameraPos(LadderUpSpeed * _DeltaTime);
 	}
 	if (false == IsPlayerLadder())
 	{
 		StateChange(EKirbyState::Idle);
 		return;
 	}
+
+	if (true == UEngineInput::IsFree(VK_UP) && true == UEngineInput::IsPress(VK_DOWN))
+	{
+		if (true == Kirby->IsPlayerLadder())
+		{
+			StateChange(EKirbyState::LadderDown);
+			return;
+		}
+	}
 }
 
 void APlayer::LadderDownStart()
 {
-
+	PlayerRenderer->ChangeAnimation("LadderDown");
 }
 void APlayer::LadderDown(float _DeltaTime)
 {
-
+	if (true == UEngineInput::IsPress(VK_DOWN))
+	{
+		// 액터 내리는 코드
+		AddActorLocation(LadderDownSpeed * _DeltaTime);
+		GetWorld()->AddCameraPos(LadderDownSpeed * _DeltaTime);
+	}
+	if (false == IsPlayerLadder())
+	{
+		StateChange(EKirbyState::Idle);
+		return;
+	}
 }
 
 // FreeMove : 디버깅용 캐릭터 자유 이동
@@ -1190,7 +1226,7 @@ bool APlayer::IsPlayerDoor()
 bool APlayer::IsPlayerLadder()
 {
 	FVector ActorLoc = GetActorLocation();
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorLoc.iX(), ActorLoc.iY() - 10, Color8Bit::MagentaA);
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorLoc.iX(), ActorLoc.iY(), Color8Bit::MagentaA);
 	if (Color == Color8Bit::BlueA)
 	{
 		return true;
