@@ -84,7 +84,7 @@ protected:
 
 	EKirbyState State = EKirbyState::None;
 	EKirbyState BeforeJumpState = EKirbyState::None;				// 점프 이전 State가 무엇인지 저장
-	EActorDir DirState = EActorDir::Left;						// DirCheck에 쓰이는 DirState
+	EActorDir DirState = EActorDir::Right;						// DirCheck에 쓰이는 DirState
 	EActorDir MyDir = EActorDir::Right;							// Move, Run 함수에서 쓸 Dir
 	std::string CurAnimationName = "Idle";
 

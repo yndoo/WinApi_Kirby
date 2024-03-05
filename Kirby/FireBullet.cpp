@@ -19,8 +19,8 @@ void AFireBullet::BeginPlay()
 	BulletRenderer->CreateAnimation("FireBulletIdle_Left", "FireBulletIdle_Left.png", 0, 6, 0.05f, true);
 
 	BulletCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);
-	BulletCollision->SetScale({ 100, 60 });
-	BulletCollision->SetPosition({ 0, 0 });
+	BulletCollision->SetScale({ 100, 80 });
+	BulletCollision->SetPosition({ 0, -40 });
 	BulletCollision->SetColType(ECollisionType::Rect);
 
 	BulletName = "FireBullet";

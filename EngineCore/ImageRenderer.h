@@ -3,6 +3,12 @@
 #include <EnginePlatform\WindowImage.h>
 #include <map>
 
+enum class EImageSortType
+{
+	Center,
+	Left,
+};
+
 class UAnimationInfo
 {
 public:
@@ -74,6 +80,15 @@ public:
 		float _Inter,
 		bool _Loop = true
 	);
+
+	void CreateAnimation(
+		std::string_view _AnimationName,
+		std::string_view _ImageName,
+		std::vector<int> _Indexs,
+		std::vector<float> _Inters,
+		bool _Loop = true
+	);
+
 
 	void ChangeAnimation(std::string_view _AnimationName, bool _IsForce = false, int _StartIndex = 0, float _Time = -1.0f);
 	void AnimationReset();
@@ -173,6 +188,17 @@ public:
 		TextEffect = _Effect;
 	}
 
+	void SetSortType(EImageSortType _SortType)
+	{
+		SortType = _SortType;
+	}
+
+	void AutoImageScale(float _AutoScale = 1.0f)
+	{
+		AutoImageScaleValue = true;
+		AutoImageScaleRatio = _AutoScale;
+	}
+
 protected:
 	void BeginPlay() override;
 	void Tick(float _Time) override;
@@ -198,6 +224,12 @@ private:
 	Color8Bit TextColor = Color8Bit::BlackA;
 	Color8Bit TextColor2 = Color8Bit::BlackA; //Ãß°¡
 	int TextEffect = 0;
+
+	bool AutoImageScaleValue = false;
+	float AutoImageScaleRatio = 1.0f;
+
+	EImageSortType SortType = EImageSortType::Center;
+
 	// Default : 0, 
 	// Bold & Italic : 1, (custom)
 	// Bold : 2,

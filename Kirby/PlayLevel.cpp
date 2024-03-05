@@ -110,6 +110,8 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Flamer2->LateStart = true;
 
 	AWaddleDee* WaddleDee1 = SpawnActor<AWaddleDee>();
+	AWaddleDee* WaddleDee2 = SpawnActor<AWaddleDee>();
+	WaddleDee2->SetActorLocation({ 2000, 200 });
 }
 
 void UPlayLevel::LevelEnd(ULevel* _Level)
