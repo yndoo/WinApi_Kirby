@@ -13,7 +13,8 @@ enum class EKirbyCollisionOrder
 	InhaleCol,		// 흡입 충돌체
 	PlayerBullet,	// 공격 충돌체
 	Monster,
-	Player
+	Player,
+	Ladder,
 };
 
 enum class EActorDir

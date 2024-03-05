@@ -22,7 +22,6 @@ public:
 	bool IsPlayerBottomYellow();
 	bool IsPlayerOnYellow();
 	bool IsPlayerDoor();
-	bool IsPlayerLadder();
 
 	FVector BeforePos = { 100, 100 };
 

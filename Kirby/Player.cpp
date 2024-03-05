@@ -335,7 +335,7 @@ void  APlayer::Idle(float _DeltaTime)
 
 	if (true == UEngineInput::IsPress(VK_UP))
 	{
-		if (true == Kirby->IsPlayerLadder())
+		if (false)	// 여기를 고쳐야 함
 		{
 			// 사다리 오르기
 			StateChange(EKirbyState::LadderUp);
@@ -344,13 +344,14 @@ void  APlayer::Idle(float _DeltaTime)
 	}
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
-		if (true == Kirby->IsPlayerLadder())
+		if (false)	// 여기를 고쳐야 함
 		{
 			// 사다리 내리기
 			StateChange(EKirbyState::LadderDown);
 			return;
 		}
 	}
+
 	// ************* 이 아래로는 테스트용 *************
 	if (true == UEngineInput::IsDown('1'))
 	{
@@ -877,20 +878,6 @@ void APlayer::LadderUp(float _DeltaTime)
 		AddActorLocation(LadderUpSpeed * _DeltaTime);
 		GetWorld()->AddCameraPos(LadderUpSpeed * _DeltaTime);
 	}
-	if (false == IsPlayerLadder())
-	{
-		StateChange(EKirbyState::Idle);
-		return;
-	}
-
-	if (true == UEngineInput::IsFree(VK_UP) && true == UEngineInput::IsPress(VK_DOWN))
-	{
-		if (true == Kirby->IsPlayerLadder())
-		{
-			StateChange(EKirbyState::LadderDown);
-			return;
-		}
-	}
 }
 
 void APlayer::LadderDownStart()
@@ -904,11 +891,6 @@ void APlayer::LadderDown(float _DeltaTime)
 		// 액터 내리는 코드
 		AddActorLocation(LadderDownSpeed * _DeltaTime);
 		GetWorld()->AddCameraPos(LadderDownSpeed * _DeltaTime);
-	}
-	if (false == IsPlayerLadder())
-	{
-		StateChange(EKirbyState::Idle);
-		return;
 	}
 }
 
@@ -1217,17 +1199,6 @@ bool APlayer::IsPlayerDoor()
 	FVector ActorLoc = GetActorLocation();
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorLoc.iX(), ActorLoc.iY() - 10, Color8Bit::MagentaA);
 	if (Color == Color8Bit::GreenA)
-	{
-		return true;
-	}
-	return false;
-}
-
-bool APlayer::IsPlayerLadder()
-{
-	FVector ActorLoc = GetActorLocation();
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorLoc.iX(), ActorLoc.iY(), Color8Bit::MagentaA);
-	if (Color == Color8Bit::BlueA)
 	{
 		return true;
 	}
