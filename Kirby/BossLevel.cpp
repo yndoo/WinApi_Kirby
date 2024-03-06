@@ -40,7 +40,7 @@ void UBossLevel::Tick(float _DeltaTime)
 	//UEngineDebug::DebugTextPrint("X : " + std::to_string(CamPos.X) + ", Y : " + std::to_string(CamPos.Y), 30.0f);
 	if (true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
 	{
-		GEngine->ChangeLevel("PlayLevel");
+		GEngine->ChangeLevel("TitleLevel");
 	}
 }
 void UBossLevel::LevelStart(ULevel* _Level)
