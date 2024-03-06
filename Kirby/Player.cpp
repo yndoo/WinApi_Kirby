@@ -121,15 +121,20 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("FireJumpStart", "FireJump", 0, 1, 0.1f, false);
 
 	PlayerRenderer->CreateAnimation("LadderUp", "LadderMove.png", 0, 9, 0.1f, true);
-	PlayerRenderer->CreateAnimation("LadderDown", "LadderMove.png", 10, 12, 0.1f, true);
+	PlayerRenderer->CreateAnimation("LadderDown", "LadderMove.png", 10, 12, 0.2f, true);
 
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
 
 
 	BodyCollision = CreateCollision(EKirbyCollisionOrder::Player);
-	BodyCollision->SetScale({ 45, 0 });
+	BodyCollision->SetScale({ 39, 0 });
 	BodyCollision->SetPosition({ 0, -20 });
 	BodyCollision->SetColType(ECollisionType::CirCle);
+
+	BottomCollision = CreateCollision(EKirbyCollisionOrder::Player);
+	BottomCollision->SetScale({ 20, 0 });
+	BottomCollision->SetPosition({ 0, 20 });
+	BottomCollision->SetColType(ECollisionType::CirCle);
 
 	InhaleCollision = CreateCollision(EKirbyCollisionOrder::InhaleCol);
 	InhaleCollision->SetScale({ 100, 0 });		// 흡입 충돌체 크기는 흡입 입력 시간에 따라 달라진다.
@@ -303,8 +308,30 @@ void  APlayer::Idle(float _DeltaTime)
 		return;
 	}
 
+	if (true == UEngineInput::IsPress(VK_UP))
+	{
+		std::vector<UCollision*> Result;
+		if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
+		{
+			// 사다리 오르기
+			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY();
+			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY();
+			StateChange(EKirbyState::LadderUp);
+			return;
+		}
+	}
+
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
+		std::vector<UCollision*> Result;
+		if (true == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
+		{
+			// 사다리 내리기
+			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY();
+			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY();
+			StateChange(EKirbyState::LadderDown);
+			return;
+		}
 		if (false == IsEating)
 		{
 			StateChange(EKirbyState::Crouch);
@@ -341,25 +368,6 @@ void  APlayer::Idle(float _DeltaTime)
 	{
 		StateChange(EKirbyState::Attack);
 		return;
-	}
-
-	if (true == UEngineInput::IsPress(VK_UP))
-	{
-		if (false)	// 여기를 고쳐야 함
-		{
-			// 사다리 오르기
-			StateChange(EKirbyState::LadderUp);
-			return;
-		}
-	}
-	if (true == UEngineInput::IsPress(VK_DOWN))
-	{
-		if (false)	// 여기를 고쳐야 함
-		{
-			// 사다리 내리기
-			StateChange(EKirbyState::LadderDown);
-			return;
-		}
 	}
 
 	// ************* 이 아래로는 테스트용 *************
@@ -906,6 +914,19 @@ void APlayer::LadderUpStart()
 }
 void APlayer::LadderUp(float _DeltaTime)
 {
+	if (true == UEngineInput::IsFree(VK_UP) && true == UEngineInput::IsPress(VK_DOWN))
+	{
+		StateChange(EKirbyState::LadderDown);
+		return;
+	}
+	std::vector<UCollision*> Result;
+	if (false == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
+	{
+		float CurX = GetActorLocation().X;
+		SetActorLocation({ CurX, LadderTop });
+		StateChange(EKirbyState::Idle);
+		return;
+	}
 	if (true == UEngineInput::IsPress(VK_UP))
 	{
 		// 액터 올리는 코드
@@ -920,6 +941,19 @@ void APlayer::LadderDownStart()
 }
 void APlayer::LadderDown(float _DeltaTime)
 {
+	if (true == UEngineInput::IsFree(VK_DOWN) && true == UEngineInput::IsPress(VK_UP))
+	{
+		StateChange(EKirbyState::LadderUp);
+		return;
+	}
+	std::vector<UCollision*> Result;
+	if (false == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
+	{
+		float CurX = GetActorLocation().X;
+		SetActorLocation({ CurX, LadderBottom });
+		StateChange(EKirbyState::Idle);
+		return;
+	}
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
 		// 액터 내리는 코드
@@ -1151,6 +1185,13 @@ void APlayer::FinalMove(float _DeltaTime)
 	FVector MovePos = FinalMoveVector * _DeltaTime;					// 플레이어 이동량 (걷기의 Move가 아님)
 
 	FVector PrevPlayerPos = GetActorLocation();
+	FVector NextPlayerPos = PrevPlayerPos + MovePos;
+
+	Color8Bit TopColor = UContentsHelper::ColMapImage->GetColor(NextPlayerPos.iX(), NextPlayerPos.iY() - 40, Color8Bit::MagentaA);
+	if (TopColor == Color8Bit::MagentaA)
+	{
+		return;
+	}
 
 	// 플레이어 이동
 	AddActorLocation(MovePos);
@@ -1160,7 +1201,7 @@ void APlayer::FinalMove(float _DeltaTime)
 		FVector CameraPosLeft = GetWorld()->GetCameraPos();				// 카메라 왼쪽 좌표
 		FVector NextCameraPosLeft = CameraPosLeft + MovePos;			// 플레이어 이동 후 왼쪽 카메라 끝 
 		FVector NextCameraPosRight = WinScale + NextCameraPosLeft;		// 이동 후의 카메라 오른쪽 끝
-		FVector NextPlayerPos = GetActorLocation();						// 플레이어 위치
+		NextPlayerPos = GetActorLocation();						// 플레이어 위치
 
 		if (
 			NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&	// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
@@ -1175,22 +1216,18 @@ void APlayer::FinalMove(float _DeltaTime)
 
 	{
 		FVector CameraPos= GetWorld()->GetCameraPos();
-		FVector NextPlayerPos = GetActorLocation();
+		NextPlayerPos = GetActorLocation();
 		FVector YCam = { 0.f, MovePos.Y };
 		FVector NextCameraPos = CameraPos + YCam;
 		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
 		if (
 			NextPlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-			NextPlayerPos.Y <= MapSize.Y - WinScale.hY() 				// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			//NextPlayerPos.Y <= MapSize.Y - WinScale.hY() 				// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			NextCameraPos.Y >= 0 &&
+			NextCameraPos.Y + WinScale.Y <= MapSize.Y
 			)
 		{
-			//FVector CamPos = GetWorld()->GetCameraPos();
-			
-			GetWorld()->AddCameraPos(YCam);;
-		}
-		else 
-		{
-			int a = 0;
+			GetWorld()->AddCameraPos(YCam);
 		}
 	}
 }

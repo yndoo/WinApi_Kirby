@@ -97,6 +97,7 @@ protected:
 	bool IsFireKirby = false;
 private:
 	UCollision* BodyCollision = nullptr;
+	UCollision* BottomCollision = nullptr;
 	UCollision* InhaleCollision = nullptr;
 	UImageRenderer* PlayerRenderer = nullptr;
 
@@ -120,7 +121,7 @@ private:
 	FVector SlideAcc = FVector::Right * 2000.0f;
 	float SlideMaxSpeed = 800.0f;
 	FVector JumpVector = FVector::Zero;
-	FVector JumpPower = FVector::Up * 800.0f;
+	FVector JumpPower = FVector::Up * 600.0f;
 	float JumpMaxSpeed = 500.0f;
 	FVector GravityVector = FVector::Zero;
 	FVector GravityAcc = FVector::Down * 2000.0f;
@@ -136,6 +137,8 @@ private:
 
 	FVector LadderUpSpeed = FVector::Up * 100.f;
 	FVector LadderDownSpeed = FVector::Down * 100.f;
+	float LadderTop = 0.f;
+	float LadderBottom = 0.f;
 };
 
 extern APlayer* Kirby;

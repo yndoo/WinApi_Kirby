@@ -17,7 +17,7 @@ UBossLevel::~UBossLevel()
 void UBossLevel::BeginPlay()
 {
 	UEngineDirectory NewPath;
-
+	
 	NewPath.MoveParent();
 
 	NewPath.Move("KirbyResources");
@@ -54,6 +54,9 @@ void UBossLevel::LevelStart(ULevel* _Level)
 
 	SetCameraPos({ 0.f, MapSize.Y - WinScale.Y});
 	this->SpawnActor<APlayer>();
+
+	ALadder* FirstLadder = SpawnActor<ALadder>();
+	FirstLadder->SetActorLocation({ 580,1020 });
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {

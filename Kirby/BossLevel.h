@@ -2,6 +2,7 @@
 #include <EngineCore/Level.h>
 #include "Player.h"
 #include "Map.h"
+#include "Ladder.h"
 
 // Ό³Έν :
 class UBossLevel : public ULevel
