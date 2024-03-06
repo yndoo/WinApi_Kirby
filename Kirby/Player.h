@@ -22,6 +22,8 @@ public:
 	bool IsPlayerBottomYellow();
 	bool IsPlayerOnYellow();
 	bool IsPlayerDoor();
+	bool IsPlayerTopMagentaA();
+	void CameraMove(FVector MovePos);
 
 	FVector BeforePos = { 100, 100 };
 
@@ -129,6 +131,8 @@ private:
 	FVector LadderDownSpeed = FVector::Down * 100.f;
 	FVector FinalMoveVector = FVector::Zero;
 	float FreeMoveSpeed = 1000.0f;
+	float FlySpeed = 100.f;
+	
 
 	float InhaleScaleVar = 40.f;
 	float InhaleScaleAdd = 100.f;

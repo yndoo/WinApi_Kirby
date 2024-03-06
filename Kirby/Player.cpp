@@ -99,7 +99,8 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
 	AutoCreateAnimation("JumpTurn", "Jump", 1, 6, 0.04f, false);
 	AutoCreateAnimation("JumpEnd", "Jump", 7, 8, 0.05f, false);
-	AutoCreateAnimation("Fly", "Fly", 0, 9, 0.1f, false);
+	AutoCreateAnimation("FlyStart", "Fly", 0, 9, 0.1f, false);
+	AutoCreateAnimation("Flying", "Fly", 4, 9, 0.1f, true);
 	AutoCreateAnimation("Exhale", "Fly", { 1, 0 }, 0.1f, false);
 
 	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
@@ -917,11 +918,45 @@ void APlayer::Attack(float _DeltaTime)
 void APlayer::FlyStart()
 {
 	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Fly"));
+	PlayerRenderer->ChangeAnimation(GetAnimationName("FlyStart"));
 }
 void APlayer::Fly(float _DeltaTime)
 {
-
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Flying"));
+	if (true == UEngineInput::IsPress(VK_UP) || true == UEngineInput::IsPress('Z'))
+	{
+		FVector AddV = FVector::Up * FlySpeed * _DeltaTime;
+		AddActorLocation(AddV);
+	}
+	if (true == UEngineInput::IsPress(VK_LEFT))
+	{
+		FVector AddV = FVector::Left * FlySpeed * _DeltaTime;
+		AddActorLocation(AddV);
+		CameraMove(AddV);
+		//GetWorld()->AddCameraPos(AddV);
+	}
+	if (true == UEngineInput::IsPress(VK_RIGHT))
+	{
+		FVector AddV = FVector::Right * FlySpeed * _DeltaTime;
+		AddActorLocation(AddV);
+		CameraMove(AddV);
+		//GetWorld()->AddCameraPos(AddV);
+	}
+	if (true == UEngineInput::IsPress(VK_DOWN))
+	{
+		AddActorLocation(FVector::Down * FlySpeed * _DeltaTime);
+	}
+	if (true == UEngineInput::IsFree(VK_UP) && true == UEngineInput::IsFree('Z'))
+	{
+		AddActorLocation(FVector::Down * FlySpeed * _DeltaTime);
+	}
+	if (IsPlayerBottomMagentaA())
+	{
+		JumpVector = FVector::Zero;
+		MoveVector = FVector::Zero;
+		MoveUpdate(_DeltaTime, JumpMaxSpeed);
+	}
 }
 
 void APlayer::LadderUpStart()
@@ -1277,6 +1312,16 @@ bool APlayer::IsPlayerBottomMagentaA()
 	return false;
 }
 
+bool APlayer::IsPlayerTopMagentaA()
+{
+	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() - 40, Color8Bit::MagentaA);
+	if (Color == Color8Bit::MagentaA)
+	{
+		return true;
+	}
+	return false;
+}
+
 bool APlayer::IsPlayerBottomYellow()
 {
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
@@ -1309,4 +1354,43 @@ bool APlayer::IsPlayerDoor()
 		return true;
 	}
 	return false;
+}
+
+void APlayer::CameraMove(FVector MovePos)
+{
+	{
+		// 카메라 좌우이동
+		FVector CameraPosLeft = GetWorld()->GetCameraPos();				// 카메라 왼쪽 좌표
+		FVector NextCameraPosLeft = CameraPosLeft + MovePos;			// 플레이어 이동 후 왼쪽 카메라 끝 
+		FVector NextCameraPosRight = WinScale + NextCameraPosLeft;		// 이동 후의 카메라 오른쪽 끝
+		FVector NextPlayerPos = GetActorLocation();						// 플레이어 위치
+		FVector XCam = { MovePos.X, 0.f };
+		if (
+			NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&	// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
+			NextPlayerPos.X <= MapSize.X - WinScale.hX() &&				// 플레이어 위치가 맵 오른쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			NextCameraPosLeft.X >= 0 &&									// 카메라가 맵 밖으로 안 나오도록
+			NextCameraPosRight.X <= MapSize.X
+			)
+		{
+			GetWorld()->AddCameraPos(XCam);
+		}
+	}
+
+	{
+		// 카메라 상하이동
+		FVector CameraPos = GetWorld()->GetCameraPos();
+		FVector NextPlayerPos = GetActorLocation();
+		FVector YCam = { 0.f, MovePos.Y };
+		FVector NextCameraPos = CameraPos + YCam;
+		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
+		if (
+			NextPlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
+			//NextPlayerPos.Y <= MapSize.Y - WinScale.hY() &&			// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			NextCameraPos.Y >= 0 &&										// 카메라가 맵 밖으로 안 나오도록
+			NextCameraPos.Y + WinScale.Y <= MapSize.Y
+			)
+		{
+			GetWorld()->AddCameraPos(YCam);
+		}
+	}
 }
