@@ -20,7 +20,6 @@ public:
 
 	bool IsPlayerBottomMagentaA();
 	bool IsPlayerBottomYellow();
-	bool IsPlayerOnYellow();
 	bool IsPlayerDoor();
 	bool IsPlayerTopMagentaA();
 	void CameraMove(FVector MovePos);
@@ -64,6 +63,7 @@ protected:
 	void Fly(float _DeltaTime);
 	void LadderUp(float _DeltaTime);
 	void LadderDown(float _DeltaTime);
+	
 
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);

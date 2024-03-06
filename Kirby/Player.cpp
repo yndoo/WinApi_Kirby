@@ -99,8 +99,9 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
 	AutoCreateAnimation("JumpTurn", "Jump", 1, 6, 0.04f, false);
 	AutoCreateAnimation("JumpEnd", "Jump", 7, 8, 0.05f, false);
-	AutoCreateAnimation("FlyStart", "Fly", 0, 9, 0.1f, false);
-	AutoCreateAnimation("Flying", "Fly", 4, 9, 0.1f, true);
+	AutoCreateAnimation("JumpCrouch", "Crouch", 1, 1, 0.06f, false);
+	AutoCreateAnimation("FlyStart", "Fly", 0, 4, 0.05f, false);
+	AutoCreateAnimation("Flying", "Fly", 5, 9, 0.1f, true);
 	AutoCreateAnimation("Exhale", "Fly", { 1, 0 }, 0.1f, false);
 
 	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
@@ -109,17 +110,19 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("EatingRun", "EatingMove", 0, 14, 0.05f, true);
 	AutoCreateAnimation("EatingMove", "EatingMove", 0, 14, 0.07f, true);
 	AutoCreateAnimation("EatingJumpStart", "EatingJump", {0,1,2,3,4,5,6}, 0.08f, false);
-	AutoCreateAnimation("EatingJumpEnd", "EatingJump", 7, 8, 0.1f, false);
+	AutoCreateAnimation("EatingJumpEnd", "EatingJump", 7, 7, 0.1f, false);
 
 	AutoCreateAnimation("FireIdle", { 0,1,2,3,0,1,2,3,0,1,2,3, 4, 5 }, 0.09f, true);
 	AutoCreateAnimation("FireMove", 0, 19, 0.04f, true);
 	AutoCreateAnimation("FireSlide", 0, 4, 0.06f, false);
 	AutoCreateAnimation("FireBreak", 0, 1, 0.1f, false);
-	AutoCreateAnimation("FireRun", 0, 7, 0.05f, true);
-	AutoCreateAnimation("FireCrouch", 0, 7, 0.15f, true);
+	AutoCreateAnimation("FireRun", 0, 3, 0.05f, true);
+	AutoCreateAnimation("FireCrouch", 0, 1, 0.03f, true);
 	AutoCreateAnimation("FireAttack", 0, 3, 0.05f, true);
-	AutoCreateAnimation("FireJumpTurn", "FireJump", 2, 8, 0.03f, false);
 	AutoCreateAnimation("FireJumpStart", "FireJump", 0, 1, 0.1f, false);
+	AutoCreateAnimation("FireJumpTurn", "FireJump", 2, 8, 0.02f, false);
+	AutoCreateAnimation("FireJumpEnd", "FireJump", 8, 8, 0.05f, false);
+	AutoCreateAnimation("FireJumpCrouch", "FireJump", 10, 10, 0.06f, false);
 
 	PlayerRenderer->CreateAnimation("LadderUp", "LadderMove.png", 0, 9, 0.1f, true);
 	PlayerRenderer->CreateAnimation("LadderDown", "LadderMove.png", 10, 12, 0.2f, true);
@@ -666,7 +669,15 @@ void APlayer::Jump(float _DeltaTime)
 		}
 	}
 
-	if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpTurn")) && PlayerRenderer->IsCurAnimationEnd() == true && FinalMoveVector.Y > 40.f)
+	if (abs(FinalMoveVector.Y) < 40.f && true == IsEating)
+	{
+		if (FinalMoveVector.Y > 0)
+		{
+			//PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
+		}
+	}
+
+	if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpTurn")) && PlayerRenderer->IsCurAnimationEnd() == true && FinalMoveVector.Y > 40.f && false == IsEating)
 	{
 		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
 	}
@@ -675,14 +686,17 @@ void APlayer::Jump(float _DeltaTime)
 	{
 		JumpVector = FVector::Zero;
 		
-		if (true == IsEating && BeforeJumpState == EKirbyState::Idle)	// Eating 상태에서 점프 마무리
+		if (true == IsEating)	// Eating 상태에서 점프 마무리
 		{
+			if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpStart")) && PlayerRenderer->IsCurAnimationEnd() == true)
+			{
+				PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
+			}
 			if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpEnd")) && PlayerRenderer->IsCurAnimationEnd() == true)
 			{
 				StateChange(BeforeJumpState);
 				return;
 			}
-			//PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
 		}
 		else if(false == IsEating)	// Eating 아닌 상태에서 점프 마무리
 		{
@@ -694,8 +708,8 @@ void APlayer::Jump(float _DeltaTime)
 				}
 				if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("Crouch")) && PlayerRenderer->IsCurAnimationEnd() == true)
 				{
-						StateChange(BeforeJumpState);
-						return;
+					StateChange(BeforeJumpState);
+					return;
 				}
 			}
 			else
@@ -923,39 +937,42 @@ void APlayer::FlyStart()
 void APlayer::Fly(float _DeltaTime)
 {
 	DirCheck();
-	PlayerRenderer->ChangeAnimation(GetAnimationName("Flying"));
+	if (CurAnimationName == "FlyStart" && PlayerRenderer->IsCurAnimationEnd() == true)
+	{
+		PlayerRenderer->ChangeAnimation(GetAnimationName("Flying"));
+	}
+
 	if (true == UEngineInput::IsPress(VK_UP) || true == UEngineInput::IsPress('Z'))
 	{
 		FVector AddV = FVector::Up * FlySpeed * _DeltaTime;
 		AddActorLocation(AddV);
+		CameraMove(AddV);
 	}
 	if (true == UEngineInput::IsPress(VK_LEFT))
 	{
 		FVector AddV = FVector::Left * FlySpeed * _DeltaTime;
 		AddActorLocation(AddV);
 		CameraMove(AddV);
-		//GetWorld()->AddCameraPos(AddV);
 	}
 	if (true == UEngineInput::IsPress(VK_RIGHT))
 	{
 		FVector AddV = FVector::Right * FlySpeed * _DeltaTime;
 		AddActorLocation(AddV);
 		CameraMove(AddV);
-		//GetWorld()->AddCameraPos(AddV);
 	}
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
-		AddActorLocation(FVector::Down * FlySpeed * _DeltaTime);
+		//AddActorLocation(FVector::Down * FlySpeed * _DeltaTime);
 	}
 	if (true == UEngineInput::IsFree(VK_UP) && true == UEngineInput::IsFree('Z'))
 	{
-		AddActorLocation(FVector::Down * FlySpeed * _DeltaTime);
+		FVector AddV = FVector::Down * FlySpeed * _DeltaTime;
+		AddActorLocation(AddV);
+		CameraMove(AddV);
 	}
 	if (IsPlayerBottomMagentaA())
 	{
-		JumpVector = FVector::Zero;
-		MoveVector = FVector::Zero;
-		MoveUpdate(_DeltaTime, JumpMaxSpeed);
+		UpMoving(_DeltaTime, Color8Bit::MagentaA);
 	}
 }
 
@@ -1258,48 +1275,14 @@ void APlayer::FinalMove(float _DeltaTime)
 	Color8Bit TopColor = UContentsHelper::ColMapImage->GetColor(NextPlayerPos.iX(), NextPlayerPos.iY() - 20, Color8Bit::MagentaA);
 	if (TopColor == Color8Bit::MagentaA || TopColor == Color8Bit::YellowA)
 	{
-		PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));	// TestCode
+		PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));	// 머리박을 때 찌부되는거 TestCode
 		return;
 	}
 
 	// 플레이어 이동
 	AddActorLocation(MovePos);
 
-	{
-		// 카메라 좌우이동
-		FVector CameraPosLeft = GetWorld()->GetCameraPos();				// 카메라 왼쪽 좌표
-		FVector NextCameraPosLeft = CameraPosLeft + MovePos;			// 플레이어 이동 후 왼쪽 카메라 끝 
-		FVector NextCameraPosRight = WinScale + NextCameraPosLeft;		// 이동 후의 카메라 오른쪽 끝
-		NextPlayerPos = GetActorLocation();						// 플레이어 위치
-
-		if (
-			NextPlayerPos.X >= NextCameraPosLeft.X + WinScale.hX() &&	// 플레이어 위치가 맵 왼쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-			NextPlayerPos.X <= MapSize.X - WinScale.hX() &&				// 플레이어 위치가 맵 오른쪽 끝에서 절반일 때까지만 카메라 따라오도록
-			NextCameraPosLeft.X >= 0 &&									// 카메라가 맵 밖으로 안 나오도록
-			NextCameraPosRight.X <= MapSize.X
-			)
-		{
-			GetWorld()->AddCameraPos(MoveVector * _DeltaTime);
-		}
-	}
-
-	{
-		// 카메라 상하이동
-		FVector CameraPos= GetWorld()->GetCameraPos();
-		NextPlayerPos = GetActorLocation();
-		FVector YCam = { 0.f, MovePos.Y };
-		FVector NextCameraPos = CameraPos + YCam;
-		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
-		if (
-			NextPlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-			//NextPlayerPos.Y <= MapSize.Y - WinScale.hY() &&			// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
-			NextCameraPos.Y >= 0 &&										// 카메라가 맵 밖으로 안 나오도록
-			NextCameraPos.Y + WinScale.Y <= MapSize.Y
-			)
-		{
-			GetWorld()->AddCameraPos(YCam);
-		}
-	}
+	CameraMove(MovePos);
 }
 
 bool APlayer::IsPlayerBottomMagentaA()
@@ -1326,19 +1309,6 @@ bool APlayer::IsPlayerBottomYellow()
 {
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
 	if (Color == Color8Bit::YellowA)
-	{
-		return true;
-	}
-	return false;
-}
-
-// 실험 중인 함수.. (사용 X)
-bool APlayer::IsPlayerOnYellow()
-{
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
-	Color8Bit ColorLeft = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX() - 15, GetActorLocation().iY() + 1, Color8Bit::MagentaA);
-	Color8Bit ColorRight = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX() + 15, GetActorLocation().iY() + 1, Color8Bit::MagentaA);
-	if (Color == Color8Bit::YellowA || ColorLeft == Color8Bit::YellowA || ColorRight == Color8Bit::YellowA)
 	{
 		return true;
 	}

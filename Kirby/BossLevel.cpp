@@ -57,6 +57,10 @@ void UBossLevel::LevelStart(ULevel* _Level)
 
 	ALadder* FirstLadder = SpawnActor<ALadder>();
 	FirstLadder->SetActorLocation({ 580,1020 });
+
+	ALadder* SecondLadder = SpawnActor<ALadder>();
+	SecondLadder->SetActorLocation({ 60,800 });
+	SecondLadder->Collision->SetScale({ 40, 240 });
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {

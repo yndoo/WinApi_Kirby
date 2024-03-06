@@ -15,11 +15,11 @@ public:
 	ALadder& operator=(const ALadder& _Other) = delete;
 	ALadder& operator=(ALadder&& _Other) noexcept = delete;
 
+	UCollision* Collision = nullptr;
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 
-	UCollision* Collision = nullptr;
 private:
 
 };
