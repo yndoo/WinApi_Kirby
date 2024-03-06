@@ -63,7 +63,7 @@ protected:
 	void Fly(float _DeltaTime);
 	void LadderUp(float _DeltaTime);
 	void LadderDown(float _DeltaTime);
-	
+	void Exhale(float _DeltaTime);
 
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
@@ -83,6 +83,7 @@ protected:
 	void FlyStart();
 	void LadderUpStart();
 	void LadderDownStart();
+	void ExhaleStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
