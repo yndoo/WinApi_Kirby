@@ -87,7 +87,7 @@ void APlayer::BeginPlay() {
 
 	AutoCreateAnimation("Move", { 0,1,1,2,3,4,5,6,6,7,8,9 }, 0.07f, true);
 	AutoCreateAnimation("Idle", { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 }, 0.09f, true);
-	AutoCreateAnimation("Crouch", 1, 1, 0.3f, false);
+	AutoCreateAnimation("Crouch", 1, 1, 0.06f, false);
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
 	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
@@ -98,7 +98,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("InhaleFail", "Inhale", 9, 12, 0.1f, false);
 	AutoCreateAnimation("JumpStart", "Jump", 0, 0, 0.1f, false);
 	AutoCreateAnimation("JumpTurn", "Jump", 1, 6, 0.04f, false);
-	AutoCreateAnimation("JumpEnd", "Jump", 7, 8, 0.1f, false);
+	AutoCreateAnimation("JumpEnd", "Jump", 7, 8, 0.05f, false);
 	AutoCreateAnimation("Fly", "Fly", 0, 9, 0.1f, false);
 	AutoCreateAnimation("Exhale", "Fly", { 1, 0 }, 0.1f, false);
 
@@ -657,7 +657,7 @@ void APlayer::Jump(float _DeltaTime)
 
 	MoveUpdate(_DeltaTime, JumpMaxSpeed);
 
-	if (abs(FinalMoveVector.Y) < 50.f && false == IsEating)
+	if (abs(FinalMoveVector.Y) < 40.f && false == IsEating)
 	{
 		if (FinalMoveVector.Y < 0)
 		{
@@ -665,7 +665,7 @@ void APlayer::Jump(float _DeltaTime)
 		}
 	}
 
-	if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpEnd")) && PlayerRenderer->IsCurAnimationEnd() == true && FinalMoveVector.Y > 50.f)
+	if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpTurn")) && PlayerRenderer->IsCurAnimationEnd() == true && FinalMoveVector.Y > 40.f)
 	{
 		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
 	}
@@ -673,19 +673,35 @@ void APlayer::Jump(float _DeltaTime)
 	if (IsPlayerBottomMagentaA() || IsPlayerBottomYellow())
 	{
 		JumpVector = FVector::Zero;
-		if (true == IsEating && BeforeJumpState == EKirbyState::Idle)
+		
+		if (true == IsEating && BeforeJumpState == EKirbyState::Idle)	// Eating 상태에서 점프 마무리
 		{
 			if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpEnd")) && PlayerRenderer->IsCurAnimationEnd() == true)
 			{
 				StateChange(BeforeJumpState);
 				return;
 			}
-			PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
+			//PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
 		}
-		else
+		else if(false == IsEating)	// Eating 아닌 상태에서 점프 마무리
 		{
-			StateChange(BeforeJumpState);
-			return;
+			if (BeforeJumpState == EKirbyState::Idle)
+			{
+				if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpEnd")) && PlayerRenderer->IsCurAnimationEnd() == true)
+				{
+					PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));
+				}
+				if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("Crouch")) && PlayerRenderer->IsCurAnimationEnd() == true)
+				{
+						StateChange(BeforeJumpState);
+						return;
+				}
+			}
+			else
+			{
+				StateChange(BeforeJumpState);
+				return;
+			}
 		}
 	}
 }
@@ -931,7 +947,15 @@ void APlayer::LadderUp(float _DeltaTime)
 	{
 		// 액터 올리는 코드
 		AddActorLocation(LadderUpSpeed * _DeltaTime);
-		GetWorld()->AddCameraPos(LadderUpSpeed * _DeltaTime);
+		FVector PlayerPos = GetActorLocation();
+		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
+		if (
+			PlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
+			PlayerPos.Y <= MapSize.Y - WinScale.hY() 				// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			)
+		{
+			GetWorld()->AddCameraPos(LadderUpSpeed * _DeltaTime);
+		}
 	}
 }
 
@@ -958,7 +982,16 @@ void APlayer::LadderDown(float _DeltaTime)
 	{
 		// 액터 내리는 코드
 		AddActorLocation(LadderDownSpeed * _DeltaTime);
-		GetWorld()->AddCameraPos(LadderDownSpeed * _DeltaTime);
+
+		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
+		FVector PlayerPos = GetActorLocation();
+		if (
+			PlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
+			PlayerPos.Y <= MapSize.Y - WinScale.hY() 				// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			)
+		{
+			GetWorld()->AddCameraPos(LadderDownSpeed * _DeltaTime);
+		}
 	}
 }
 
@@ -1187,9 +1220,10 @@ void APlayer::FinalMove(float _DeltaTime)
 	FVector PrevPlayerPos = GetActorLocation();
 	FVector NextPlayerPos = PrevPlayerPos + MovePos;
 
-	Color8Bit TopColor = UContentsHelper::ColMapImage->GetColor(NextPlayerPos.iX(), NextPlayerPos.iY() - 40, Color8Bit::MagentaA);
-	if (TopColor == Color8Bit::MagentaA)
+	Color8Bit TopColor = UContentsHelper::ColMapImage->GetColor(NextPlayerPos.iX(), NextPlayerPos.iY() - 20, Color8Bit::MagentaA);
+	if (TopColor == Color8Bit::MagentaA || TopColor == Color8Bit::YellowA)
 	{
+		PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));	// TestCode
 		return;
 	}
 
@@ -1197,7 +1231,7 @@ void APlayer::FinalMove(float _DeltaTime)
 	AddActorLocation(MovePos);
 
 	{
-		// 카메라 이동
+		// 카메라 좌우이동
 		FVector CameraPosLeft = GetWorld()->GetCameraPos();				// 카메라 왼쪽 좌표
 		FVector NextCameraPosLeft = CameraPosLeft + MovePos;			// 플레이어 이동 후 왼쪽 카메라 끝 
 		FVector NextCameraPosRight = WinScale + NextCameraPosLeft;		// 이동 후의 카메라 오른쪽 끝
@@ -1215,6 +1249,7 @@ void APlayer::FinalMove(float _DeltaTime)
 	}
 
 	{
+		// 카메라 상하이동
 		FVector CameraPos= GetWorld()->GetCameraPos();
 		NextPlayerPos = GetActorLocation();
 		FVector YCam = { 0.f, MovePos.Y };
@@ -1222,8 +1257,8 @@ void APlayer::FinalMove(float _DeltaTime)
 		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
 		if (
 			NextPlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-			//NextPlayerPos.Y <= MapSize.Y - WinScale.hY() 				// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
-			NextCameraPos.Y >= 0 &&
+			//NextPlayerPos.Y <= MapSize.Y - WinScale.hY() &&			// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			NextCameraPos.Y >= 0 &&										// 카메라가 맵 밖으로 안 나오도록
 			NextCameraPos.Y + WinScale.Y <= MapSize.Y
 			)
 		{

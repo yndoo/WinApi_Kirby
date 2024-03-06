@@ -121,10 +121,12 @@ private:
 	FVector SlideAcc = FVector::Right * 2000.0f;
 	float SlideMaxSpeed = 800.0f;
 	FVector JumpVector = FVector::Zero;
-	FVector JumpPower = FVector::Up * 600.0f;
+	FVector JumpPower = FVector::Up * 600.0f;	//600
 	float JumpMaxSpeed = 500.0f;
 	FVector GravityVector = FVector::Zero;
 	FVector GravityAcc = FVector::Down * 2000.0f;
+	FVector LadderUpSpeed = FVector::Up * 100.f;
+	FVector LadderDownSpeed = FVector::Down * 100.f;
 	FVector FinalMoveVector = FVector::Zero;
 	float FreeMoveSpeed = 1000.0f;
 
@@ -133,10 +135,9 @@ private:
 	float InhaleFirstMax = 50.f;
 	float InhaleSecondMax = 80.f;
 	float InhaleMaxScale = 100.f;
-	float FireTime = 0.0f;
+	float FireTime = 0.0f;			// FireKirby 공격 텀에 사용되는 변수
 
-	FVector LadderUpSpeed = FVector::Up * 100.f;
-	FVector LadderDownSpeed = FVector::Down * 100.f;
+
 	float LadderTop = 0.f;
 	float LadderBottom = 0.f;
 };
