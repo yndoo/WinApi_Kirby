@@ -121,7 +121,7 @@ private:
 	FVector SlideAcc = FVector::Right * 2000.0f;
 	float SlideMaxSpeed = 800.0f;
 	FVector JumpVector = FVector::Zero;
-	FVector JumpPower = FVector::Up * 600.0f;	//600
+	FVector JumpPower = FVector::Up * 700.0f;	//600
 	float JumpMaxSpeed = 500.0f;
 	FVector GravityVector = FVector::Zero;
 	FVector GravityAcc = FVector::Down * 2000.0f;

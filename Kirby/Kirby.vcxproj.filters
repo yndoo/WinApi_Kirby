@@ -45,6 +45,9 @@
     <ClInclude Include="Ladder.h">
       <Filter>Actor</Filter>
     </ClInclude>
+    <ClInclude Include="WoodBlock.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -89,6 +92,9 @@
       <Filter>Actor\Monsters</Filter>
     </ClCompile>
     <ClCompile Include="Ladder.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="WoodBlock.cpp">
       <Filter>Actor</Filter>
     </ClCompile>
   </ItemGroup>

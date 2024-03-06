@@ -217,6 +217,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="WaddleDee.h" />
+    <ClInclude Include="WoodBlock.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BossLevel.cpp">
@@ -277,6 +281,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="WaddleDee.cpp" />
+    <ClCompile Include="WoodBlock.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EngineBase\EngineBase.vcxproj">

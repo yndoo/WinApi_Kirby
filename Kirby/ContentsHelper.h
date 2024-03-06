@@ -15,6 +15,7 @@ enum class EKirbyCollisionOrder
 	Monster,
 	Player,
 	Ladder,
+	Block,
 };
 
 enum class EActorDir

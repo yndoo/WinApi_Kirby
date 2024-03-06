@@ -1,25 +1,25 @@
-#include "Ladder.h"
+#include "WoodBlock.h"
 #include "ContentsHelper.h"
 
-ALadder::ALadder()
+AWoodBlock::AWoodBlock()
 {
 }
 
-ALadder::~ALadder()
+AWoodBlock::~AWoodBlock()
 {
 }
 
-void ALadder::BeginPlay()
+void AWoodBlock::BeginPlay()
 {
 	AActor::BeginPlay();
 
-	Collision = CreateCollision(EKirbyCollisionOrder::Ladder);
+	Collision = CreateCollision(EKirbyCollisionOrder::Block);
 	Collision->SetScale({ 40, 200 });
 	Collision->SetPosition({ 0, 0 });
 	Collision->SetColType(ECollisionType::Rect);
 }
 
-void ALadder::Tick(float _DeltaTime)
+void AWoodBlock::Tick(float _DeltaTime)
 {
 	AActor::Tick(_DeltaTime);
 }
