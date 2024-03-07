@@ -1071,6 +1071,7 @@ void APlayer::ExhaleStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Exhale"));
+	MoveVector = FVector::Zero;
 	JumpVector = FVector::Zero;
 	GravityVector = FVector::Zero;
 }
