@@ -982,9 +982,16 @@ void APlayer::Fly(float _DeltaTime)
 	}
 	if (true == UEngineInput::IsFree(VK_UP) && true == UEngineInput::IsFree('Z'))
 	{
-		FVector AddV = FVector::Down * FlySpeed * _DeltaTime;
-		AddActorLocation(AddV);
-		CameraMove(AddV);
+		if (IsPlayerBottomMagentaA())
+		{
+			UpMoving(_DeltaTime, Color8Bit::MagentaA);
+		} 
+		else
+		{
+			FVector AddV = FVector::Down * FlySpeed * _DeltaTime;
+			AddActorLocation(AddV);
+			CameraMove(AddV);
+		}
 	}
 	if (IsPlayerBottomMagentaA())
 	{
