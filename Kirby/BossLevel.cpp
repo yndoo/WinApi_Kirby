@@ -61,6 +61,14 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	ALadder* SecondLadder = SpawnActor<ALadder>();
 	SecondLadder->SetActorLocation({ 60,800 });
 	SecondLadder->Collision->SetScale({ 40, 240 });
+
+	// 1층 나무블록 두 개
+	std::vector<AWoodBlock*> WBV1;
+	for (int i = 0; i < 2; i++)
+	{
+		WBV1.push_back(SpawnActor<AWoodBlock>());
+		WBV1[i]->SetActorLocation({ 480 + i * 40,920 });
+	}
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {

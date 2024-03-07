@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "Ladder.h"
+#include "WoodBlock.h"
 
 // Ό³Έν :
 class UBossLevel : public ULevel
