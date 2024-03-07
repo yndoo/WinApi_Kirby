@@ -982,7 +982,7 @@ void APlayer::Fly(float _DeltaTime)
 	}
 	if (true == UEngineInput::IsFree(VK_UP) && true == UEngineInput::IsFree('Z'))
 	{
-		if (IsPlayerBottomMagentaA())
+		if (IsPlayerBottomMagentaA() || IsPlayerBottomYellow())
 		{
 			UpMoving(_DeltaTime, Color8Bit::MagentaA);
 		} 
@@ -993,10 +993,7 @@ void APlayer::Fly(float _DeltaTime)
 			CameraMove(AddV);
 		}
 	}
-	if (IsPlayerBottomMagentaA())
-	{
-		UpMoving(_DeltaTime, Color8Bit::MagentaA);
-	}
+
 }
 
 void APlayer::LadderUpStart()
