@@ -1028,7 +1028,7 @@ void APlayer::LadderUp(float _DeltaTime)
 	if (false == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 	{
 		float CurX = GetActorLocation().X;
-		SetActorLocation({ CurX, LadderTop });
+		//SetActorLocation({ CurX, LadderTop });
 		StateChange(EKirbyState::Idle);
 		return;
 	}
@@ -1057,7 +1057,9 @@ void APlayer::LadderDown(float _DeltaTime)
 	if (false == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 	{
 		float CurX = GetActorLocation().X;
-		SetActorLocation({ CurX, LadderBottom });
+		//float CurCamX = GetWorld()->GetCameraPos().X;
+		//SetActorLocation({ CurX, LadderBottom });
+		//GetWorld()->SetCameraPos({ CurCamX, MapSize.Y - WinScale.Y });
 		StateChange(EKirbyState::Idle);
 		return;
 	}
@@ -1067,6 +1069,10 @@ void APlayer::LadderDown(float _DeltaTime)
 		FVector LPos = LadderDownSpeed * _DeltaTime;
 		// 액터 내리는 코드
 		AddActorLocation(LPos);
+		if (IsPlayerBottomMagentaA())	// 카메라 더내려가는게 이거때문이 아닌가봐
+		{
+			return;
+		}
 		CameraMove(LPos);
 		//UpMoving(_DeltaTime, Color8Bit::MagentaA);
 	}
@@ -1409,7 +1415,7 @@ void APlayer::CameraMove(FVector MovePos)
 		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
 		if (
 			NextPlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-			//NextPlayerPos.Y <= MapSize.Y - WinScale.hY() &&			// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
+			NextPlayerPos.Y <= MapSize.Y - WinScale.hY() &&				// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
 			NextCameraPos.Y >= 0 &&										// 카메라가 맵 밖으로 안 나오도록
 			NextCameraPos.Y + WinScale.Y <= MapSize.Y
 			)
