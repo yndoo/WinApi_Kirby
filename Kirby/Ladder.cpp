@@ -14,7 +14,7 @@ void ALadder::BeginPlay()
 	AActor::BeginPlay();
 
 	Collision = CreateCollision(EKirbyCollisionOrder::Ladder);
-	Collision->SetScale({ 40, 200 });
+	Collision->SetScale({ 40, 198 });
 	Collision->SetPosition({ 0, 0 });
 	Collision->SetColType(ECollisionType::Rect);
 }

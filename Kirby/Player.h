@@ -145,6 +145,7 @@ private:
 
 	float LadderTop = 0.f;
 	float LadderBottom = 0.f;
+	//FVector LadderCamPos = FVector::Zero;
 };
 
 extern APlayer* Kirby;

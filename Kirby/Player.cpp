@@ -129,6 +129,8 @@ void APlayer::BeginPlay() {
 
 	PlayerRenderer->CreateAnimation("LadderUp", "LadderMove.png", 0, 9, 0.1f, true);
 	PlayerRenderer->CreateAnimation("LadderDown", "LadderMove.png", 10, 12, 0.2f, true);
+	PlayerRenderer->CreateAnimation("FireLadderUp", "FireLadderUp.png", 0, 39, 0.025f, true);
+	PlayerRenderer->CreateAnimation("FireLadderDown", "FireLadderDown.png", 0, 15, 0.05f, true);
 
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
 
@@ -139,9 +141,9 @@ void APlayer::BeginPlay() {
 	BodyCollision->SetColType(ECollisionType::CirCle);
 
 	BottomCollision = CreateCollision(EKirbyCollisionOrder::Player);
-	BottomCollision->SetScale({ 20, 0 });
-	BottomCollision->SetPosition({ 0, 20 });
-	BottomCollision->SetColType(ECollisionType::CirCle);
+	BottomCollision->SetScale({ 5, 5 });
+	BottomCollision->SetPosition({ 0, 5 });
+	BottomCollision->SetColType(ECollisionType::Rect);
 
 	InhaleCollision = CreateCollision(EKirbyCollisionOrder::InhaleCol);
 	InhaleCollision->SetScale({ 100, 0 });		// 흡입 충돌체 크기는 흡입 입력 시간에 따라 달라진다.
@@ -329,7 +331,7 @@ void  APlayer::Idle(float _DeltaTime)
 		{
 			// 사다리 오르기
 			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY();
-			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY();
+			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY();// -1.f;
 			StateChange(EKirbyState::LadderUp);
 			return;
 		}
@@ -342,7 +344,7 @@ void  APlayer::Idle(float _DeltaTime)
 		{
 			// 사다리 내리기
 			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY();
-			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY();
+			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY();// -1.f;
 			StateChange(EKirbyState::LadderDown);
 			return;
 		}
@@ -998,7 +1000,7 @@ void APlayer::Fly(float _DeltaTime)
 
 void APlayer::LadderUpStart()
 {
-	PlayerRenderer->ChangeAnimation("LadderUp");
+	PlayerRenderer->ChangeAnimation(GetAnimationName("LadderUp"));
 }
 void APlayer::LadderUp(float _DeltaTime)
 {
@@ -1018,22 +1020,15 @@ void APlayer::LadderUp(float _DeltaTime)
 	if (true == UEngineInput::IsPress(VK_UP))
 	{
 		// 액터 올리는 코드
-		AddActorLocation(LadderUpSpeed * _DeltaTime);
-		FVector PlayerPos = GetActorLocation();
-		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
-		if (
-			PlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-			PlayerPos.Y <= MapSize.Y - WinScale.hY() 				// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
-			)
-		{
-			GetWorld()->AddCameraPos(LadderUpSpeed * _DeltaTime);
-		}
+		FVector LPos = LadderUpSpeed * _DeltaTime;
+		AddActorLocation(LPos);
+		CameraMove(LPos);
 	}
 }
 
 void APlayer::LadderDownStart()
 {
-	PlayerRenderer->ChangeAnimation("LadderDown");
+	PlayerRenderer->ChangeAnimation(GetAnimationName("LadderDown"));
 }
 void APlayer::LadderDown(float _DeltaTime)
 {
@@ -1042,6 +1037,7 @@ void APlayer::LadderDown(float _DeltaTime)
 		StateChange(EKirbyState::LadderUp);
 		return;
 	}
+
 	std::vector<UCollision*> Result;
 	if (false == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 	{
@@ -1050,20 +1046,14 @@ void APlayer::LadderDown(float _DeltaTime)
 		StateChange(EKirbyState::Idle);
 		return;
 	}
+
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
+		FVector LPos = LadderDownSpeed * _DeltaTime;
 		// 액터 내리는 코드
-		AddActorLocation(LadderDownSpeed * _DeltaTime);
-
-		// BossLevel에서는 플레이어가 WinScale 절반 이상일 때 카메라가 따라가야 함.
-		FVector PlayerPos = GetActorLocation();
-		if (
-			PlayerPos.Y >= WinScale.hY() &&							// 플레이어 위치가 맵 위쪽 끝에서 절반 이상일 때부터 카메라 이동하도록
-			PlayerPos.Y <= MapSize.Y - WinScale.hY() 				// 플레이어 위치가 맵 아래쪽 끝에서 절반일 때까지만 카메라 따라오도록
-			)
-		{
-			GetWorld()->AddCameraPos(LadderDownSpeed * _DeltaTime);
-		}
+		AddActorLocation(LPos);
+		CameraMove(LPos);
+		//UpMoving(_DeltaTime, Color8Bit::MagentaA);
 	}
 }
 
@@ -1172,7 +1162,18 @@ std::string APlayer::GetAnimationName(std::string _Name)
 	}
 	else if (IsFireKirby == true)
 	{
+		if (_Name == "LadderUp" || _Name == "LadderDown")
+		{
+			return std::string("Fire") + _Name;
+		}
 		return std::string("Fire") + _Name + DirName;
+	}
+	else
+	{
+		if (_Name == "LadderUp" || _Name == "LadderDown")
+		{
+			return _Name;
+		}
 	}
 
 	return _Name + DirName;
