@@ -47,6 +47,7 @@ protected:
 	std::string GetAnimationName(std::string _Name);
 	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);	// 진짜 이동시키는 함수
 	void UpMoving(float _DeltaTime, Color8Bit _Color);
+	void WoodBlockCheck();
 
 	// 상태
 	void Idle(float _DeltaTime);
@@ -101,6 +102,7 @@ protected:
 private:
 	UCollision* BodyCollision = nullptr;
 	UCollision* BottomCollision = nullptr;
+	UCollision* RealBottomCollision = nullptr;
 	UCollision* InhaleCollision = nullptr;
 	UImageRenderer* PlayerRenderer = nullptr;
 

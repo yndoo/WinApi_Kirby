@@ -67,7 +67,7 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	for (int i = 0; i < 2; i++)
 	{
 		WBV1.push_back(SpawnActor<AWoodBlock>());
-		WBV1[i]->SetActorLocation({ 480 + i * 40,920 });
+		WBV1[i]->SetActorLocation({ 480 + i * 40, 920 });
 	}
 }
 void UBossLevel::LevelEnd(ULevel* _Level)

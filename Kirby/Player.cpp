@@ -145,6 +145,11 @@ void APlayer::BeginPlay() {
 	BottomCollision->SetPosition({ 0, 5 });
 	BottomCollision->SetColType(ECollisionType::Rect);
 
+	RealBottomCollision = CreateCollision(EKirbyCollisionOrder::Player);
+	RealBottomCollision->SetScale({ 10, 2 });
+	RealBottomCollision->SetPosition({ 0, 0 });
+	RealBottomCollision->SetColType(ECollisionType::Rect);
+
 	InhaleCollision = CreateCollision(EKirbyCollisionOrder::InhaleCol);
 	InhaleCollision->SetScale({ 100, 0 });		// 흡입 충돌체 크기는 흡입 입력 시간에 따라 달라진다.
 	InhaleCollision->SetPosition({ 0, -20 });	// 흡입 충돌체 위치는 흡입 시마다 바뀌어야 한다.
@@ -949,6 +954,16 @@ void APlayer::FlyStart()
 void APlayer::Fly(float _DeltaTime)
 {
 	DirCheck();
+	WoodBlockCheck();
+
+	if (IsPlayerTopMagentaA())
+	{
+		FVector AddV = FVector::Down * FlySpeed * _DeltaTime;
+		AddActorLocation(AddV);
+		CameraMove(AddV);
+		return;
+	}
+
 	if (CurAnimationName == "FlyStart" && PlayerRenderer->IsCurAnimationEnd() == true)
 	{
 		PlayerRenderer->ChangeAnimation(GetAnimationName("Flying"));
@@ -1320,8 +1335,8 @@ void APlayer::FinalMove(float _DeltaTime)
 
 	// 플레이어 이동
 	AddActorLocation(MovePos);
-
 	CameraMove(MovePos);
+	WoodBlockCheck();
 }
 
 bool APlayer::IsPlayerBottomMagentaA()
@@ -1400,6 +1415,29 @@ void APlayer::CameraMove(FVector MovePos)
 			)
 		{
 			GetWorld()->AddCameraPos(YCam);
+		}
+	}
+}
+
+void APlayer::WoodBlockCheck()
+{
+	std::vector<UCollision*> Result;
+	if (true == RealBottomCollision->CollisionCheck(EKirbyCollisionOrder::Block, Result))
+	{
+		while (true)
+		{
+			std::vector<UCollision*> Result2;
+			if (true == RealBottomCollision->CollisionCheck(EKirbyCollisionOrder::Block, Result2))
+			{
+				GravityVector = FVector::Zero;
+				JumpVector = FVector::Zero;
+				AddActorLocation(FVector::Up);
+				GetWorld()->AddCameraPos(FVector::Up);
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
 }
