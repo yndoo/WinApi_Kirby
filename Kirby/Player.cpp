@@ -123,6 +123,8 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("FireJumpTurn", "FireJump", 2, 8, 0.02f, false);
 	AutoCreateAnimation("FireJumpEnd", "FireJump", 8, 8, 0.05f, false);
 	AutoCreateAnimation("FireJumpCrouch", "FireJump", 10, 10, 0.06f, false);
+	AutoCreateAnimation("FireFlyStart", 2, 4, 0.05f, false);
+	AutoCreateAnimation("FireFlying", 0, 14, 0.1f, true);
 
 	PlayerRenderer->CreateAnimation("LadderUp", "LadderMove.png", 0, 9, 0.1f, true);
 	PlayerRenderer->CreateAnimation("LadderDown", "LadderMove.png", 10, 12, 0.2f, true);
