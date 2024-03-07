@@ -60,6 +60,7 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("FireAttack", 4, 1);
 	CuttingImgLR("FireFlyStart", 5, 1);
 	CuttingImgLR("FireFlying", 5, 3);
+	CuttingImgLR("FireExhale", 3, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("LadderMove.png", 13, 1);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 

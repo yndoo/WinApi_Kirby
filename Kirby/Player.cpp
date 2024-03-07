@@ -102,7 +102,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("JumpCrouch", "Crouch", 1, 1, 0.06f, false);
 	AutoCreateAnimation("FlyStart", "Fly", 0, 4, 0.05f, false);
 	AutoCreateAnimation("Flying", "Fly", 5, 9, 0.1f, true);
-	AutoCreateAnimation("Exhale", "Fly", { 1, 0 }, 0.1f, false);
+	AutoCreateAnimation("Exhale", "Fly", { 2, 1, 0 }, 0.15f, false);
 
 	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
 	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
@@ -125,6 +125,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("FireJumpCrouch", "FireJump", 10, 10, 0.06f, false);
 	AutoCreateAnimation("FireFlyStart", 2, 4, 0.05f, false);
 	AutoCreateAnimation("FireFlying", 0, 14, 0.1f, true);
+	AutoCreateAnimation("FireExhale", 0, 2, 0.15f, false);
 
 	PlayerRenderer->CreateAnimation("LadderUp", "LadderMove.png", 0, 9, 0.1f, true);
 	PlayerRenderer->CreateAnimation("LadderDown", "LadderMove.png", 10, 12, 0.2f, true);
@@ -207,6 +208,9 @@ void APlayer::StateChange(EKirbyState _State)
 		case EKirbyState::LadderDown:
 			LadderDownStart();
 			break;
+		case EKirbyState::Exhale:
+			ExhaleStart();
+			break;
 		default:
 			break;
 		}
@@ -271,6 +275,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EKirbyState::LadderDown:
 		// 사다리 내려가기
 		LadderDown(_DeltaTime);
+		break;
+	case EKirbyState::Exhale:
+		// 공기 뱉기
+		Exhale(_DeltaTime);
 		break;
 	case EKirbyState::FreeMove:
 		// 자유 이동
@@ -944,6 +952,12 @@ void APlayer::Fly(float _DeltaTime)
 		PlayerRenderer->ChangeAnimation(GetAnimationName("Flying"));
 	}
 
+	if (true == UEngineInput::IsPress('X'))
+	{
+		StateChange(EKirbyState::Exhale);
+		return;
+	}
+
 	if (true == UEngineInput::IsPress(VK_UP) || true == UEngineInput::IsPress('Z'))
 	{
 		FVector AddV = FVector::Up * FlySpeed * _DeltaTime;
@@ -1046,6 +1060,23 @@ void APlayer::LadderDown(float _DeltaTime)
 		{
 			GetWorld()->AddCameraPos(LadderDownSpeed * _DeltaTime);
 		}
+	}
+}
+
+void APlayer::ExhaleStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Exhale"));
+	JumpVector = FVector::Zero;
+	GravityVector = FVector::Zero;
+}
+void APlayer::Exhale(float _DeltaTime)
+{
+	MoveUpdate(_DeltaTime);
+	if (PlayerRenderer->IsCurAnimationEnd() == true)
+	{
+		StateChange(EKirbyState::Idle);
+		return;
 	}
 }
 
