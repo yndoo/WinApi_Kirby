@@ -19,7 +19,7 @@ public:
 	APlayer& operator=(APlayer&& _Other) noexcept = delete;
 
 	bool IsPlayerBottomMagentaA();
-	bool IsPlayerBottomYellow();
+	bool IsPlayerBottomYellowA();
 	bool IsPlayerDoor();
 	bool IsPlayerTopMagentaA();
 	void CameraMove(FVector MovePos);
@@ -45,7 +45,7 @@ protected:
 	// 상태 보조 함수
 	bool DirCheck(); // 방향 체크하고, 방향이 바뀌었는지를 리턴
 	std::string GetAnimationName(std::string _Name);
-	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);	// 진짜 이동시키는 함수
+	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);	
 	void UpMoving(float _DeltaTime, Color8Bit _Color);
 	void WoodBlockCheck();
 

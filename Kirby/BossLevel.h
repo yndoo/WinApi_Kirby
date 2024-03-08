@@ -29,10 +29,12 @@ protected:
 
 private:
 	APlayer* NewKirby = nullptr;
+	AMrFrosty* OneFrosty = nullptr;
 	ASpawner* FrostySpawner = nullptr;
+	ASpawner* FrostyStarter = nullptr;
 	AMap* Map = nullptr;
 
-	bool FrostySpawned = false;
+	//bool FrostySpawned = false;
 
 	FVector MapSize = FVector::Zero;
 	FVector WinScale = FVector::Zero;

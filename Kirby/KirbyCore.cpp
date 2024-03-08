@@ -52,13 +52,15 @@ void KirbyCore::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("WaddleDee_Left.png", 5, 2); 
 	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyIdle_Right.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyIdle_Left.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyMove_Right.png", 3, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyMove_Left.png", 3, 1);
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");
 	CreateLevel<URestAreaLevel>("RestAreaLevel");
 	CreateLevel<UBossLevel>("BossLevel");
 
-	ChangeLevel("PlayLevel");
+	ChangeLevel("BossLevel");
 	//ChangeLevel("TitleLevel");	// ¿·Ω√ ª©µ“
 }
 

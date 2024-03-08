@@ -74,7 +74,17 @@ void APlayer::BeginPlay() {
 	else
 	{
 		// 커비 찐 최초 생성
-		SetActorLocation({ 100, 100 });
+		// 테스트용 보스레벨에서 커비 최초생성하는 경우
+		std::string LevelName = GetWorld()->GetName();
+		if (LevelName == "BOSSLEVEL")
+		{
+			SetActorLocation({ 100, 1050 });
+		}
+		else	// 커비 찐 최초 생성
+		{
+			SetActorLocation({ 100, 100 });
+		}
+
 	}
 
 	Kirby = this;
@@ -699,7 +709,7 @@ void APlayer::Jump(float _DeltaTime)
 		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
 	}
 
-	if (IsPlayerBottomMagentaA() || IsPlayerBottomYellow())
+	if (IsPlayerBottomMagentaA() || IsPlayerBottomYellowA())
 	{
 		JumpVector = FVector::Zero;
 		
@@ -999,7 +1009,7 @@ void APlayer::Fly(float _DeltaTime)
 	}
 	if (true == UEngineInput::IsFree(VK_UP) && true == UEngineInput::IsFree('Z'))
 	{
-		if (IsPlayerBottomMagentaA() || IsPlayerBottomYellow())
+		if (IsPlayerBottomMagentaA() || IsPlayerBottomYellowA())
 		{
 			UpMoving(_DeltaTime, Color8Bit::MagentaA);
 		} 
@@ -1263,7 +1273,7 @@ void APlayer::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Ac
 	{
 		UpMoving(_DeltaTime, Color8Bit::MagentaA);
 	}
-	if (IsPlayerBottomYellow())
+	if (IsPlayerBottomYellowA())
 	{
 		UpMoving(_DeltaTime, Color8Bit::YellowA);
 	}
@@ -1308,7 +1318,7 @@ void APlayer::CalGravityVector(float _DeltaTime)
 		GravityVector = FVector::Zero;
 	}
 
-	if (IsPlayerBottomYellow())
+	if (IsPlayerBottomYellowA())
 	{
 		GravityVector = FVector::Zero;
 	}
@@ -1365,7 +1375,7 @@ bool APlayer::IsPlayerTopMagentaA()
 	return false;
 }
 
-bool APlayer::IsPlayerBottomYellow()
+bool APlayer::IsPlayerBottomYellowA()
 {
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY() + 1, Color8Bit::MagentaA);
 	if (Color == Color8Bit::YellowA)

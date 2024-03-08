@@ -44,14 +44,30 @@ void UBossLevel::Tick(float _DeltaTime)
 	}
 
 	std::vector<UCollision*> Result;
-	if (true == FrostySpawner->SpawnCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	if (nullptr != FrostySpawner && true == FrostySpawner->SpawnCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
 		//보스 스폰
-		AMrFrosty* Frosty = SpawnActor<AMrFrosty>();
-		Frosty->SetActorLocation({ 520, 300 });
+		OneFrosty = SpawnActor<AMrFrosty>();
+		OneFrosty->SetActorLocation({ 520, 300 });
 		FrostySpawner->SpawnCollision->Destroy();
 	}
+
+	std::vector<UCollision*> Result2;
+	if (nullptr != FrostyStarter && true == FrostyStarter->SpawnCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result2))
+	{
+		//보스 움직임시작?
+		OneFrosty->IsStart = true;
+		FrostyStarter->SpawnCollision->Destroy();
+	}
+
+	//테스트용
+	if (true == UEngineInput::IsDown(VK_SPACE))
+	{
+		Kirby->AddActorLocation({ 150, -500 });
+		AddCameraPos({ 0, -500 });
+	}
 }
+
 void UBossLevel::LevelStart(ULevel* _Level)
 {
 	Map->SetMapImage("bosslevel_map.png");
@@ -83,7 +99,9 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	FrostySpawner = SpawnActor<ASpawner>();
 	FrostySpawner->SetActorLocation({ 0, 400 });
 
-
+	// 보스 시작장치
+	FrostyStarter = SpawnActor<ASpawner>();
+	FrostyStarter->SetActorLocation({ 320, 300 });
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {
