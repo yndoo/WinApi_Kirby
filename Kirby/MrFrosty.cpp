@@ -114,7 +114,7 @@ void AMrFrosty::Move(float _DeltaTime)
 
 	// 벽에 닿으면 HitWall 상태로 변경해야함
 	float FrostyXPos = GetActorLocation().X;
-	if (FrostyXPos < 100.f)
+	if (FrostyXPos < 100.f || FrostyXPos > 570.f)
 	{
 		StateChange(EEnemyState::HitWall);
 		return;
@@ -126,15 +126,46 @@ void AMrFrosty::HitWallStart()
 	//이미지는 벽 방향 그대로, 벽에서 튕겨 나오는 건 벽 반대 방향
 	MonsterRenderer->AnimationReset();
 	MonsterRenderer->SetImage(GetAnimationName("Damaged") + std::string(".png"));
+	JumpVector = SmallJumpPower;	
+	switch (DirState)
+	{
+	case EActorDir::Right:
+		MoveVector += FVector::Left * 400.f;
+		break;
+	case EActorDir::Left:
+		MoveVector += FVector::Right * 400.f;
+		break;
+	default:
+		break;
+	}
 }
 void AMrFrosty::HitWall(float _DeltaTime)
 {
 	// 벽에서 튕겨나가기
-	// 
+	switch (DirState)
+	{
+	case EActorDir::Right:
+		AddMoveVector(FVector::Right * _DeltaTime, SmallMoveAcc);
+		break;
+	case EActorDir::Left:
+		AddMoveVector(FVector::Left * _DeltaTime, SmallMoveAcc);
+		break;
+	default:
+		break;
+	}
+	MoveUpdate(_DeltaTime);
+
 	// MoveVector가 일정 이하 됐을 때는
 	// 커비가 가까이 있으면 Shoot
 	// 커비가 멀리 있으면 Move
 	// 커비가 닿으면 Throw(이건 나중에)
+
+	if (abs(MoveVector.X) < 80.f)
+	{
+		MoveVector = FVector::Zero;
+		StateChange(EEnemyState::Idle);
+		return;
+	}
 }
 
 void AMrFrosty::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Acc /*= FVector::Zero*/)
@@ -207,10 +238,11 @@ void AMrFrosty::CalGravityVector(float _DeltaTime)
 void AMrFrosty::CalJumpVector(float _DeltaTime)
 {
 	FVector DownVec = FVector::Down * _DeltaTime * 100.f;
-	if (JumpVector.Y - DownVec.Y <= 0)
+	if (JumpVector.Y + DownVec.Y <= 0)
 	{
 		JumpVector += DownVec;
 	}
+
 }
 
 void AMrFrosty::CalFinalMoveVector(float _DeltaTime)

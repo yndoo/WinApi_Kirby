@@ -40,6 +40,7 @@ protected:
 
 	FVector MoveVector = FVector::Zero;
 	FVector MoveAcc = FVector::Right * 100.0f;
+	FVector SmallMoveAcc = FVector::Right * 50.f;
 	float MovePower = 50.f;
 	float MoveMaxSpeed = 200.0f;
 	FVector JumpVector = FVector::Zero;
