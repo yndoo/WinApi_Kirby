@@ -42,6 +42,15 @@ void UBossLevel::Tick(float _DeltaTime)
 	{
 		GEngine->ChangeLevel("TitleLevel");
 	}
+
+	std::vector<UCollision*> Result;
+	if (true == FrostySpawner->SpawnCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	{
+		//보스 스폰
+		AMrFrosty* Frosty = SpawnActor<AMrFrosty>();
+		Frosty->SetActorLocation({ 520, 300 });
+		FrostySpawner->SpawnCollision->Destroy();
+	}
 }
 void UBossLevel::LevelStart(ULevel* _Level)
 {
@@ -69,6 +78,12 @@ void UBossLevel::LevelStart(ULevel* _Level)
 		WBV1.push_back(SpawnActor<AWoodBlock>());
 		WBV1[i]->SetActorLocation({ 480 + i * 40, 920 });
 	}
+
+	// 보스 스폰장치
+	FrostySpawner = SpawnActor<ASpawner>();
+	FrostySpawner->SetActorLocation({ 0, 400 });
+
+
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {

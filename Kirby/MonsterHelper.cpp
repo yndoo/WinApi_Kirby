@@ -160,3 +160,26 @@ std::string MonsterHelper::GetAnimationName(std::string _Name)
 
 	return _Name + DirName;
 }
+
+bool MonsterHelper::DirCheck()
+{
+	bool IsChanged = false;
+	EActorDir Dir = DirState;
+	if (UEngineInput::IsPress(VK_LEFT))
+	{
+		Dir = EActorDir::Left;
+	}
+	if (UEngineInput::IsPress(VK_RIGHT))
+	{
+		Dir = EActorDir::Right;
+	}
+
+	if (Dir != DirState)	// 방향 변경됐으면 애니메이션 다시
+	{
+		DirState = Dir;
+		std::string Name = GetAnimationName(CurAnimationName);
+		IsChanged = true;
+	}
+
+	return IsChanged;
+}

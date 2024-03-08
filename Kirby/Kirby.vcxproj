@@ -175,6 +175,14 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="MrFrosty.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Spawner.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="StarBullet.h">
       <SubType>
       </SubType>
@@ -236,6 +244,14 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="MonsterHelper.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="MrFrosty.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Spawner.cpp">
       <SubType>
       </SubType>
     </ClCompile>

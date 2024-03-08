@@ -49,7 +49,9 @@ void KirbyCore::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Damaged.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("WaddleDee_Right.png", 5, 2);
-	UEngineResourcesManager::GetInst().CuttingImage("WaddleDee_Left.png", 5, 2);
+	UEngineResourcesManager::GetInst().CuttingImage("WaddleDee_Left.png", 5, 2); 
+	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyIdle_Right.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyIdle_Left.png", 2, 1);
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");

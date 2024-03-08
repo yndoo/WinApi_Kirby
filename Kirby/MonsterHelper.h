@@ -52,8 +52,8 @@ protected:
 
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
-	void StateUpdate(float _DeltaTime);
-	void StateChange(EEnemyState _State);
+	virtual void StateUpdate(float _DeltaTime);
+	virtual void StateChange(EEnemyState _State);
 
 	virtual void Idle(float _DeltaTime);
 	virtual void Damaged(float _DeltaTime);
@@ -67,6 +67,7 @@ protected:
 	virtual void InhaledStart();
 	//virtual void DieStart();
 
+	bool DirCheck();
 	void FallDown(Color8Bit _Color);
 	std::string GetAnimationName(std::string _Name);
 

@@ -4,6 +4,8 @@
 #include "Map.h"
 #include "Ladder.h"
 #include "WoodBlock.h"
+#include "Spawner.h"
+#include "MrFrosty.h"
 
 // Ό³Έν :
 class UBossLevel : public ULevel
@@ -27,7 +29,10 @@ protected:
 
 private:
 	APlayer* NewKirby = nullptr;
+	ASpawner* FrostySpawner = nullptr;
 	AMap* Map = nullptr;
+
+	bool FrostySpawned = false;
 
 	FVector MapSize = FVector::Zero;
 	FVector WinScale = FVector::Zero;

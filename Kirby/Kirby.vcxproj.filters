@@ -42,11 +42,17 @@
     <ClInclude Include="WaddleDee.h">
       <Filter>Actor\Monsters</Filter>
     </ClInclude>
-    <ClInclude Include="Ladder.h">
-      <Filter>Actor</Filter>
+    <ClInclude Include="MrFrosty.h">
+      <Filter>Actor\Monsters</Filter>
     </ClInclude>
     <ClInclude Include="WoodBlock.h">
-      <Filter>Actor</Filter>
+      <Filter>Actor\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="Ladder.h">
+      <Filter>Actor\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="Spawner.h">
+      <Filter>Actor\ETC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -91,11 +97,17 @@
     <ClCompile Include="WaddleDee.cpp">
       <Filter>Actor\Monsters</Filter>
     </ClCompile>
-    <ClCompile Include="Ladder.cpp">
-      <Filter>Actor</Filter>
+    <ClCompile Include="MrFrosty.cpp">
+      <Filter>Actor\Monsters</Filter>
     </ClCompile>
     <ClCompile Include="WoodBlock.cpp">
-      <Filter>Actor</Filter>
+      <Filter>Actor\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="Ladder.cpp">
+      <Filter>Actor\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="Spawner.cpp">
+      <Filter>Actor\ETC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +134,9 @@
     </Filter>
     <Filter Include="Actor\Monsters">
       <UniqueIdentifier>{54f14a6f-48ce-4345-903e-f78eb959f36b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\ETC">
+      <UniqueIdentifier>{6c99faff-7017-4b44-9557-2ea9d5685b3d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
