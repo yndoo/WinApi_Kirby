@@ -67,7 +67,7 @@ protected:
 	virtual void InhaledStart();
 	//virtual void DieStart();
 
-	bool DirCheck();
+	virtual bool DirCheck();	// 얘는 현재 커비의 Dir을 Check하는데?
 	void FallDown(Color8Bit _Color);
 	std::string GetAnimationName(std::string _Name);
 

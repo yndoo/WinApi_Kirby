@@ -63,6 +63,7 @@ enum class EEnemyState
 	Move,
 	Inhaled,
 	Die,
+	HitWall,
 };
 
 enum class EBulletState

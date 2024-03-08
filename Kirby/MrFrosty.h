@@ -27,6 +27,8 @@ protected:
 	void IdleStart() override;
 	void Move(float _DeltaTime) override;
 	void MoveStart() override;
+	void HitWall(float _DeltaTime);
+	void HitWallStart();
 
 	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);
@@ -51,6 +53,7 @@ protected:
 	//UCollision* BodyCollision = nullptr;
 	//UImageRenderer* Renderer = nullptr;
 private:
+	bool DirCheck() override;	// 얘는 커비를 향하는 방향
 	void UpMoving(float _DeltaTime, Color8Bit _Color);
 	bool IsPlayerBottomMagentaA();
 	bool IsPlayerBottomYellowA();

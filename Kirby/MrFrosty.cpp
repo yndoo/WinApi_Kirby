@@ -46,6 +46,9 @@ void AMrFrosty::StateUpdate(float _DeltaTime)
 	case EEnemyState::Move:
 		Move(_DeltaTime);
 		break;
+	case EEnemyState::HitWall:
+		HitWall(_DeltaTime);
+		break;
 	default:
 		break;
 	}
@@ -62,6 +65,9 @@ void AMrFrosty::StateChange(EEnemyState _State)
 			break;
 		case EEnemyState::Move:
 			MoveStart();
+			break;
+		case EEnemyState::HitWall:
+			HitWallStart();
 			break;
 		default:
 			break;
@@ -93,18 +99,6 @@ void AMrFrosty::MoveStart()
 }
 void AMrFrosty::Move(float _DeltaTime)
 {
-	float KirbyXPos = Kirby->GetActorLocation().X;
-	float FrostyXPos = GetActorLocation().X;
-	float FrostyDir = KirbyXPos - FrostyXPos;
-	if (FrostyDir > 0)
-	{
-		DirState = EActorDir::Right;
-	}
-	else if (FrostyDir < 0)
-	{
-		DirState = EActorDir::Left;
-	}
-
 	switch (DirState)
 	{
 	case EActorDir::Right:
@@ -116,15 +110,31 @@ void AMrFrosty::Move(float _DeltaTime)
 	default:
 		break;
 	}
-	MoveUpdate(_DeltaTime);
-		
+	MoveUpdate(_DeltaTime);	
+
 	// 벽에 닿으면 HitWall 상태로 변경해야함
-	FrostyXPos = GetActorLocation().X;
+	float FrostyXPos = GetActorLocation().X;
 	if (FrostyXPos < 100.f)
 	{
-		int a = 0;
+		StateChange(EEnemyState::HitWall);
+		return;
 	}
+}
 
+void AMrFrosty::HitWallStart()
+{
+	//이미지는 벽 방향 그대로, 벽에서 튕겨 나오는 건 벽 반대 방향
+	MonsterRenderer->AnimationReset();
+	MonsterRenderer->SetImage(GetAnimationName("Damaged") + std::string(".png"));
+}
+void AMrFrosty::HitWall(float _DeltaTime)
+{
+	// 벽에서 튕겨나가기
+	// 
+	// MoveVector가 일정 이하 됐을 때는
+	// 커비가 가까이 있으면 Shoot
+	// 커비가 멀리 있으면 Move
+	// 커비가 닿으면 Throw(이건 나중에)
 }
 
 void AMrFrosty::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Acc /*= FVector::Zero*/)
@@ -223,6 +233,32 @@ void AMrFrosty::FinalMove(float _DeltaTime)
 
 	// 이동
 	AddActorLocation(MovePos);
+}
+
+bool AMrFrosty::DirCheck()
+{
+	bool IsChanged = false;
+	EActorDir NewDir = EActorDir::None;
+
+	float KirbyXPos = Kirby->GetActorLocation().X;
+	float FrostyXPos = GetActorLocation().X;
+	float FrostyDir = KirbyXPos - FrostyXPos;
+	if (FrostyDir > 0)
+	{
+		NewDir = EActorDir::Right;
+	}
+	else if (FrostyDir < 0)
+	{
+		NewDir = EActorDir::Left;
+	}
+
+	if (NewDir != DirState)
+	{
+		IsChanged = true;
+		DirState = NewDir;
+	}
+
+	return IsChanged;
 }
 
 bool AMrFrosty::IsPlayerBottomMagentaA()
