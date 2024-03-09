@@ -50,6 +50,7 @@ void UBossLevel::Tick(float _DeltaTime)
 		OneFrosty = SpawnActor<AMrFrosty>();
 		OneFrosty->SetActorLocation({ 520, 300 });
 		FrostySpawner->SpawnCollision->Destroy();
+		FrostySpawner = nullptr;
 	}
 
 	std::vector<UCollision*> Result2;

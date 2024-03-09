@@ -28,6 +28,9 @@ void  BulletHelper::StateChange(EBulletState _State)
 		case EBulletState::Idle:
 			IdleStart();
 			break;
+		case EBulletState::Move:
+			MoveStart();
+			break;
 		case EBulletState::Damage:
 			DamageStart();
 			break;
@@ -47,6 +50,9 @@ void  BulletHelper::StateUpdate(float _DeltaTime)
 	{
 	case EBulletState::Idle:
 		Idle(_DeltaTime);
+		break;
+	case EBulletState::Move:
+		Move(_DeltaTime);
 		break;
 	case EBulletState::Damage:
 		Damage(_DeltaTime);
@@ -88,6 +94,15 @@ void BulletHelper::Idle(float _DeltaTime)
 		StateChange(EBulletState::Damage);
 		return;
 	}
+}
+
+void BulletHelper::MoveStart()
+{
+
+}
+void BulletHelper::Move(float _DeltaTime)
+{
+
 }
 
 void BulletHelper::DamageStart()

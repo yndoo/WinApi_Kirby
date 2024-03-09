@@ -72,6 +72,7 @@ enum class EBulletState
 {
 	None,
 	Idle,
+	Move,
 	Damage,
 	Finish,
 };

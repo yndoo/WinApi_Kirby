@@ -270,22 +270,6 @@ void AMrFrosty::AddMoveVector(const FVector& _DirDelta, FVector Acc)
 
 void AMrFrosty::CalMoveVector(float _DeltaTime, float MaxSpeed)
 {
-	// 벽 못가게 체크
-	FVector CheckPos = GetActorLocation();
-	CheckPos.X += static_cast<float>(DirState) * 20.0f;	// 앞뒤로 20픽셀
-	CheckPos.Y -= 20;									// 잔디 블록 막히게
-
-	FVector CurPos = GetActorLocation();
-	CurPos.X += static_cast<float>(DirState) * 20.0f;	// 앞뒤로 20픽셀
-	CurPos.Y -= 28;										// 경사로는 올라야돼
-
-	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(CheckPos.iX(), CheckPos.iY(), Color8Bit::MagentaA);
-	Color8Bit Color2 = UContentsHelper::ColMapImage->GetColor(CurPos.iX(), CurPos.iY(), Color8Bit::MagentaA);
-	if (Color == Color8Bit::MagentaA && Color2 == Color8Bit::MagentaA)
-	{
-		MoveVector = FVector::Zero;
-	}
-
 	// 최대 속도를 넘어가지 않도록
 	if (MaxSpeed <= MoveVector.Size2D())
 	{
@@ -308,15 +292,15 @@ void AMrFrosty::CalGravityVector(float _DeltaTime)
 	}
 }
 
-void AMrFrosty::CalJumpVector(float _DeltaTime)
-{
-	FVector DownVec = FVector::Down * _DeltaTime * 100.f;
-	if (JumpVector.Y + DownVec.Y <= 0)
-	{
-		JumpVector += DownVec;
-	}
-
-}
+//void AMrFrosty::CalJumpVector(float _DeltaTime)
+//{
+//	FVector DownVec = FVector::Down * _DeltaTime * 100.f;
+//	if (JumpVector.Y + DownVec.Y <= 0)
+//	{
+//		JumpVector += DownVec;
+//	}
+//
+//}
 
 void AMrFrosty::CalFinalMoveVector(float _DeltaTime)
 {
@@ -329,14 +313,7 @@ void AMrFrosty::CalFinalMoveVector(float _DeltaTime)
 // 최종 계산된 방향과 힘으로 이동시키는 함수
 void AMrFrosty::FinalMove(float _DeltaTime)
 {
-	MapSize = UContentsHelper::ColMapImage->GetScale();
-
-	FVector MovePos = FinalMoveVector * _DeltaTime;					// 플레이어 이동량 (걷기의 Move가 아님)
-
-	FVector PrevPlayerPos = GetActorLocation();
-	FVector NextPlayerPos = PrevPlayerPos + MovePos;
-
-	// 이동
+	FVector MovePos = FinalMoveVector * _DeltaTime;
 	AddActorLocation(MovePos);
 }
 
