@@ -54,6 +54,9 @@
     <ClInclude Include="Spawner.h">
       <Filter>Actor\ETC</Filter>
     </ClInclude>
+    <ClInclude Include="IceBullet.h">
+      <Filter>Actor\Bullets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -108,6 +111,9 @@
     </ClCompile>
     <ClCompile Include="Spawner.cpp">
       <Filter>Actor\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="IceBullet.cpp">
+      <Filter>Actor\Bullets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

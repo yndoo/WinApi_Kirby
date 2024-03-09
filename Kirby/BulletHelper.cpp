@@ -64,17 +64,6 @@ void BulletHelper::IdleStart()
 	// Bullet은 한 번 쏜 방향으로 가면 되므로 한 번 받아온 Dir로 충분함. (== DirCheck 필요 없음)
 	BulletRenderer->ChangeAnimation(GetAnimationName("Idle"));
 }
-
-void BulletHelper::DamageStart()
-{
-
-}
-
-void BulletHelper::FinishStart()
-{
-
-}
-
 void BulletHelper::Idle(float _DeltaTime)
 {
 	switch (Dir)
@@ -101,6 +90,10 @@ void BulletHelper::Idle(float _DeltaTime)
 	}
 }
 
+void BulletHelper::DamageStart()
+{
+	// 터지는 애니메이션
+}
 void BulletHelper::Damage(float _DeltaTime)
 {
 	// 터지는 애니메이션 했다 치고~
@@ -108,6 +101,10 @@ void BulletHelper::Damage(float _DeltaTime)
 	Destroy();
 }
 
+void BulletHelper::FinishStart()
+{
+
+}
 void BulletHelper::Finish(float _DeltaTime)
 {
 

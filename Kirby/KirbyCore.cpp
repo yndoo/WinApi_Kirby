@@ -42,10 +42,12 @@ void KirbyCore::BeginPlay() {
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
 
+	//Bullets
 	UEngineResourcesManager::GetInst().CuttingImage("StarBulletIdle_Right.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("StarBulletIdle_Left.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("FireBulletIdle_Right.png", 7, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("FireBulletIdle_Left.png", 7, 1);
+	// Monsters
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Damaged.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("WaddleDee_Right.png", 5, 2);

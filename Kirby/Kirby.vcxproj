@@ -167,6 +167,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="IceBullet.h" />
     <ClInclude Include="Ladder.h">
       <SubType>
       </SubType>
@@ -239,6 +240,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="IceBullet.cpp" />
     <ClCompile Include="Ladder.cpp">
       <SubType>
       </SubType>

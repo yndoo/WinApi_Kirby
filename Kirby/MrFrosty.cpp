@@ -1,6 +1,7 @@
 #include "MrFrosty.h"
 #include "ContentsHelper.h"
 #include "Player.h"
+#include "IceBullet.h"
 
 AMrFrosty::AMrFrosty()
 {
@@ -222,10 +223,17 @@ void AMrFrosty::ShootStart()
 {
 	DirCheck();
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Shoot"));
+
+	// ¾óÀ½½î±â
+	AIceBullet* bullet = GetWorld()->SpawnActor<AIceBullet>();
+	bullet->SetActorLocation(GetActorLocation() + FVector({ 0, -20 }));
+	bullet->SetDir(DirState);
+	bullet->Destroy(3.f);
 }
 void AMrFrosty::Shoot(float _DeltaTime)
 {
-	// ¾óÀ½½î±â
+
+
 	if (true == MonsterRenderer->IsCurAnimationEnd())
 	{
 		StateChange(EEnemyState::Idle);

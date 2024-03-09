@@ -696,14 +696,6 @@ void APlayer::Jump(float _DeltaTime)
 		}
 	}
 
-	if (abs(FinalMoveVector.Y) < 40.f && true == IsEating)
-	{
-		if (FinalMoveVector.Y > 0)
-		{
-			//PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
-		}
-	}
-
 	if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpTurn")) && PlayerRenderer->IsCurAnimationEnd() == true && FinalMoveVector.Y > 40.f && false == IsEating)
 	{
 		PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
