@@ -64,6 +64,8 @@ enum class EEnemyState
 	Inhaled,
 	Die,
 	HitWall,
+	ShootReady,
+	Shoot,
 };
 
 enum class EBulletState

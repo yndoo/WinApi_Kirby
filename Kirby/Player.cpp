@@ -345,8 +345,8 @@ void  APlayer::Idle(float _DeltaTime)
 		if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 		{
 			// 사다리 오르기
-			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY();
-			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY();// -1.f;
+			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY() - 1.f;
+			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY() - 1.f;
 			StateChange(EKirbyState::LadderUp);
 			return;
 		}
@@ -358,8 +358,8 @@ void  APlayer::Idle(float _DeltaTime)
 		if (true == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 		{
 			// 사다리 내리기
-			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY();
-			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY();// -1.f;
+			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY() - 1.f;
+			LadderBottom = Result[0]->GetOwner()->GetActorLocation().Y + Result[0]->GetTransform().GetScale().hY() - 1.f;
 			StateChange(EKirbyState::LadderDown);
 			return;
 		}
@@ -987,7 +987,7 @@ void APlayer::Fly(float _DeltaTime)
 
 	if (true == UEngineInput::IsPress(VK_UP) || true == UEngineInput::IsPress('Z'))
 	{
-		FVector AddV = FVector::Up * FlySpeed * _DeltaTime;
+		FVector AddV = FVector::Up * (FlySpeed + 20.f) * _DeltaTime;
 		AddActorLocation(AddV);
 		CameraMove(AddV);
 	}
@@ -1003,10 +1003,11 @@ void APlayer::Fly(float _DeltaTime)
 		AddActorLocation(AddV);
 		CameraMove(AddV);
 	}
-	if (true == UEngineInput::IsPress(VK_DOWN))
-	{
-		//AddActorLocation(FVector::Down * FlySpeed * _DeltaTime);
-	}
+	//if (true == UEngineInput::IsPress(VK_DOWN))
+	//{
+	//	// 떨어지는 건 중력에 의해서만 하도록 잠시 없앰
+	//	//AddActorLocation(FVector::Down * FlySpeed * _DeltaTime);
+	//}
 	if (true == UEngineInput::IsFree(VK_UP) && true == UEngineInput::IsFree('Z'))
 	{
 		if (IsPlayerBottomMagentaA() || IsPlayerBottomYellowA())
@@ -1037,7 +1038,7 @@ void APlayer::LadderUp(float _DeltaTime)
 	std::vector<UCollision*> Result;
 	if (false == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 	{
-		float CurX = GetActorLocation().X;
+		//float CurX = GetActorLocation().X;
 		//SetActorLocation({ CurX, LadderTop });
 		StateChange(EKirbyState::Idle);
 		return;
@@ -1066,7 +1067,7 @@ void APlayer::LadderDown(float _DeltaTime)
 	std::vector<UCollision*> Result;
 	if (false == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 	{
-		float CurX = GetActorLocation().X;
+		//float CurX = GetActorLocation().X;
 		//float CurCamX = GetWorld()->GetCameraPos().X;
 		//SetActorLocation({ CurX, LadderBottom });
 		//GetWorld()->SetCameraPos({ CurCamX, MapSize.Y - WinScale.Y });
@@ -1079,12 +1080,7 @@ void APlayer::LadderDown(float _DeltaTime)
 		FVector LPos = LadderDownSpeed * _DeltaTime;
 		// 액터 내리는 코드
 		AddActorLocation(LPos);
-		if (IsPlayerBottomMagentaA())	// 카메라 더내려가는게 이거때문이 아닌가봐
-		{
-			return;
-		}
 		CameraMove(LPos);
-		//UpMoving(_DeltaTime, Color8Bit::MagentaA);
 	}
 }
 

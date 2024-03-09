@@ -16,15 +16,25 @@ void AMrFrosty::BeginPlay()
 	MonsterRenderer->SetImage("MrFrostyIdle_Left.png");
 	MonsterRenderer->SetTransform({ {0,0}, {300, 300} });
 
+	WideCollision = CreateCollision(EKirbyCollisionOrder::Monster);
+	WideCollision->SetScale({ 240, 160 });	
+	WideCollision->SetPosition({ 0, -80 });
+	WideCollision->SetColType(ECollisionType::Rect);
+
 	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Monster);
-	MonsterCollision->SetScale({ 40, 40 });
-	MonsterCollision->SetPosition({ 0, -20 });
+	MonsterCollision->SetScale({ 80, 100 });
+	MonsterCollision->SetPosition({ 0, -50 });
 	MonsterCollision->SetColType(ECollisionType::Rect);
+
 
 	MonsterRenderer->CreateAnimation("Idle_Right", "MrFrostyIdle_Right.png", { 0,1,0,1 }, 0.5f, true);
 	MonsterRenderer->CreateAnimation("Idle_Left", "MrFrostyIdle_Left.png", { 0,1,0,1 }, 0.5f, true);
 	MonsterRenderer->CreateAnimation("Move_Right", "MrFrostyMove_Right.png", 1, 2, 0.1f, true);
 	MonsterRenderer->CreateAnimation("Move_Left", "MrFrostyMove_Left.png", 1, 2, 0.1f, true);
+	MonsterRenderer->CreateAnimation("ShootReady", "MrFrostyShootReady.png", {1, 0, 1, 2}, 0.1f, true);
+	//MonsterRenderer->CreateAnimation("ShootReady", "MrFrostyShootReady.png",  0,2 , 0.1f, true);
+	MonsterRenderer->CreateAnimation("Shoot_Right", "MrFrostyShoot_Right.png", 0, 5, 0.2f, false);
+	MonsterRenderer->CreateAnimation("Shoot_Left", "MrFrostyShoot_Left.png", 0, 5, 0.2f, false);
 
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Idle"));
 	StateChange(EEnemyState::Idle);
@@ -49,6 +59,12 @@ void AMrFrosty::StateUpdate(float _DeltaTime)
 	case EEnemyState::HitWall:
 		HitWall(_DeltaTime);
 		break;
+	case EEnemyState::ShootReady:
+		ShootReady(_DeltaTime);
+		break;
+	case EEnemyState::Shoot:
+		Shoot(_DeltaTime);
+		break;
 	default:
 		break;
 	}
@@ -69,6 +85,12 @@ void AMrFrosty::StateChange(EEnemyState _State)
 		case EEnemyState::HitWall:
 			HitWallStart();
 			break;
+		case EEnemyState::ShootReady:
+			ShootReadyStart();
+			break;
+		case EEnemyState::Shoot:
+			ShootStart();
+			break;
 		default:
 			break;
 		}
@@ -79,12 +101,20 @@ void AMrFrosty::StateChange(EEnemyState _State)
 void AMrFrosty::IdleStart()
 {
 	DirCheck();
+	MoveVector = FVector::Zero;
+	JumpVector = FVector::Zero;
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Idle"));
 }
 void AMrFrosty::Idle(float _DeltaTime)
 {
 	MoveUpdate(_DeltaTime);
 	if (true == IsStart)
+	{
+		IsStart = false;
+		StateChange(EEnemyState::Move);
+		return;
+	}
+	if (MonsterRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("Idle")) && MonsterRenderer->IsCurAnimationEnd() == true)
 	{
 		StateChange(EEnemyState::Move);
 		return;
@@ -156,13 +186,48 @@ void AMrFrosty::HitWall(float _DeltaTime)
 	MoveUpdate(_DeltaTime);
 
 	// MoveVector가 일정 이하 됐을 때는
-	// 커비가 가까이 있으면 Shoot
-	// 커비가 멀리 있으면 Move
-	// 커비가 닿으면 Throw(이건 나중에)
-
 	if (abs(MoveVector.X) < 80.f)
 	{
+		// 커비가 가까이 있으면 ShootReady
+		std::vector<UCollision*> Result;
+		if (true == WideCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+		{
+			StateChange(EEnemyState::ShootReady);
+			return;
+		}
+		// 커비가 멀리 있으면 Move 
+		// 커비가 닿으면 Throw(이건 나중에)
 		MoveVector = FVector::Zero;
+		StateChange(EEnemyState::Move);
+		return;
+	}
+}
+
+void AMrFrosty::ShootReadyStart()
+{
+	Timer = 0.f;
+	MonsterRenderer->ChangeAnimation("ShootReady");
+}
+void AMrFrosty::ShootReady(float _DeltaTime)
+{
+	Timer += _DeltaTime;
+	if (Timer >= ShootReadyCoolTime)
+	{
+		StateChange(EEnemyState::Shoot);
+		return;
+	}
+}
+
+void AMrFrosty::ShootStart()
+{
+	DirCheck();
+	MonsterRenderer->ChangeAnimation(GetAnimationName("Shoot"));
+}
+void AMrFrosty::Shoot(float _DeltaTime)
+{
+	// 얼음쏘기
+	if (true == MonsterRenderer->IsCurAnimationEnd())
+	{
 		StateChange(EEnemyState::Idle);
 		return;
 	}

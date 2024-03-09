@@ -23,12 +23,16 @@ protected:
 	void StateUpdate(float _DeltaTime) override;
 	void StateChange(EEnemyState _State) override;
 
-	void Idle(float _DeltaTime) override;
 	void IdleStart() override;
-	void Move(float _DeltaTime) override;
+	void Idle(float _DeltaTime) override;
 	void MoveStart() override;
-	void HitWall(float _DeltaTime);
+	void Move(float _DeltaTime) override;
 	void HitWallStart();
+	void HitWall(float _DeltaTime);
+	void ShootReadyStart();
+	void ShootReady(float _DeltaTime);
+	void ShootStart();
+	void Shoot(float _DeltaTime);
 
 	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);
@@ -51,12 +55,15 @@ protected:
 	FVector GravityAcc = FVector::Down * 2000.0f;
 	FVector FinalMoveVector = FVector::Zero;
 
-	//UCollision* BodyCollision = nullptr;
+	UCollision* WideCollision = nullptr;	// 가까이에 커비가 있는지 확인하는 용도
 	//UImageRenderer* Renderer = nullptr;
 private:
 	bool DirCheck() override;	// 얘는 커비를 향하는 방향
 	void UpMoving(float _DeltaTime, Color8Bit _Color);
 	bool IsPlayerBottomMagentaA();
 	bool IsPlayerBottomYellowA();
+
+	float Timer = 0.f;
+	float ShootReadyCoolTime = 2.f;
 };
 

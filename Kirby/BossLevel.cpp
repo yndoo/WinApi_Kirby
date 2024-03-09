@@ -53,7 +53,10 @@ void UBossLevel::Tick(float _DeltaTime)
 	}
 
 	std::vector<UCollision*> Result2;
-	if (nullptr != FrostyStarter && true == FrostyStarter->SpawnCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result2))
+	if (
+		nullptr != FrostyStarter && nullptr != OneFrosty &&
+		true == FrostyStarter->SpawnCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result2)
+		)
 	{
 		//보스 움직임시작?
 		OneFrosty->IsStart = true;
@@ -82,6 +85,7 @@ void UBossLevel::LevelStart(ULevel* _Level)
 
 	ALadder* FirstLadder = SpawnActor<ALadder>();
 	FirstLadder->SetActorLocation({ 580,1020 });
+	FirstLadder->Collision->SetScale({ 40, 199 });
 
 	ALadder* SecondLadder = SpawnActor<ALadder>();
 	SecondLadder->SetActorLocation({ 60,800 });
