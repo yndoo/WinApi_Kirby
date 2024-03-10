@@ -12,12 +12,12 @@ void AIceBullet::BeginPlay()
 {
 	BulletRenderer = CreateImageRenderer(EKirbyRenderOrder::Bullet);
 	BulletRenderer->SetImage("IceBlock.png");
-	BulletRenderer->SetTransform({ {0,-30}, {60, 60} });
+	BulletRenderer->SetTransform({ {0,-20}, {40, 40} });
 	BulletRenderer->SetTransColor(Color8Bit::Magenta);
 
 	BulletCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);
-	BulletCollision->SetScale({ 60, 60 });
-	BulletCollision->SetPosition({ 0, -30 });
+	BulletCollision->SetScale({ 40, 40 });
+	BulletCollision->SetPosition({ 0, -20 });
 	BulletCollision->SetColType(ECollisionType::Rect);
 
 	StateChange(EBulletState::Idle);
@@ -31,18 +31,18 @@ void AIceBullet::Tick(float _DeltaTime)
 
 void AIceBullet::IdleStart()
 {
-
+	JumpVector = JumpPower;
 }
 void AIceBullet::Idle(float _DeltaTime)
 {
-	switch (Dir)
+	MoveUpdate(_DeltaTime);
+	// 위로 던져졌다가
+
+	// 몬스터랑 충돌하면 앞으로 포물선
+	std::vector<UCollision*> Result;
+	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
 	{
-	case EActorDir::Left:
-		AddActorLocation(FVector::Left * 100.f * _DeltaTime);
-		break;
-	case EActorDir::Right:
-		AddActorLocation(FVector::Right * 100.f * _DeltaTime);
-		break;
+		StateChange(EBulletState::Move);
 	}
 }
 
@@ -52,7 +52,18 @@ void AIceBullet::MoveStart()
 }
 void AIceBullet::Move(float _DeltaTime)
 {
+	MoveUpdate(_DeltaTime);
+	switch (Dir)
+	{
+	case EActorDir::Left:
+		AddMoveVector(FVector::Left * _DeltaTime, MoveAcc);
+		break;
+	case EActorDir::Right:
+		AddMoveVector(FVector::Right * _DeltaTime, MoveAcc);
+		break;
+	}
 
+	JumpVector += FVector::Down * _DeltaTime * 100.f;
 }
 
 void AIceBullet::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Acc /*= FVector::Zero*/)

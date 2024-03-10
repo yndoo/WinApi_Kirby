@@ -65,6 +65,7 @@ enum class EEnemyState
 	Die,
 	HitWall,
 	ShootReady,
+	ShootJump,
 	Shoot,
 };
 

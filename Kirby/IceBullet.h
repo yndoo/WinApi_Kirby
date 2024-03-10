@@ -42,13 +42,13 @@ protected:
 	FVector MoveAcc = FVector::Right * 100.0f;
 	//FVector SmallMoveAcc = FVector::Right * 50.f;
 	float MovePower = 50.f;
-	float MoveMaxSpeed = 200.0f;
+	//float MoveMaxSpeed = 200.0f;
 	FVector JumpVector = FVector::Zero;
-	//FVector SmallJumpPower = FVector::Up * 100;
-	FVector JumpPower = FVector::Up * 400;
-	float JumpMaxSpeed = 200.0f;
+	FVector SmallJumpPower = FVector::Up * 300;
+	FVector JumpPower = FVector::Up * 600;
+	//float JumpMaxSpeed = 200.0f;
 	FVector GravityVector = FVector::Zero;
-	FVector GravityAcc = FVector::Down * 2000.0f;
+	FVector GravityAcc = FVector::Down * 3000.0f;
 	FVector FinalMoveVector = FVector::Zero;
 
 private:

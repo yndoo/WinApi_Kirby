@@ -63,6 +63,9 @@ void AMrFrosty::StateUpdate(float _DeltaTime)
 	case EEnemyState::ShootReady:
 		ShootReady(_DeltaTime);
 		break;
+	case EEnemyState::ShootJump:
+		ShootJump(_DeltaTime);
+		break;
 	case EEnemyState::Shoot:
 		Shoot(_DeltaTime);
 		break;
@@ -88,6 +91,9 @@ void AMrFrosty::StateChange(EEnemyState _State)
 			break;
 		case EEnemyState::ShootReady:
 			ShootReadyStart();
+			break;
+		case EEnemyState::ShootJump:
+			ShootJumpStart();
 			break;
 		case EEnemyState::Shoot:
 			ShootStart();
@@ -214,6 +220,28 @@ void AMrFrosty::ShootReady(float _DeltaTime)
 	Timer += _DeltaTime;
 	if (Timer >= ShootReadyCoolTime)
 	{
+		StateChange(EEnemyState::ShootJump);
+		return;
+	}
+}
+
+void AMrFrosty::ShootJumpStart()
+{
+	DirCheck();
+	MonsterRenderer->ChangeAnimation(GetAnimationName("Move"));
+
+	// 얼음 위로 던져야 함.
+	AIceBullet* bullet = GetWorld()->SpawnActor<AIceBullet>();
+	bullet->SetActorLocation(GetActorLocation() + FVector({ 0, -100 }));
+	bullet->SetDir(DirState);
+	bullet->Destroy(3.f);
+}
+void AMrFrosty::ShootJump(float _DeltaTime)
+{
+	// 충돌하면 ShootStart
+	std::vector<UCollision*> Result;
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	{
 		StateChange(EEnemyState::Shoot);
 		return;
 	}
@@ -223,12 +251,6 @@ void AMrFrosty::ShootStart()
 {
 	DirCheck();
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Shoot"));
-
-	// 얼음쏘기
-	AIceBullet* bullet = GetWorld()->SpawnActor<AIceBullet>();
-	bullet->SetActorLocation(GetActorLocation() + FVector({ 0, -20 }));
-	bullet->SetDir(DirState);
-	bullet->Destroy(3.f);
 }
 void AMrFrosty::Shoot(float _DeltaTime)
 {

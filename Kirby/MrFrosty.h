@@ -33,6 +33,8 @@ protected:
 	void ShootReady(float _DeltaTime);
 	void ShootStart();
 	void Shoot(float _DeltaTime);
+	void ShootJumpStart();
+	void ShootJump(float _DeltaTime);
 
 	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);
