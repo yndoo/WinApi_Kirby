@@ -164,6 +164,21 @@ std::string MonsterHelper::GetAnimationName(std::string _Name)
 
 	CurAnimationName = _Name;
 
+	if (_Name == "ShootReady")
+	{
+		if (true == IsDamaged)
+		{
+			IsDamaged = false;
+			return "Damaged" + _Name;
+		}
+		return _Name;
+	}
+
+	if (true == IsDamaged)
+	{
+		IsDamaged = false;
+		return "Damaged" +_Name + DirName;
+	}
 	return _Name + DirName;
 }
 

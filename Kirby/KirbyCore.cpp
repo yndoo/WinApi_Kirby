@@ -56,9 +56,18 @@ void KirbyCore::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyIdle_Left.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyMove_Right.png", 3, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyMove_Left.png", 3, 1);
-	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyShootReady.png", 3, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MF_ShootReady.png", 3, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyShoot_Right.png", 6, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MrFrostyShoot_Left.png", 6, 1);
+
+	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedIdle_Right.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedIdle_Left.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedMove_Right.png", 3, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedMove_Left.png", 3, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedShootReady.png", 3, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedShoot_Right.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedShoot_Left.png", 2, 1);
+	
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");

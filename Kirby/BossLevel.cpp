@@ -49,6 +49,7 @@ void UBossLevel::Tick(float _DeltaTime)
 		//보스 스폰
 		OneFrosty = SpawnActor<AMrFrosty>();
 		OneFrosty->SetActorLocation({ 520, 300 });
+		OneFrosty->SetMaxHp(200);
 		FrostySpawner->SpawnCollision->Destroy();
 		FrostySpawner = nullptr;
 	}

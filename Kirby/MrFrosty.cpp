@@ -2,6 +2,7 @@
 #include "ContentsHelper.h"
 #include "Player.h"
 #include "IceBullet.h"
+#include <EngineCore/EngineDebug.h>
 
 AMrFrosty::AMrFrosty()
 {
@@ -15,7 +16,7 @@ void AMrFrosty::BeginPlay()
 {
 	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
 	MonsterRenderer->SetImage("MrFrostyIdle_Left.png");
-	MonsterRenderer->SetTransform({ {0,0}, {300, 300} });
+	MonsterRenderer->SetTransform({ {0,0}, {350, 350} });
 
 	WideCollision = CreateCollision(EKirbyCollisionOrder::MonsterAround);
 	WideCollision->SetScale({ 240, 160 });	
@@ -30,15 +31,21 @@ void AMrFrosty::BeginPlay()
 
 	MonsterRenderer->CreateAnimation("Idle_Right", "MrFrostyIdle_Right.png", { 0,1,0,1 }, 0.5f, true);
 	MonsterRenderer->CreateAnimation("Idle_Left", "MrFrostyIdle_Left.png", { 0,1,0,1 }, 0.5f, true);
-	MonsterRenderer->CreateAnimation("Move_Right", "MrFrostyMove_Right.png", 1, 2, 0.1f, true);
-	MonsterRenderer->CreateAnimation("Move_Left", "MrFrostyMove_Left.png", 1, 2, 0.1f, true);
-	MonsterRenderer->CreateAnimation("ShootReady", "MrFrostyShootReady.png", {1, 0, 1, 2}, 0.1f, true);
-	//MonsterRenderer->CreateAnimation("ShootReady", "MrFrostyShootReady.png",  0,2 , 0.1f, true);
+	MonsterRenderer->CreateAnimation("Move_Right", "MrFrostyMove_Right.png", 0, 2, 0.1f, true);
+	MonsterRenderer->CreateAnimation("Move_Left", "MrFrostyMove_Left.png", 0, 2, 0.1f, true);
+	MonsterRenderer->CreateAnimation("ShootReady", "MF_ShootReady.png", {1, 0, 1, 2}, 0.1f, true);
 	MonsterRenderer->CreateAnimation("ShootJump_Right", "MrFrostyShoot_Right.png", 0, 2, 0.1f, false);
 	MonsterRenderer->CreateAnimation("ShootJump_Left", "MrFrostyShoot_Left.png", 0, 2, 0.1f, false);
 	MonsterRenderer->CreateAnimation("Shoot_Right", "MrFrostyShoot_Right.png", 2, 5, 0.1f, false);
 	MonsterRenderer->CreateAnimation("Shoot_Left", "MrFrostyShoot_Left.png", 2, 5, 0.1f, false);
 
+	MonsterRenderer->CreateAnimation("DamagedIdle_Right", "MF_DamagedIdle_Right.png", { 0,1,0,1,0,1 }, 0.2f, true);
+	MonsterRenderer->CreateAnimation("DamagedIdle_Left", "MF_DamagedIdle_Left.png", { 0,1,0,1,0,1 }, 0.2f, true);
+	MonsterRenderer->CreateAnimation("DamagedMove_Right", "MF_DamagedMove_Right.png", { 0,1,0,1,0,1 }, 0.2f, true);
+	MonsterRenderer->CreateAnimation("DamagedMove_Left", "MF_DamagedMove_Left.png", { 0,1,0,1,0,1 }, 0.2f, true);
+	MonsterRenderer->CreateAnimation("DamagedShootReady", "MF_DamagedShootReady.png", { 1, 0, 1, 2, 1, 0, 1, 2 }, 0.1f, true);
+	MonsterRenderer->CreateAnimation("DamagedShoot_Right", "MF_DamagedShoot_Right.png", { 0,1,0,1,0,1 }, 0.2f, true);
+	MonsterRenderer->CreateAnimation("DamagedShoot_Left", "MF_DamagedShoot_Left.png", { 0,1,0,1,0,1 }, 0.2f, true);
 
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Idle"));
 	StateChange(EEnemyState::Idle);
@@ -48,6 +55,8 @@ void AMrFrosty::Tick(float _DeltaTime)
 {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
+
+	UEngineDebug::DebugTextPrint("Mr.Frosty HP : " + std::to_string(GetCurHp()), 30.0f);
 }
 
 void AMrFrosty::StateUpdate(float _DeltaTime)
@@ -118,6 +127,8 @@ void AMrFrosty::IdleStart()
 void AMrFrosty::Idle(float _DeltaTime)
 {
 	MoveUpdate(_DeltaTime);
+	MonsterRenderer->ChangeAnimation(GetAnimationName("Idle"));
+
 	if (true == IsStart)
 	{
 		IsStart = false;
@@ -129,6 +140,12 @@ void AMrFrosty::Idle(float _DeltaTime)
 		StateChange(EEnemyState::Move);
 		return;
 	}
+
+	std::vector<UCollision*> Result;
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	{
+		IsDamaged = true;
+	}
 }
 
 void AMrFrosty::MoveStart()
@@ -139,6 +156,8 @@ void AMrFrosty::MoveStart()
 }
 void AMrFrosty::Move(float _DeltaTime)
 {
+	MonsterRenderer->ChangeAnimation(GetAnimationName("Move"));
+
 	switch (DirState)
 	{
 	case EActorDir::Right:
@@ -159,13 +178,19 @@ void AMrFrosty::Move(float _DeltaTime)
 		StateChange(EEnemyState::HitWall);
 		return;
 	}
+
+	std::vector<UCollision*> Result;
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	{
+		IsDamaged = true;
+	}
 }
 
 void AMrFrosty::HitWallStart()
 {
 	//이미지는 벽 방향 그대로, 벽에서 튕겨 나오는 건 벽 반대 방향
 	MonsterRenderer->AnimationReset();
-	MonsterRenderer->SetImage(GetAnimationName("Damaged") + std::string(".png"));
+	MonsterRenderer->SetImage(GetAnimationName("HitWall") + std::string(".png"));
 	JumpVector = SmallJumpPower;	
 	switch (DirState)
 	{
@@ -216,10 +241,18 @@ void AMrFrosty::HitWall(float _DeltaTime)
 void AMrFrosty::ShootReadyStart()
 {
 	Timer = 0.f;
-	MonsterRenderer->ChangeAnimation("ShootReady");
+	MonsterRenderer->ChangeAnimation(GetAnimationName("ShootReady"));
 }
 void AMrFrosty::ShootReady(float _DeltaTime)
 {
+	MonsterRenderer->ChangeAnimation(GetAnimationName("ShootReady"));
+
+	std::vector<UCollision*> Result;
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	{
+		IsDamaged = true;
+	}
+
 	Timer += _DeltaTime;
 	if (Timer >= ShootReadyCoolTime)
 	{
@@ -256,6 +289,14 @@ void AMrFrosty::ShootStart()
 }
 void AMrFrosty::Shoot(float _DeltaTime)
 {
+	MonsterRenderer->ChangeAnimation(GetAnimationName("Shoot"));
+
+	std::vector<UCollision*> Result;
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	{
+		IsDamaged = true;
+	}
+
 	if (true == MonsterRenderer->IsCurAnimationEnd())
 	{
 		StateChange(EEnemyState::Idle);

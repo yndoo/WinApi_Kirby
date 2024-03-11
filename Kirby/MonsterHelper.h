@@ -36,15 +36,16 @@ public:
 	void SetCurHp(int _CurHp)
 	{
 		CurHp = _CurHp;
-	}
-
-	void AddDamageHp(int _Damage)
-	{
-		CurHp += _Damage;
 		if (CurHp > MaxHp)
 		{
 			CurHp = MaxHp;
 		}
+	}
+
+	// 체력 깎는 == 데미지 입히는 함수
+	void AddDamageHp(int _Damage)
+	{
+		SetCurHp(CurHp + _Damage);
 	}
 protected:
 	UCollision* MonsterCollision = nullptr;
@@ -75,6 +76,7 @@ protected:
 	EEnemyState State = EEnemyState::None;
 	FVector InhaleDir = FVector::Zero;
 	std::string CurAnimationName = "Idle";
+	bool IsDamaged = false;
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();
