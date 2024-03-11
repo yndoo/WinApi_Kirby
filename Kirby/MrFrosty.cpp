@@ -19,8 +19,8 @@ void AMrFrosty::BeginPlay()
 	MonsterRenderer->SetTransform({ {0,0}, {350, 350} });
 
 	WideCollision = CreateCollision(EKirbyCollisionOrder::MonsterAround);
-	WideCollision->SetScale({ 240, 160 });	
-	WideCollision->SetPosition({ 0, -80 });
+	WideCollision->SetScale({ 240, 180 });	
+	WideCollision->SetPosition({ 0, -90 });
 	WideCollision->SetColType(ECollisionType::Rect);
 
 	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Monster);
@@ -66,8 +66,15 @@ void AMrFrosty::Tick(float _DeltaTime)
 	int CurHp = GetCurHp();
 	if (CurHp <= 0)
 	{
-		//StateChange(EEnemyState::Die);
-		//return;
+		StateChange(EEnemyState::Die);
+		return;
+	}
+
+	std::vector<UCollision*> Result;
+	if (false == IsDamaged && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	{
+		IsDamaged = true;
+		AddDamageHp(60);
 	}
 
 	UEngineDebug::DebugTextPrint("Mr.Frosty HP : " + std::to_string(CurHp), 30.0f);
@@ -94,6 +101,9 @@ void AMrFrosty::StateUpdate(float _DeltaTime)
 		break;
 	case EEnemyState::Shoot:
 		Shoot(_DeltaTime);
+		break;
+	case EEnemyState::Die:
+		Die(_DeltaTime);
 		break;
 	default:
 		break;
@@ -124,6 +134,9 @@ void AMrFrosty::StateChange(EEnemyState _State)
 		case EEnemyState::Shoot:
 			ShootStart();
 			break;
+		case EEnemyState::Die:
+			DieStart();
+			break;
 		default:
 			break;
 		}
@@ -153,13 +166,6 @@ void AMrFrosty::Idle(float _DeltaTime)
 	{
 		StateChange(EEnemyState::Move);
 		return;
-	}
-
-	std::vector<UCollision*> Result;
-	if (false == IsDamaged && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
-	{
-		IsDamaged = true;
-		AddDamageHp(60);
 	}
 }
 
@@ -193,13 +199,6 @@ void AMrFrosty::Move(float _DeltaTime)
 		StateChange(EEnemyState::HitWall);
 		return;
 	}
-
-	std::vector<UCollision*> Result;
-	if (false == IsDamaged && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
-	{
-		IsDamaged = true;
-		AddDamageHp(60);
-	}
 }
 
 void AMrFrosty::HitWallStart()
@@ -214,6 +213,8 @@ void AMrFrosty::HitWallStart()
 	{
 		MonsterRenderer->ChangeAnimation(GetAnimationName("HitWall"));
 	}
+
+	// 벽에서 튕겨나가기
 	JumpVector = SmallJumpPower;	
 	switch (DirState)
 	{
@@ -233,7 +234,8 @@ void AMrFrosty::HitWall(float _DeltaTime)
 	{
 		MonsterRenderer->ChangeAnimation(GetAnimationName("HitWall"));
 	}
-	// 벽에서 튕겨나가기
+
+	// 감속
 	switch (DirState)
 	{
 	case EActorDir::Right:
@@ -274,13 +276,6 @@ void AMrFrosty::ShootReady(float _DeltaTime)
 {
 	MonsterRenderer->ChangeAnimation(GetAnimationName("ShootReady"));
 
-	std::vector<UCollision*> Result;
-	if (false == IsDamaged && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
-	{
-		IsDamaged = true;
-		AddDamageHp(60);
-	}
-
 	Timer += _DeltaTime;
 	if (Timer >= ShootReadyCoolTime)
 	{
@@ -319,18 +314,68 @@ void AMrFrosty::Shoot(float _DeltaTime)
 {
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Shoot"));
 
-	std::vector<UCollision*> Result;
-	if (false == IsDamaged && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
-	{
-		IsDamaged = true;
-		AddDamageHp(60);
-	}
-
 	if (true == MonsterRenderer->IsCurAnimationEnd())
 	{
 		StateChange(EEnemyState::Idle);
 		return;
 	}
+}
+
+void AMrFrosty::DieStart()
+{
+	DirCheck();
+	MonsterRenderer->ChangeAnimation(GetAnimationName("HitWall"));
+
+	// 뒤로 튕겨나가기
+	JumpVector = SmallJumpPower;
+	switch (DirState)
+	{
+	case EActorDir::Right:
+		MoveVector += FVector::Left * 200.f;
+		break;
+	case EActorDir::Left:
+		MoveVector += FVector::Right * 200.f;
+		break;
+	default:
+		break;
+	}
+}
+void AMrFrosty::Die(float _DeltaTime)
+{
+	float FrostyXPos = GetActorLocation().X;
+	if (FrostyXPos < 100.f || FrostyXPos > 570.f)
+	{
+		MoveVector = FVector::Zero;
+	}
+
+	// 감속
+	switch (DirState)
+	{
+	case EActorDir::Right:
+		AddMoveVector(FVector::Right * _DeltaTime, SmallMoveAcc);
+		break;
+	case EActorDir::Left:
+		AddMoveVector(FVector::Left * _DeltaTime, SmallMoveAcc);
+		break;
+	default:
+		break;
+	}
+	MoveUpdate(_DeltaTime);
+
+
+	// MoveVector가 일정 이하 됐을 때는
+	if (abs(MoveVector.X) < 80.f)
+	{
+		MoveVector = FVector::Zero;
+		if (false == DeathCheck)
+		{
+			MonsterRenderer->Destroy(3.f);
+			Destroy(5.f);
+			DeathCheck = true;
+		}
+	}
+
+	// 3초 지나고 Die이펙트 실행된 후 Destroy? 새 상태를 만드는게나을라나?
 }
 
 void AMrFrosty::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Acc /*= FVector::Zero*/)
@@ -396,6 +441,7 @@ void AMrFrosty::CalFinalMoveVector(float _DeltaTime)
 void AMrFrosty::FinalMove(float _DeltaTime)
 {
 	FVector MovePos = FinalMoveVector * _DeltaTime;
+
 	AddActorLocation(MovePos);
 }
 

@@ -94,7 +94,6 @@ void MonsterHelper::IdleStart()
 {
 
 }
-
 void MonsterHelper::Idle(float _DeltaTime)
 {
 
@@ -104,7 +103,6 @@ void MonsterHelper::DamagedStart()
 {
 
 }
-
 void MonsterHelper::Damaged(float _DeltaTime)
 {
 
@@ -114,7 +112,6 @@ void MonsterHelper::MoveStart()
 {
 
 }
-
 void MonsterHelper::Move(float _DeltaTime)
 {
 
@@ -124,8 +121,16 @@ void MonsterHelper::InhaledStart()
 {
 
 }
-
 void MonsterHelper::Inhaled(float _DeltaTime)
+{
+
+}
+
+void MonsterHelper::DieStart()
+{
+
+}
+void MonsterHelper::Die(float _DeltaTime)
 {
 
 }

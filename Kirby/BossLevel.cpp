@@ -38,9 +38,12 @@ void UBossLevel::Tick(float _DeltaTime)
 	ULevel::Tick(_DeltaTime);
 	//FVector CamPos = GetCameraPos();
 	//UEngineDebug::DebugTextPrint("X : " + std::to_string(CamPos.X) + ", Y : " + std::to_string(CamPos.Y), 30.0f);
-	if (true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
+	if (OneFrosty->IsDestroy() && true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
 	{
-		GEngine->ChangeLevel("TitleLevel");
+		// 문에 별 생기고 엔딩레벨로 가야함.
+
+		GEngine->ChangeLevel("TitleLevel");	// 임시
+
 	}
 
 	std::vector<UCollision*> Result;
