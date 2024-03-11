@@ -30,6 +30,12 @@ void MonsterHelper::Tick(float _DeltaTime)
 		return;
 	}
 
+	if (nullptr != MonsterCollision && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	{
+		StateChange(EEnemyState::Damaged);
+		return;
+	}
+
 	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
 	{
 		// Bullet종류로 공격 받았을 때

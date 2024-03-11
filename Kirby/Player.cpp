@@ -670,7 +670,7 @@ void APlayer::Jump(float _DeltaTime)
 		MoveVector = FVector::Zero;
 	}
 
-	if (true == UEngineInput::IsDown('Z'))
+	if (true == UEngineInput::IsDown('Z') && false == IsEating)
 	{
 		StateChange(EKirbyState::Fly);
 		return;
@@ -817,19 +817,24 @@ void APlayer::Inhale(float _DeltaTime)
 	}
 
 	// 흡입 중에 커비와 몬스터의 충돌 확인
-	std::vector<UCollision*> Result;
-	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
+	std::vector<UCollision*> Result1;
+	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result1))
 	{
 		// 몬스터 먹어버리기
-
-		AActor* temp = Result[0]->GetOwner();
-		int a = 0;
-
-		//if(Result[0]->GetOwner()->CopyAbilityType)
 		InhaleCollision->ActiveOff();
 		StateChange(EKirbyState::Eating);
 		return;
 	}
+
+	std::vector<UCollision*> Result2;
+	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::EdibleBullet, Result2))
+	{
+		// Bullet 먹어버리기
+		InhaleCollision->ActiveOff();
+		StateChange(EKirbyState::Eating);
+		return;
+	}
+
 
 	// 몇 초동안 흡입에 뭐 안 들어오면 흡입 그냥 끝남.. 나중에 수정.
 	// 흡입 끝남

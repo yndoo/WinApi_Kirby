@@ -242,7 +242,7 @@ void AMrFrosty::ShootJump(float _DeltaTime)
 {
 	// 충돌하면 ShootStart
 	std::vector<UCollision*> Result;
-	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::EdibleBullet, Result))
 	{
 		StateChange(EEnemyState::Shoot);
 		return;

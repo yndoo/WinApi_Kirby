@@ -14,6 +14,7 @@ enum class EKirbyCollisionOrder
 	MonsterAround,
 	Monster,
 	PlayerBullet,	// 공격 충돌체
+	EdibleBullet,
 	Player,
 	Ladder,
 	Block,

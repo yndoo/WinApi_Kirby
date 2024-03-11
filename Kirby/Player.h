@@ -130,8 +130,8 @@ private:
 	float JumpMaxSpeed = 500.0f;
 	FVector GravityVector = FVector::Zero;
 	FVector GravityAcc = FVector::Down * 2000.0f;
-	FVector LadderUpSpeed = FVector::Up * 100.f;
-	FVector LadderDownSpeed = FVector::Down * 100.f;
+	FVector LadderUpSpeed = FVector::Up * 200.f;
+	FVector LadderDownSpeed = FVector::Down * 200.f;
 	FVector FinalMoveVector = FVector::Zero;
 	float FreeMoveSpeed = 1000.0f;
 	float FlySpeed = 100.f;

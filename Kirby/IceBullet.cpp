@@ -15,7 +15,7 @@ void AIceBullet::BeginPlay()
 	BulletRenderer->SetTransform({ {0,-20}, {40, 40} });
 	BulletRenderer->SetTransColor(Color8Bit::Magenta);
 
-	BulletCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);
+	BulletCollision = CreateCollision(EKirbyCollisionOrder::EdibleBullet);
 	BulletCollision->SetScale({ 40, 40 });
 	BulletCollision->SetPosition({ 0, -20 });
 	BulletCollision->SetColType(ECollisionType::Rect);
@@ -27,6 +27,21 @@ void AIceBullet::Tick(float _DeltaTime)
 {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
+
+	// 커비 흡입 충돌체와 몬스터의 충돌 확인
+	std::vector<UCollision*> Result;
+	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
+	{
+		// 커비쪽으로 당겨지기
+		FVector InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
+		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
+		return;
+	}
+
+	if (nullptr != BulletCollision && true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	{
+		Destroy();
+	}
 }
 
 void AIceBullet::IdleStart()
