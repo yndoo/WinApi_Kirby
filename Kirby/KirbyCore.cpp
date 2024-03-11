@@ -67,7 +67,8 @@ void KirbyCore::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedShootReady.png", 3, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedShoot_Right.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedShoot_Left.png", 2, 1);
-	
+	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedHitWall_Right.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedHitWall_Left.png", 2, 1);
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");

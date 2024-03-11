@@ -39,7 +39,7 @@ enum class EKirbyState
 	Slide,
 	Run,
 	Jump,
-	Break,
+	Brake,
 	Inhale,
 	Eating,
 	EatingRun,

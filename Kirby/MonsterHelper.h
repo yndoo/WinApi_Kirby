@@ -69,14 +69,16 @@ protected:
 	//virtual void DieStart();
 
 	virtual bool DirCheck();	// 얘는 현재 커비의 Dir을 Check하는데?
+	virtual std::string GetAnimationName(std::string _Name);
 	void FallDown(Color8Bit _Color);
-	std::string GetAnimationName(std::string _Name);
+	void SwitchIsDamaged(float _DeltaTime, float _CoolTime);
 
 	EActorDir DirState = EActorDir::Left;
 	EEnemyState State = EEnemyState::None;
 	FVector InhaleDir = FVector::Zero;
 	std::string CurAnimationName = "Idle";
 	bool IsDamaged = false;
+	float SwitchIsDamagedTimer = 0.f;
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();

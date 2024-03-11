@@ -201,7 +201,7 @@ void APlayer::StateChange(EKirbyState _State)
 		case EKirbyState::Jump:
 			JumpStart();
 			break;
-		case EKirbyState::Break:
+		case EKirbyState::Brake:
 			BreakStart();
 			break;
 		case EKirbyState::Inhale:
@@ -261,7 +261,7 @@ void APlayer::StateUpdate(float _DeltaTime) {
 		// 점프
 		Jump(_DeltaTime);
 		break;
-	case EKirbyState::Break:
+	case EKirbyState::Brake:
 		// 브레이크
 		Break(_DeltaTime);
 		break;
@@ -440,7 +440,7 @@ void APlayer::Move(float _DeltaTime)
 		if (IsPlayerBottomMagentaA())
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
-			StateChange(EKirbyState::Break);
+			StateChange(EKirbyState::Brake);
 		}
 		else
 		{
@@ -536,7 +536,7 @@ void APlayer::Run(float _DeltaTime)
 		if (IsPlayerBottomMagentaA())
 		{
 			// 땅 위에서 방향 바뀌었으면 브레이크
-			StateChange(EKirbyState::Break);
+			StateChange(EKirbyState::Brake);
 		}
 		else
 		{

@@ -22,6 +22,7 @@ protected:
 	void Tick(float _DeltaTime) override;
 	void StateUpdate(float _DeltaTime) override;
 	void StateChange(EEnemyState _State) override;
+	std::string GetAnimationName(std::string _Name) override;
 
 	void IdleStart() override;
 	void Idle(float _DeltaTime) override;
@@ -40,7 +41,6 @@ protected:
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);
 	void CalMoveVector(float _DeltaTime, float MaxSpeed);
 	void CalGravityVector(float _DeltaTime);
-	//void CalJumpVector(float _DeltaTime);
 	void CalFinalMoveVector(float _DeltaTime);
 	void FinalMove(float _DeltaTime);
 

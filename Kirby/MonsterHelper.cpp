@@ -164,19 +164,9 @@ std::string MonsterHelper::GetAnimationName(std::string _Name)
 
 	CurAnimationName = _Name;
 
-	if (_Name == "ShootReady")
-	{
-		if (true == IsDamaged)
-		{
-			IsDamaged = false;
-			return "Damaged" + _Name;
-		}
-		return _Name;
-	}
-
 	if (true == IsDamaged)
 	{
-		IsDamaged = false;
+		//IsDamaged = false;
 		return "Damaged" +_Name + DirName;
 	}
 	return _Name + DirName;
@@ -203,4 +193,14 @@ bool MonsterHelper::DirCheck()
 	}
 
 	return IsChanged;
+}
+
+void MonsterHelper::SwitchIsDamaged(float _DeltaTime, float _CoolTime)
+{
+	SwitchIsDamagedTimer += _DeltaTime;
+	if (SwitchIsDamagedTimer >= _CoolTime)
+	{
+		IsDamaged = !IsDamaged;
+		SwitchIsDamagedTimer = 0.f;
+	}
 }
