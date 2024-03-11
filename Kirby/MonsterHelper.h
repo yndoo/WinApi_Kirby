@@ -45,7 +45,7 @@ public:
 	// 체력 깎는 == 데미지 입히는 함수
 	void AddDamageHp(int _Damage)
 	{
-		SetCurHp(CurHp + _Damage);
+		SetCurHp(CurHp - _Damage);
 	}
 protected:
 	UCollision* MonsterCollision = nullptr;
