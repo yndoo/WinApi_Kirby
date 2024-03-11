@@ -14,7 +14,6 @@
     <ClInclude Include="RestAreaLevel.h">
       <Filter>RestAreaLevel</Filter>
     </ClInclude>
-    <ClInclude Include="Map.h" />
     <ClInclude Include="BossLevel.h">
       <Filter>BossLevel</Filter>
     </ClInclude>
@@ -58,7 +57,13 @@
       <Filter>Actor\Bullets</Filter>
     </ClInclude>
     <ClInclude Include="DoorStar.h">
-      <Filter>Helper</Filter>
+      <Filter>Actor\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="EndingLevel.h">
+      <Filter>EndingLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Actor\ETC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,7 +80,6 @@
     <ClCompile Include="RestAreaLevel.cpp">
       <Filter>RestAreaLevel</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp" />
     <ClCompile Include="BossLevel.cpp">
       <Filter>BossLevel</Filter>
     </ClCompile>
@@ -119,7 +123,13 @@
       <Filter>Actor\Bullets</Filter>
     </ClCompile>
     <ClCompile Include="DoorStar.cpp">
-      <Filter>Helper</Filter>
+      <Filter>Actor\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="EndingLevel.cpp">
+      <Filter>EndingLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Actor\ETC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +159,9 @@
     </Filter>
     <Filter Include="Actor\ETC">
       <UniqueIdentifier>{6c99faff-7017-4b44-9557-2ea9d5685b3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EndingLevel">
+      <UniqueIdentifier>{b59dc5bd-451c-4363-93df-9f8c189c62dd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
