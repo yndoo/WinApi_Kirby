@@ -39,13 +39,13 @@ protected:
 	void FinalMove(float _DeltaTime);
 
 	FVector MoveVector = FVector::Zero;
-	FVector MoveAcc = FVector::Right * 100.0f;
+	FVector MoveAcc = FVector::Right * 50.0f;
 	//FVector SmallMoveAcc = FVector::Right * 50.f;
 	float MovePower = 50.f;
 	//float MoveMaxSpeed = 200.0f;
 	FVector JumpVector = FVector::Zero;
 	FVector SmallJumpPower = FVector::Up * 300;
-	FVector JumpPower = FVector::Up * 600;
+	FVector JumpPower = FVector::Up * 800;
 	//float JumpMaxSpeed = 200.0f;
 	FVector GravityVector = FVector::Zero;
 	FVector GravityAcc = FVector::Down * 3000.0f;

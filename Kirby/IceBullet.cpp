@@ -31,12 +31,12 @@ void AIceBullet::Tick(float _DeltaTime)
 
 void AIceBullet::IdleStart()
 {
+	// 위로 던져졌다가
 	JumpVector = JumpPower;
 }
 void AIceBullet::Idle(float _DeltaTime)
 {
 	MoveUpdate(_DeltaTime);
-	// 위로 던져졌다가
 
 	// 몬스터랑 충돌하면 앞으로 포물선
 	std::vector<UCollision*> Result;
@@ -48,7 +48,16 @@ void AIceBullet::Idle(float _DeltaTime)
 
 void AIceBullet::MoveStart()
 {
-
+	GravityVector = FVector::Zero;
+	switch (Dir)
+	{
+	case EActorDir::Left:
+		MoveVector += FVector::Left * 100.f;
+		break;
+	case EActorDir::Right:
+		MoveVector += FVector::Right * 100.f;
+		break;
+	}
 }
 void AIceBullet::Move(float _DeltaTime)
 {
@@ -63,7 +72,7 @@ void AIceBullet::Move(float _DeltaTime)
 		break;
 	}
 
-	JumpVector += FVector::Down * _DeltaTime * 100.f;
+	JumpVector += FVector::Down * _DeltaTime * 200.f;
 }
 
 void AIceBullet::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Acc /*= FVector::Zero*/)

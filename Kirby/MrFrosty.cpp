@@ -17,7 +17,7 @@ void AMrFrosty::BeginPlay()
 	MonsterRenderer->SetImage("MrFrostyIdle_Left.png");
 	MonsterRenderer->SetTransform({ {0,0}, {300, 300} });
 
-	WideCollision = CreateCollision(EKirbyCollisionOrder::Monster);
+	WideCollision = CreateCollision(EKirbyCollisionOrder::MonsterAround);
 	WideCollision->SetScale({ 240, 160 });	
 	WideCollision->SetPosition({ 0, -80 });
 	WideCollision->SetColType(ECollisionType::Rect);
@@ -34,8 +34,11 @@ void AMrFrosty::BeginPlay()
 	MonsterRenderer->CreateAnimation("Move_Left", "MrFrostyMove_Left.png", 1, 2, 0.1f, true);
 	MonsterRenderer->CreateAnimation("ShootReady", "MrFrostyShootReady.png", {1, 0, 1, 2}, 0.1f, true);
 	//MonsterRenderer->CreateAnimation("ShootReady", "MrFrostyShootReady.png",  0,2 , 0.1f, true);
-	MonsterRenderer->CreateAnimation("Shoot_Right", "MrFrostyShoot_Right.png", 0, 5, 0.2f, false);
-	MonsterRenderer->CreateAnimation("Shoot_Left", "MrFrostyShoot_Left.png", 0, 5, 0.2f, false);
+	MonsterRenderer->CreateAnimation("ShootJump_Right", "MrFrostyShoot_Right.png", 0, 2, 0.1f, false);
+	MonsterRenderer->CreateAnimation("ShootJump_Left", "MrFrostyShoot_Left.png", 0, 2, 0.1f, false);
+	MonsterRenderer->CreateAnimation("Shoot_Right", "MrFrostyShoot_Right.png", 2, 5, 0.1f, false);
+	MonsterRenderer->CreateAnimation("Shoot_Left", "MrFrostyShoot_Left.png", 2, 5, 0.1f, false);
+
 
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Idle"));
 	StateChange(EEnemyState::Idle);
@@ -229,7 +232,6 @@ void AMrFrosty::ShootJumpStart()
 {
 	DirCheck();
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Move"));
-
 	// 얼음 위로 던져야 함.
 	AIceBullet* bullet = GetWorld()->SpawnActor<AIceBullet>();
 	bullet->SetActorLocation(GetActorLocation() + FVector({ 0, -100 }));
@@ -254,8 +256,6 @@ void AMrFrosty::ShootStart()
 }
 void AMrFrosty::Shoot(float _DeltaTime)
 {
-
-
 	if (true == MonsterRenderer->IsCurAnimationEnd())
 	{
 		StateChange(EEnemyState::Idle);
