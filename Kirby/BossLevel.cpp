@@ -38,12 +38,20 @@ void UBossLevel::Tick(float _DeltaTime)
 	ULevel::Tick(_DeltaTime);
 	//FVector CamPos = GetCameraPos();
 	//UEngineDebug::DebugTextPrint("X : " + std::to_string(CamPos.X) + ", Y : " + std::to_string(CamPos.Y), 30.0f);
-	if (OneFrosty->IsDestroy() && true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
+	if (nullptr != OneFrosty && true == OneFrosty->DeathCheck)
 	{
 		// 문에 별 생기고 엔딩레벨로 가야함.
-
-		GEngine->ChangeLevel("TitleLevel");	// 임시
-
+		if (false == OpenDoorOnce)
+		{
+			ADoorStar* DStar = SpawnActor<ADoorStar>();
+			DStar->SetActorLocation({ 540, 261 });
+			OpenDoorOnce = true;
+		}
+		
+		if (true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
+		{
+			GEngine->ChangeLevel("TitleLevel");	// 임시
+		}
 	}
 
 	std::vector<UCollision*> Result;
@@ -52,7 +60,7 @@ void UBossLevel::Tick(float _DeltaTime)
 		//보스 스폰
 		OneFrosty = SpawnActor<AMrFrosty>();
 		OneFrosty->SetActorLocation({ 520, 300 });
-		OneFrosty->SetMaxHp(200);
+		OneFrosty->SetMaxHp(100);
 		FrostySpawner->SpawnCollision->Destroy();
 		FrostySpawner = nullptr;
 	}

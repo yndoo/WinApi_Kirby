@@ -17,6 +17,7 @@ public:
 	AMrFrosty& operator=(AMrFrosty&& _Other) noexcept = delete;
 
 	bool IsStart = false;
+	bool DeathCheck = false;
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -66,7 +67,6 @@ private:
 	void UpMoving(float _DeltaTime, Color8Bit _Color);
 	bool IsPlayerBottomMagentaA();
 	bool IsPlayerBottomYellowA();
-	bool DeathCheck = false;
 
 	float Timer = 0.f;
 	float ShootReadyCoolTime = 2.f;

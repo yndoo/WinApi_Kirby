@@ -77,7 +77,8 @@ void AMrFrosty::Tick(float _DeltaTime)
 		AddDamageHp(60);
 	}
 
-	UEngineDebug::DebugTextPrint("Mr.Frosty HP : " + std::to_string(CurHp), 30.0f);
+	// 몬스터 체력 디버깅용
+	//UEngineDebug::DebugTextPrint("Mr.Frosty HP : " + std::to_string(CurHp), 30.0f);
 }
 
 void AMrFrosty::StateUpdate(float _DeltaTime)
@@ -370,7 +371,7 @@ void AMrFrosty::Die(float _DeltaTime)
 		if (false == DeathCheck)
 		{
 			MonsterRenderer->Destroy(3.f);
-			Destroy(5.f);
+			//Destroy(5.f);
 			DeathCheck = true;
 		}
 	}

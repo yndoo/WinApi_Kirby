@@ -173,8 +173,8 @@ void APlayer::Tick(float _DeltaTime) {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
 
-	//FVector PlayerPos = GetActorLocation();
-	//UEngineDebug::DebugTextPrint("X : " + std::to_string(PlayerPos.X) + ", Y : " + std::to_string(PlayerPos.Y), 30.0f);
+	FVector PlayerPos = GetActorLocation();
+	UEngineDebug::DebugTextPrint("X : " + std::to_string(PlayerPos.X) + ", Y : " + std::to_string(PlayerPos.Y), 30.0f);
 }
 
 void APlayer::StateChange(EKirbyState _State) 

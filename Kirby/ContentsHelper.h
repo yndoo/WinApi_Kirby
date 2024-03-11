@@ -3,6 +3,7 @@
 enum class EKirbyRenderOrder
 {
 	Map,
+	DoorStar,
 	Monster,
 	Player,
 	Bullet,

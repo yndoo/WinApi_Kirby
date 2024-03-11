@@ -6,6 +6,7 @@
 #include "WoodBlock.h"
 #include "Spawner.h"
 #include "MrFrosty.h"
+#include "DoorStar.h"
 
 // Ό³Έν :
 class UBossLevel : public ULevel
@@ -35,6 +36,7 @@ private:
 	AMap* Map = nullptr;
 
 	//bool FrostySpawned = false;
+	bool OpenDoorOnce = false;
 
 	FVector MapSize = FVector::Zero;
 	FVector WinScale = FVector::Zero;

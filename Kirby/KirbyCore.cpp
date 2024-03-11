@@ -42,6 +42,8 @@ void KirbyCore::BeginPlay() {
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
 
+	//Effects
+	UEngineResourcesManager::GetInst().CuttingImage("DoorStar.png", 2, 1);
 	//Bullets
 	UEngineResourcesManager::GetInst().CuttingImage("StarBulletIdle_Right.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("StarBulletIdle_Left.png", 2, 1);
