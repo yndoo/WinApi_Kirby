@@ -17,9 +17,6 @@
     <ClInclude Include="BossLevel.h">
       <Filter>BossLevel</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Actor</Filter>
-    </ClInclude>
     <ClInclude Include="StarBullet.h">
       <Filter>Actor\Bullets</Filter>
     </ClInclude>
@@ -65,6 +62,12 @@
     <ClInclude Include="Map.h">
       <Filter>Actor\ETC</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Actor\Kirby</Filter>
+    </ClInclude>
+    <ClInclude Include="EndingKirby.h">
+      <Filter>Actor\Kirby</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -82,9 +85,6 @@
     </ClCompile>
     <ClCompile Include="BossLevel.cpp">
       <Filter>BossLevel</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="ContentsHelper.cpp">
       <Filter>Helper</Filter>
@@ -131,6 +131,12 @@
     <ClCompile Include="Map.cpp">
       <Filter>Actor\ETC</Filter>
     </ClCompile>
+    <ClCompile Include="EndingKirby.cpp">
+      <Filter>Actor\Kirby</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Actor\Kirby</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PlayLevel">
@@ -162,6 +168,9 @@
     </Filter>
     <Filter Include="EndingLevel">
       <UniqueIdentifier>{b59dc5bd-451c-4363-93df-9f8c189c62dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Kirby">
+      <UniqueIdentifier>{46a5a448-051c-49c0-b6a7-025e3eef15a2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@
 #include "PlayLevel.h"
 #include "RestAreaLevel.h"
 #include "BossLevel.h"
+#include "EndingLevel.h"
 #include <EngineBase/EngineDirectory.h>
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
@@ -44,6 +45,7 @@ void KirbyCore::BeginPlay() {
 
 	//Effects
 	UEngineResourcesManager::GetInst().CuttingImage("DoorStar.png", 2, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("EndingStartEffects.png", 8, 1);
 	//Bullets
 	UEngineResourcesManager::GetInst().CuttingImage("StarBulletIdle_Right.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("StarBulletIdle_Left.png", 2, 1);
@@ -76,9 +78,12 @@ void KirbyCore::BeginPlay() {
 	CreateLevel<UPlayLevel>("PlayLevel");
 	CreateLevel<URestAreaLevel>("RestAreaLevel");
 	CreateLevel<UBossLevel>("BossLevel");
+	CreateLevel<UEndingLevel>("EndingLevel");
 
-	ChangeLevel("BossLevel");
+	ChangeLevel("EndingLevel");
 	//ChangeLevel("TitleLevel");	// ¿·Ω√ ª©µ“
+
+
 }
 
 void KirbyCore::Tick(float _DeltaTime) {

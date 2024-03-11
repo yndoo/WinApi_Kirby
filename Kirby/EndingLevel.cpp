@@ -2,6 +2,7 @@
 #include <EngineBase/EngineDirectory.h>
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
+#include "EndingKirby.h"
 
 UEndingLevel::UEndingLevel()
 {
@@ -30,7 +31,8 @@ void UEndingLevel::BeginPlay()
 	}
 
 	Map = SpawnActor<AMap>();
-
+	AEndingKirby* Kb = SpawnActor<AEndingKirby>();
+	Kb->SetActorLocation({ 317, 338 });
 }
 
 void UEndingLevel::Tick(float _DeltaTime)
@@ -41,7 +43,11 @@ void UEndingLevel::Tick(float _DeltaTime)
 
 void UEndingLevel::LevelStart(ULevel* _Level)
 {
-	Map->SetMapImage("");
+	Map->SetMapImage("ending_background_map.png");
+	Map->SetColMapImage("ending_background_colmap.png");
+	Map->SetBackMapImage("ending_background_map.png");
+	//Map->ColRenderer->ActiveOff();
+	Map->BackRenderer->ActiveOff();
 }
 void UEndingLevel::LevelEnd(ULevel* _Level)
 {
