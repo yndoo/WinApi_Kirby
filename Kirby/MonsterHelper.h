@@ -47,6 +47,8 @@ public:
 	{
 		SetCurHp(CurHp - _Damage);
 	}
+
+	bool DeathCheck = false;
 protected:
 	UCollision* MonsterCollision = nullptr;
 	UImageRenderer* MonsterRenderer = nullptr;

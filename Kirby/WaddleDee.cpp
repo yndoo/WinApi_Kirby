@@ -78,9 +78,10 @@ void AWaddleDee::DamagedStart()
 }
 void AWaddleDee::Damaged(float _DeltaTime)
 {
-	if (GetCurHp() <= 0)
+	if (GetCurHp() <= 0 && false == DeathCheck)
 	{
-		Destroy();
+		DeathCheck = true;
+		Destroy(2.0f);
 	}
 	else if (MonsterRenderer->IsCurAnimationEnd())
 	{

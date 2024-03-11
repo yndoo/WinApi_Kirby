@@ -80,7 +80,7 @@ void KirbyCore::BeginPlay() {
 	CreateLevel<UBossLevel>("BossLevel");
 	CreateLevel<UEndingLevel>("EndingLevel");
 
-	ChangeLevel("EndingLevel");
+	ChangeLevel("TitleLevel");
 	//ChangeLevel("TitleLevel");	// ¿·Ω√ ª©µ“
 
 

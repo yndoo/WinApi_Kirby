@@ -17,7 +17,7 @@ public:
 	AMrFrosty& operator=(AMrFrosty&& _Other) noexcept = delete;
 
 	bool IsStart = false;
-	bool DeathCheck = false;
+	//bool DeathCheck = false;
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
