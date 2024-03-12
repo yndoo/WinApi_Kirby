@@ -4,6 +4,12 @@
 #include <EngineBase/EngineTime.h>
 #include <EngineCore/EngineCore.h>
 
+enum class EKirbyType
+{
+	Base,
+	Fire,
+};
+
 // 설명 :
 class APlayer : public AActor
 {
@@ -108,6 +114,8 @@ protected:
 	bool IsEating = false;
 	bool IsFireKirby = false;
 	bool EatingFireType = false;	// 입 안에 먹은 변신체가 Fire 타입인지
+
+	EKirbyType KirbyType = EKirbyType::Base;
 private:
 	UCollision* BodyCollision = nullptr;
 	UCollision* BottomCollision = nullptr;

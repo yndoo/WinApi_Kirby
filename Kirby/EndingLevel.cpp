@@ -3,6 +3,7 @@
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
 #include "EndingKirby.h"
+#include <EngineCore/EngineCore.h>
 
 UEndingLevel::UEndingLevel()
 {
@@ -39,7 +40,10 @@ void UEndingLevel::BeginPlay()
 void UEndingLevel::Tick(float _DeltaTime)
 {
 	ULevel::Tick(_DeltaTime);
-
+	if (true == Map->BackRenderer->IsCurAnimationEnd())
+	{
+		//³¡
+	}
 }
 
 void UEndingLevel::LevelStart(ULevel* _Level)
@@ -51,9 +55,6 @@ void UEndingLevel::LevelStart(ULevel* _Level)
 	//Map->Renderer->ActiveOff();
 
 	Map->BackRenderer->ChangeAnimation("Dance");
-
-	//AEndingKirby* Kb = SpawnActor<AEndingKirby>();
-	//Kb->SetActorLocation({ 317, 338 });
 }
 void UEndingLevel::LevelEnd(ULevel* _Level)
 {

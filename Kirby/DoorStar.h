@@ -20,7 +20,8 @@ protected:
 	void Tick(float _DeltaTime) override;
 
 	//UCollision* DoorCollision = nullptr;	// Door에 Collision 사용 안 하지만 혹시 모름
-	UImageRenderer* Renderer = nullptr;		// 문 위에 별 렌더러
+	UImageRenderer* StarRenderer = nullptr;		// 문 위에 별 렌더러
+	UImageRenderer* DoorRenderer = nullptr;		// 문 렌더러
 private:
 
 };
