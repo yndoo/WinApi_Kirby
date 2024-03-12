@@ -23,7 +23,7 @@ void AMrFrosty::BeginPlay()
 	WideCollision->SetPosition({ 0, -90 });
 	WideCollision->SetColType(ECollisionType::Rect);
 
-	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Monster);
+	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Boss);
 	MonsterCollision->SetScale({ 80, 100 });
 	MonsterCollision->SetPosition({ 0, -50 });
 	MonsterCollision->SetColType(ECollisionType::Rect);
