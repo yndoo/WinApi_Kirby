@@ -104,7 +104,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
 	AutoCreateAnimation("Brake", 0, 0, 0.2f, false);
-	AutoCreateAnimation("Swallow", "Swallow", 0, 4, 0.1f, false);
+	AutoCreateAnimation("Swallow", 0, 4, 0.1f, false);
 	AutoCreateAnimation("InhaleStart", "Inhale", 4, 4, 0.1f, false);
 	AutoCreateAnimation("InhaleSmall", "Inhale", 5, 6, 0.1f, true);
 	AutoCreateAnimation("InhaleLarge", "Inhale", 7, 8, 0.1f, true);
@@ -116,7 +116,8 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("FlyStart", "Fly", 0, 4, 0.05f, false);
 	AutoCreateAnimation("Flying", "Fly", 5, 9, 0.1f, true);
 	AutoCreateAnimation("Exhale", "Fly", { 2, 1, 0 }, 0.15f, false);
-	AutoCreateAnimation("Damaged", "Damaged", 0, 8, 0.05f, false);
+	AutoCreateAnimation("Damaged", 0, 8, 0.05f, false);
+	//AutoCreateAnimation("InhaleFail", 0, 3, 0.1f, false);
 
 	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
 	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
@@ -265,6 +266,9 @@ void APlayer::StateChange(EKirbyState _State)
 		case EKirbyState::Damaged:
 			DamagedStart();
 			break;
+		case EKirbyState::InhaleFail:
+			InhaleFailStart();
+			break;
 		default:
 			break;
 		}
@@ -337,6 +341,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EKirbyState::Damaged:
 		// 피격
 		Damaged(_DeltaTime);
+		break;
+	case EKirbyState::InhaleFail:
+		// 흡입 실패
+		InhaleFail(_DeltaTime);
 		break;
 	case EKirbyState::FreeMove:
 		// 자유 이동
@@ -426,7 +434,7 @@ void  APlayer::Idle(float _DeltaTime)
 		return;
 	}
 
-	if (true == UEngineInput::IsPress('X') && false == IsEating)
+	if (true == UEngineInput::IsDown('X') && false == IsEating)
 	{
 		if (true == IsFireKirby)
 		{
@@ -809,6 +817,7 @@ void APlayer::Brake(float _DeltaTime)
 // Inhale : 흡입 중 상태
 void APlayer::InhaleStart()
 {
+	InhaleMaxTime = 0.f;
 	InhaleCollision->ActiveOn();
 
 	DirCheck();
@@ -823,7 +832,6 @@ void APlayer::InhaleStart()
 	{
 		InhaleCollision->SetPosition({ 40, -20 });
 	}
-	
 }
 void APlayer::Inhale(float _DeltaTime)
 {
@@ -833,6 +841,7 @@ void APlayer::Inhale(float _DeltaTime)
 		FTransform ColTrans = InhaleCollision->GetTransform();
 		FVector ColScale = ColTrans.GetScale();
 
+		// Scale 일정 이상 지나면 InhaleLarge 애니메이션으로 변경해줘야 함.
 		if (InhaleScaleVar >= InhaleFirstMax && InhaleScaleVar < InhaleSecondMax)
 		{
 			PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleSmall"));
@@ -845,7 +854,6 @@ void APlayer::Inhale(float _DeltaTime)
 		InhaleScaleVar += InhaleScaleAdd * _DeltaTime;
 		InhaleCollision->SetScale({ InhaleScaleVar, InhaleScaleVar + 20.f });
 
-		// Scale 일정 이상 지나면 InhaleLarge 애니메이션으로 변경해줘야 함. (아직 안 함)
 
 		FVector ColPos = ColTrans.GetPosition();
 		if (DirState == EActorDir::Left)
@@ -856,6 +864,12 @@ void APlayer::Inhale(float _DeltaTime)
 		{
 			InhaleCollision->SetPosition({ ColPos.X + _DeltaTime * InhaleScaleAdd / 2, -20.f });
 		}
+	}
+
+	// 시간 측정
+	if (InhaleScaleVar > InhaleSecondMax)
+	{
+		InhaleMaxTime += _DeltaTime;
 	}
 
 	// 흡입 중에 커비와 몬스터의 충돌 확인
@@ -881,16 +895,22 @@ void APlayer::Inhale(float _DeltaTime)
 		return;
 	}
 
-
-	// 몇 초동안 흡입에 뭐 안 들어오면 흡입 그냥 끝남.. 나중에 수정.
-	// 흡입 끝남
-	if (true == UEngineInput::IsFree('X'))
+	// X키 떼거나 InhalkeMaxTime이 2초 미만일 때는 Idle로 돌아감
+	if (true == UEngineInput::IsFree('X') && InhaleMaxTime < 2.f)
 	{
-		UContentsHelper::EatingFireMonster = false;
+		//UContentsHelper::EatingFireMonster = false;
 
 		InhaleCollision->ActiveOff();
-		IsEating = false;
+		//IsEating = false;
 		StateChange(EKirbyState::Idle);
+		return;
+
+	}
+	// 흡입 일정 시간 이상 하면 InhaleFail로 돌아감
+	if (InhaleMaxTime >= 2.f)
+	{
+		InhaleCollision->ActiveOff();
+		StateChange(EKirbyState::InhaleFail);
 		return;
 	}
 }
@@ -1120,10 +1140,6 @@ void APlayer::LadderDown(float _DeltaTime)
 	std::vector<UCollision*> Result;
 	if (false == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 	{
-		//float CurX = GetActorLocation().X;
-		//float CurCamX = GetWorld()->GetCameraPos().X;
-		//SetActorLocation({ CurX, LadderBottom });
-		//GetWorld()->SetCameraPos({ CurCamX, MapSize.Y - WinScale.Y });
 		StateChange(EKirbyState::Idle);
 		return;
 	}
@@ -1194,6 +1210,20 @@ void APlayer::Damaged(float _DeltaTime)
 	if (true == PlayerRenderer->IsCurAnimationEnd() && abs(FinalMoveVector.X) < 100.0f)
 	{
 		MoveVector = FVector::Zero;
+		StateChange(EKirbyState::Idle);
+		return;
+	}
+}
+
+void APlayer::InhaleFailStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleFail"));
+}
+void APlayer::InhaleFail(float _DeltaTime)
+{
+	if (true == PlayerRenderer->IsCurAnimationEnd())
+	{
 		StateChange(EKirbyState::Idle);
 		return;
 	}

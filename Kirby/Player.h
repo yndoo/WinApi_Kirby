@@ -70,6 +70,7 @@ protected:
 	void LadderDown(float _DeltaTime);
 	void Exhale(float _DeltaTime);
 	void Damaged(float _DeltaTime);
+	void InhaleFail(float _DeltaTime);
 
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
@@ -91,6 +92,7 @@ protected:
 	void LadderDownStart();
 	void ExhaleStart();
 	void DamagedStart();
+	void InhaleFailStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
@@ -150,6 +152,7 @@ private:
 	float InhaleFirstMax = 50.f;
 	float InhaleSecondMax = 80.f;
 	float InhaleMaxScale = 100.f;
+	float InhaleMaxTime = 0.f;
 	float FireTime = 0.0f;			// FireKirby 공격 텀에 사용되는 변수
 
 

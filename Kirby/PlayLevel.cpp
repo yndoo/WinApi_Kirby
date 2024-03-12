@@ -46,6 +46,7 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("Inhale", 13, 1);
 	CuttingImgLR("Fly", 10, 1);
 	CuttingImgLR("Damaged", 9, 1);
+	//CuttingImgLR("InhaleFail", 4, 1);
 
 	CuttingImgLR("Swallow", 5, 1);
 	CuttingImgLR("Eating", 7, 1);
