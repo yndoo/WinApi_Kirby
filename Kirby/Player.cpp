@@ -167,11 +167,20 @@ void APlayer::BeginPlay() {
 	InhaleCollision->ActiveOff();
 
 	StateChange(EKirbyState::Idle);
+	UContentsHelper::EatingFireMonster = false;
 }
 
 void APlayer::Tick(float _DeltaTime) {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
+
+	std::vector<UCollision*> Result;
+	if (IsFireKirby == true && (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result) || (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Boss, Result))))
+	{
+		// 변신 상태에서 몬스터 피격당하면 변신 풀리기
+		// 나중에 Damaged로 가면 변신 풀리게 옮기면 됨
+		IsFireKirby = false;
+	}
 
 	FVector PlayerPos = GetActorLocation();
 	UEngineDebug::DebugTextPrint("X : " + std::to_string(PlayerPos.X) + ", Y : " + std::to_string(PlayerPos.Y), 30.0f);
@@ -368,7 +377,7 @@ void  APlayer::Idle(float _DeltaTime)
 			StateChange(EKirbyState::Crouch);
 			return;
 		}
-		else
+		else if (true == IsEating)
 		{
 			// 삼키기
 			IsEating = false;
@@ -820,6 +829,10 @@ void APlayer::Inhale(float _DeltaTime)
 	std::vector<UCollision*> Result1;
 	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result1))
 	{
+		if (Result1[0]->GetOwner()->GetName() == UEngineString::ToUpper("Flamer"))
+		{
+			UContentsHelper::EatingFireMonster = true;
+		}
 		// 몬스터 먹어버리기
 		InhaleCollision->ActiveOff();
 		StateChange(EKirbyState::Eating);
@@ -840,6 +853,8 @@ void APlayer::Inhale(float _DeltaTime)
 	// 흡입 끝남
 	if (true == UEngineInput::IsFree('X'))
 	{
+		UContentsHelper::EatingFireMonster = false;
+
 		InhaleCollision->ActiveOff();
 		IsEating = false;
 		StateChange(EKirbyState::Idle);
@@ -847,7 +862,7 @@ void APlayer::Inhale(float _DeltaTime)
 	}
 }
 
-// Eating : 입에 몬스터 넣은 상태
+// Eating : 입에 몬스터 넣은 상태, 사용하지 않고 있음.
 void APlayer::EatingStart()
 {
 	DirCheck();
@@ -860,6 +875,7 @@ void APlayer::Eating(float _DeltaTime)
 	StateChange(EKirbyState::Idle);
 	return;
 }
+
 // Swallow : 삼키기
 void APlayer::SwallowStart()
 {
@@ -868,6 +884,11 @@ void APlayer::SwallowStart()
 }
 void APlayer::Swallow(float _DeltaTime)
 {
+	if (true == UContentsHelper::EatingFireMonster)
+	{
+		IsFireKirby = true;
+		UContentsHelper::EatingFireMonster = false;
+	}
 	if (PlayerRenderer->IsCurAnimationEnd())
 	{
 		StateChange(EKirbyState::Idle);

@@ -89,6 +89,7 @@ class UContentsHelper
 public:
 	static UWindowImage* ColMapImage;
 	static UWindowImage* BackgroundImage;
+	static bool EatingFireMonster;			// 입 안에 Fire속성 몬스터가 있는 지(아직 삼키지X)
 protected:
 
 private:

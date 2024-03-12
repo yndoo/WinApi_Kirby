@@ -14,6 +14,7 @@ void AFlamer::BeginPlay() {
 
 	SetActorLocation({ 500,250 });
 	SetMaxHp(100);
+	SetName("Flamer");
 
 	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
 	MonsterRenderer->SetImage("Flamer_Spin.png");
@@ -62,6 +63,10 @@ void AFlamer::Idle(float _DeltaTime)
 	std::vector<UCollision*> Result;
 	if (nullptr != MonsterCollision && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
+		if (GetCurHp() <= 0)
+		{
+			UContentsHelper::EatingFireMonster = true;
+		}
 		StateChange(EEnemyState::Damaged);
 		return;
 	}
@@ -74,6 +79,11 @@ void AFlamer::DamagedStart()
 void AFlamer::Damaged(float _DeltaTime)
 {
 	// 나중에 체력 넣으면 체력이 0될 때 죽어야 함(미완)
+	if (GetCurHp() <= 0)
+	{
+		StateChange(EEnemyState::Die);
+		return;
+	}
 
 	// 바닥에 떨어진 후 Move
 	if (MonsterRenderer->IsCurAnimationEnd() == true)
@@ -82,6 +92,16 @@ void AFlamer::Damaged(float _DeltaTime)
 		StateChange(EEnemyState::Move);
 		return;
 	}
+
+}
+
+void AFlamer::DieStart()
+{
+	//Die 애니메이션 실행
+	
+}
+void AFlamer::Die(float _DeltaTime)
+{
 
 }
 

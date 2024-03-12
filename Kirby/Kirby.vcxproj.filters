@@ -68,9 +68,6 @@
     <ClInclude Include="EndingKirby.h">
       <Filter>Actor\Kirby</Filter>
     </ClInclude>
-    <ClInclude Include="EffectHelper.h">
-      <Filter>Helper</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -139,9 +136,6 @@
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Actor\Kirby</Filter>
-    </ClCompile>
-    <ClCompile Include="EffectHelper.cpp">
-      <Filter>Helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

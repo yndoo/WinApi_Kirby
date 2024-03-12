@@ -1,8 +1,8 @@
 #pragma once
-#include "EffectHelper.h"
+#include <EngineCore/Actor.h>
 
 // 설명 : 입력없이 랜더링만 하는 커비
-class AEndingKirby : public EffectHelper
+class AEndingKirby : public AActor
 {
 public:
 	// constrcuter destructer
@@ -19,7 +19,9 @@ protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 
-	UImageRenderer* Renderer = nullptr;
+	UImageRenderer* Renderer = nullptr;	// 커비 렌더러
+	UImageRenderer* EffectRenderer1 = nullptr;
+	UImageRenderer* EffectRenderer2 = nullptr;
 private:
 
 };
