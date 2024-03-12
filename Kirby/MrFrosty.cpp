@@ -48,7 +48,10 @@ void AMrFrosty::BeginPlay()
 	MonsterRenderer->CreateAnimation("DamagedHitWall_Right", "MF_DamagedHitWall_Right.png", 0, 1, 0.1f, true);
 	MonsterRenderer->CreateAnimation("DamagedHitWall_Left", "MF_DamagedHitWall_Left.png", 0, 1, 0.1f, true);
 
+	MonsterRenderer->CreateAnimation("DieEffect", "MonDieEffects.png", 0, 23, 0.05f, false);
+
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Idle"));
+
 	StateChange(EEnemyState::Idle);
 }
 
@@ -324,6 +327,7 @@ void AMrFrosty::Shoot(float _DeltaTime)
 
 void AMrFrosty::DieStart()
 {
+	Timer = 0.f;
 	DirCheck();
 	MonsterRenderer->ChangeAnimation(GetAnimationName("HitWall"));
 
@@ -363,16 +367,21 @@ void AMrFrosty::Die(float _DeltaTime)
 	}
 	MoveUpdate(_DeltaTime);
 
+	if (true == DeathCheck && true == MonsterRenderer->IsCurAnimationEnd())
+	{
+		MonsterRenderer->ActiveOff();
+	}
 
 	// MoveVector가 일정 이하 됐을 때는
-	if (abs(MoveVector.X) < 80.f)
+	if (abs(MoveVector.X) < 30.f)
 	{
+		Timer += _DeltaTime;
 		MoveVector = FVector::Zero;
-		if (false == DeathCheck)
+		if (false == DeathCheck && Timer >= DieEffectBeforeTime)
 		{
 			MonsterCollision->Destroy();
-			MonsterRenderer->Destroy(3.f);
-			//Destroy(5.f);
+			MonsterRenderer->AddPosition({ 0, -40 });
+			MonsterRenderer->ChangeAnimation("DieEffect");
 			DeathCheck = true;
 		}
 	}

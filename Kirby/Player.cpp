@@ -1468,8 +1468,12 @@ void APlayer::FinalMove(float _DeltaTime)
 	Color8Bit TopColor = UContentsHelper::ColMapImage->GetColor(NextPlayerPos.iX(), NextPlayerPos.iY() - 20, Color8Bit::MagentaA);
 	if (TopColor == Color8Bit::MagentaA || TopColor == Color8Bit::YellowA)
 	{
-		PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));	// 머리박을 때 찌부되는거 TestCode
-		return;
+		MovePos.Y = 0.f;
+		if (false == IsEating && false == IsFireKirby)
+		{
+			PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));	// 머리박을 때 찌부되는거 TestCode
+			return;
+		}
 	}
 
 	// 플레이어 이동

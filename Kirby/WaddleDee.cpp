@@ -13,7 +13,7 @@ void AWaddleDee::BeginPlay()
 	AActor::BeginPlay();
 
 	SetActorLocation({ 1500, 200 });
-	SetMaxHp(100);
+	SetMaxHp(60);
 
 	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
 	MonsterRenderer->SetImage("WaddleDee_Right.png");
@@ -24,10 +24,10 @@ void AWaddleDee::BeginPlay()
 	MonsterRenderer->CreateAnimation("Idle_Left", "WaddleDee_Left.png", 0, 4, 0.3f, true);
 	MonsterRenderer->CreateAnimation("Inhaled_Right", "WaddleDee_Right.png", 8, 8, 0.1f, false);
 	MonsterRenderer->CreateAnimation("Inhaled_Left", "WaddleDee_Left.png", 8, 8, 0.1f, false);
-	MonsterRenderer->CreateAnimation("Damaged_Right", "WaddleDee_Right.png", { 8,8,8,8 }, 0.3f, false);
-	MonsterRenderer->CreateAnimation("Damaged_Left", "WaddleDee_Left.png", { 8,8,8,8 }, 0.3f, false);
-	//MonsterRenderer->CreateAnimation("Damaged", "WaddleDee_Right.png", { 0,0,0,0,1 }, 0.2f, false);
-	//MonsterRenderer->ChangeAnimation("Idle_Left");
+	MonsterRenderer->CreateAnimation("Damaged_Right", "WaddleDee_Right.png", { 8,8,8,8 }, 0.2f, false);
+	MonsterRenderer->CreateAnimation("Damaged_Left", "WaddleDee_Left.png", { 8,8,8,8 }, 0.2f, false);
+	MonsterRenderer->CreateAnimation("DieEffect", "MonDieEffects.png", 0, 23, 0.05f, false);
+	
 
 	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Monster);
 	MonsterCollision->SetScale({ 40, 40 });
@@ -50,6 +50,8 @@ void AWaddleDee::IdleStart()
 }
 void AWaddleDee::Idle(float _DeltaTime)
 {
+	MonsterRenderer->ChangeAnimation(GetAnimationName("Idle"));
+
 	FVector ActorPos = GetActorLocation();
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorPos.iX(), ActorPos.iY(), Color8Bit::MagentaA);
 	if (Color != Color8Bit::MagentaA)
@@ -57,7 +59,23 @@ void AWaddleDee::Idle(float _DeltaTime)
 		FallDown(Color8Bit::MagentaA);
 	}
 
-	switch (DirState)
+	// 벽에 부딪히면 반대로 이동하도록.
+	if (true == IsWall())
+	{
+		switch (MonsterDir)
+		{
+		case EActorDir::Left:
+			MonsterDir = EActorDir::Right;
+			break;
+		case EActorDir::Right:
+			MonsterDir = EActorDir::Left;
+			break;
+		default:
+			break;
+		}
+	}
+
+	switch (MonsterDir)
 	{
 	case EActorDir::Left:
 		AddActorLocation(FVector::Left * 50.0f * _DeltaTime);
@@ -70,29 +88,8 @@ void AWaddleDee::Idle(float _DeltaTime)
 	}
 }
 
-void AWaddleDee::DamagedStart()
-{
-	AddDamageHp(60);
-	MonsterCollision->SetActive(true, 2.0f);
-	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
-}
-void AWaddleDee::Damaged(float _DeltaTime)
-{
-	if (GetCurHp() <= 0 && false == DeathCheck)
-	{
-		DeathCheck = true;
-		Destroy(2.0f);
-	}
-	else if (MonsterRenderer->IsCurAnimationEnd())
-	{
-		StateChange(EEnemyState::Idle);
-		return;
-	}
-}
-
 void AWaddleDee::MoveStart()
 {
-
 }
 void AWaddleDee::Move(float _DeltaTime)
 {
@@ -109,6 +106,63 @@ void AWaddleDee::Inhaled(float _DeltaTime)
 	std::vector<UCollision*> Result;
 	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
-		Destroy();
+		//StateChange(EEnemyState::Damaged);
+		MonsterRenderer->ActiveOff();
+		MonsterCollision->ActiveOff();
+		return;
 	}
+}
+
+void AWaddleDee::DamagedStart()
+{
+	AddDamageHp(60);
+	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
+}
+void AWaddleDee::Damaged(float _DeltaTime)
+{
+	if (GetCurHp() <= 0 && true == MonsterRenderer->IsCurAnimationEnd())
+	{
+		// 원래 게임 : 한 대 맞고 이펙트터지면서 죽어야 함. 
+		StateChange(EEnemyState::Die);
+	}
+}
+
+void AWaddleDee::DieStart()
+{
+	MonsterRenderer->AddPosition({ 0, -20 });
+	MonsterRenderer->ChangeAnimation("DieEffect");
+}
+void AWaddleDee::Die(float _DeltaTime)
+{
+	if (true == MonsterRenderer->IsCurAnimationEnd())
+	{
+		MonsterCollision->ActiveOff();
+		MonsterRenderer->ActiveOff();
+	}
+}
+
+bool AWaddleDee::IsWall()
+{
+	FVector CurPos = GetActorLocation();
+	Color8Bit RColor = UContentsHelper::ColMapImage->GetColor(CurPos.iX() + 30, CurPos.iY() - 10, Color8Bit::MagentaA);
+	Color8Bit LColor = UContentsHelper::ColMapImage->GetColor(CurPos.iX() - 30, CurPos.iY() - 10, Color8Bit::MagentaA);
+
+	switch (MonsterDir)
+	{
+	case EActorDir::Left:
+		if (LColor == Color8Bit::MagentaA)
+		{
+			return true;
+		}
+		break;
+	case EActorDir::Right:
+		if (RColor == Color8Bit::MagentaA)
+		{
+			return true;
+		}
+		break;
+	default:
+		break;
+	}
+	return false;
 }

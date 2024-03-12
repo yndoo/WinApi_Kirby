@@ -7,6 +7,7 @@
 #include "Spawner.h"
 #include "MrFrosty.h"
 #include "DoorStar.h"
+#include "WaddleDee.h"
 
 // Ό³Έν :
 class UBossLevel : public ULevel

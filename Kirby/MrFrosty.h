@@ -73,6 +73,7 @@ private:
 
 	float Timer = 0.f;
 	float ShootReadyCoolTime = 2.f;
+	float DieEffectBeforeTime = 2.f;
 	bool BulletDestroyCheck = false;
 };
 

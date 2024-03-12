@@ -22,11 +22,15 @@ protected:
 	void Damaged(float _DeltaTime) override;
 	void Move(float _DeltaTime) override;
 	void Inhaled(float _DeltaTime) override;
+	void Die(float _DeltaTime) override;
 
 	void IdleStart() override;
 	void DamagedStart() override;
 	void MoveStart() override;
 	void InhaledStart() override;
+	void DieStart() override;
+
+	bool IsWall() override;
 private:
 
 };

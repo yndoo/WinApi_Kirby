@@ -105,13 +105,13 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	SecondLadder->SetActorLocation({ 60,800 });
 	SecondLadder->Collision->SetScale({ 40, 240 });
 
-	// 1층 나무블록 두 개
-	std::vector<AWoodBlock*> WBV1;
-	for (int i = 0; i < 2; i++)
-	{
-		WBV1.push_back(SpawnActor<AWoodBlock>());
-		WBV1[i]->SetActorLocation({ 480 + i * 40, 920 });
-	}
+	//// 1층 나무블록 두 개
+	//std::vector<AWoodBlock*> WBV1;
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	WBV1.push_back(SpawnActor<AWoodBlock>());
+	//	WBV1[i]->SetActorLocation({ 480 + i * 40, 920 });
+	//}
 
 	// 보스 스폰장치
 	FrostySpawner = SpawnActor<ASpawner>();
@@ -120,6 +120,9 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	// 보스 시작장치
 	FrostyStarter = SpawnActor<ASpawner>();
 	FrostyStarter->SetActorLocation({ 320, 300 });
+
+	AWaddleDee* WMon1 = SpawnActor<AWaddleDee>();
+	WMon1->SetActorLocation({ 485, 1116 });
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {

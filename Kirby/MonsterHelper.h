@@ -57,6 +57,7 @@ protected:
 	void Tick(float _DeltaTime) override;
 	virtual void StateUpdate(float _DeltaTime);
 	virtual void StateChange(EEnemyState _State);
+	virtual bool IsWall();
 
 	virtual void Idle(float _DeltaTime);
 	virtual void Damaged(float _DeltaTime);
@@ -76,6 +77,7 @@ protected:
 	void SwitchIsDamaged(float _DeltaTime, float _CoolTime);
 
 	EActorDir DirState = EActorDir::Left;
+	EActorDir MonsterDir = EActorDir::Left;	// 몬스터의 현재 방향, 방향전환을 아직 안 만들어서 항상 Left임
 	EEnemyState State = EEnemyState::None;
 	FVector InhaleDir = FVector::Zero;
 	std::string CurAnimationName = "Idle";

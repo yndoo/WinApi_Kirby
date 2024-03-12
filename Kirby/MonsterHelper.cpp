@@ -62,6 +62,9 @@ void MonsterHelper::StateChange(EEnemyState _State)
 		case EEnemyState::Inhaled:
 			InhaledStart();
 			break;
+		case EEnemyState::Die:
+			DieStart();
+			break;
 		default:
 			break;
 		}
@@ -84,6 +87,9 @@ void MonsterHelper::StateUpdate(float _DeltaTime)
 		break;
 	case EEnemyState::Inhaled:
 		Inhaled(_DeltaTime);
+		break;
+	case EEnemyState::Die:
+		Die(_DeltaTime);
 		break;
 	default:
 		break;
@@ -155,7 +161,7 @@ std::string MonsterHelper::GetAnimationName(std::string _Name)
 {
 	std::string DirName = "";
 
-	switch (DirState)
+	switch (MonsterDir)
 	{
 	case EActorDir::Left:
 		DirName = "_Left";
@@ -208,4 +214,16 @@ void MonsterHelper::SwitchIsDamaged(float _DeltaTime, float _CoolTime)
 		IsDamaged = !IsDamaged;
 		SwitchIsDamagedTimer = 0.f;
 	}
+}
+
+bool MonsterHelper::IsWall()
+{
+	FVector CurPos = GetActorLocation();
+	Color8Bit FColor = UContentsHelper::ColMapImage->GetColor(CurPos.iX() + 30, CurPos.iY() - 10, Color8Bit::MagentaA);
+	Color8Bit BColor = UContentsHelper::ColMapImage->GetColor(CurPos.iX() - 30, CurPos.iY() - 10, Color8Bit::MagentaA);
+	if (FColor == Color8Bit::MagentaA || BColor == Color8Bit::MagentaA)
+	{
+		return true;
+	}
+	return false;
 }
