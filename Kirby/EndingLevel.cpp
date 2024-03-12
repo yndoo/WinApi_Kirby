@@ -30,7 +30,10 @@ void UEndingLevel::BeginPlay()
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
 
+	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("DanceCut"));
+
 	Map = SpawnActor<AMap>();
+	Map->BackRenderer->CreateAnimation("Dance", "DanceCut", 0, 204, 0.03f, false);
 }
 
 void UEndingLevel::Tick(float _DeltaTime)
@@ -41,14 +44,16 @@ void UEndingLevel::Tick(float _DeltaTime)
 
 void UEndingLevel::LevelStart(ULevel* _Level)
 {
-	Map->SetMapImage("ending_background_map.png");
+	Map->SetMapImage("ending_foreground_map.png");
 	Map->SetColMapImage("ending_background_colmap.png");
 	Map->SetBackMapImage("ending_background_map.png");
-	//Map->ColRenderer->ActiveOff();
-	Map->BackRenderer->ActiveOff();
+	Map->ColRenderer->ActiveOff();
+	//Map->Renderer->ActiveOff();
 
-	AEndingKirby* Kb = SpawnActor<AEndingKirby>();
-	Kb->SetActorLocation({ 317, 338 });
+	Map->BackRenderer->ChangeAnimation("Dance");
+
+	//AEndingKirby* Kb = SpawnActor<AEndingKirby>();
+	//Kb->SetActorLocation({ 317, 338 });
 }
 void UEndingLevel::LevelEnd(ULevel* _Level)
 {

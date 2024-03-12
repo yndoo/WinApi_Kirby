@@ -69,6 +69,7 @@ void UPlayLevel::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("LadderMove.png", 13, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("FireLadderUp.png", 4, 10);
 	UEngineResourcesManager::GetInst().CuttingImage("FireLadderDown.png", 4, 4);
+	UEngineResourcesManager::GetInst().CuttingImage("KirbyDance.png", 10, 3);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
 	
