@@ -86,11 +86,8 @@ void BulletHelper::Idle(float _DeltaTime)
 
 	// 공격이 Monster에 닿으면
 	std::vector<UCollision*> Result;
-	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
+	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result) || true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Boss, Result))
 	{
-		AActor* temp = Result[0]->GetOwner();
-		int a = 0;
-
 		StateChange(EBulletState::Damage);
 		return;
 	}

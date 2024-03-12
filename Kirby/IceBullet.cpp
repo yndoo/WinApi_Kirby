@@ -55,7 +55,7 @@ void AIceBullet::Idle(float _DeltaTime)
 
 	// 몬스터랑 충돌하면 앞으로 포물선
 	std::vector<UCollision*> Result;
-	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
+	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Boss, Result))
 	{
 		StateChange(EBulletState::Move);
 	}
