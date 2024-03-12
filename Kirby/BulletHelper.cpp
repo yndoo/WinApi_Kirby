@@ -84,7 +84,7 @@ void BulletHelper::Idle(float _DeltaTime)
 		break;
 	}
 
-	// 공격이 Monster에 닿으면
+	// 공격이 Monster나 Boss에 닿으면 충돌
 	std::vector<UCollision*> Result;
 	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result) || true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Boss, Result))
 	{
