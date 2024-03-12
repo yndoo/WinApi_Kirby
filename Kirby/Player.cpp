@@ -44,6 +44,7 @@ void APlayer::KirbyCopy()
 	BeforePos = Kirby->BeforePos;
 	IsEating = Kirby->IsEating;
 	IsFireKirby = Kirby->IsFireKirby;
+	EatingFireType = UContentsHelper::EatingFireMonster;
 }
 
 void APlayer::BeginPlay() {
@@ -54,6 +55,8 @@ void APlayer::BeginPlay() {
 		// 커비가 이미 있던 경우
 		KirbyCopy();
 		Kirby->Destroy();
+
+		UContentsHelper::EatingFireMonster = EatingFireType;
 
 		std::string LevelName = GetWorld()->GetName();
 
@@ -100,7 +103,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("Crouch", 1, 1, 0.06f, false);
 	AutoCreateAnimation("Slide", 0, 0, 0.3f, true);
 	AutoCreateAnimation("Run", 0, 7, 0.05f, true);
-	AutoCreateAnimation("Break", 0, 0, 0.2f, false);
+	AutoCreateAnimation("Brake", 0, 0, 0.2f, false);
 	AutoCreateAnimation("Swallow", "Swallow", 0, 4, 0.1f, false);
 	AutoCreateAnimation("InhaleStart", "Inhale", 4, 4, 0.1f, false);
 	AutoCreateAnimation("InhaleSmall", "Inhale", 5, 6, 0.1f, true);
@@ -113,6 +116,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("FlyStart", "Fly", 0, 4, 0.05f, false);
 	AutoCreateAnimation("Flying", "Fly", 5, 9, 0.1f, true);
 	AutoCreateAnimation("Exhale", "Fly", { 2, 1, 0 }, 0.15f, false);
+	AutoCreateAnimation("Damaged", "Damaged", 0, 8, 0.05f, false);
 
 	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
 	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
@@ -125,7 +129,7 @@ void APlayer::BeginPlay() {
 	AutoCreateAnimation("FireIdle", { 0,1,2,3,0,1,2,3,0,1,2,3, 4, 5 }, 0.09f, true);
 	AutoCreateAnimation("FireMove", 0, 19, 0.04f, true);
 	AutoCreateAnimation("FireSlide", 0, 4, 0.06f, false);
-	AutoCreateAnimation("FireBreak", 0, 1, 0.1f, false);
+	AutoCreateAnimation("FireBrake", 0, 1, 0.1f, false);
 	AutoCreateAnimation("FireRun", 0, 3, 0.05f, true);
 	AutoCreateAnimation("FireCrouch", 0, 1, 0.03f, true);
 	AutoCreateAnimation("FireAttack", 0, 3, 0.05f, true);
@@ -175,11 +179,32 @@ void APlayer::Tick(float _DeltaTime) {
 	StateUpdate(_DeltaTime);
 
 	std::vector<UCollision*> Result;
-	if (IsFireKirby == true && (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result) || (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Boss, Result))))
+	if (State != EKirbyState::Eating &&
+		State != EKirbyState::Inhale &&
+		(
+			true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result) ||
+			true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Boss, Result) ||
+			true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::EdibleBullet, Result) 
+		)
+	   )
 	{
 		// 변신 상태에서 몬스터 피격당하면 변신 풀리기
-		// 나중에 Damaged로 가면 변신 풀리게 옮기면 됨
-		IsFireKirby = false;
+		if (true == IsEating)
+		{
+			// 먹은 거 뱉어지기
+			return;
+		}
+		if (true == IsFireKirby)
+		{
+			// 변신 풀리기
+			return;
+		}
+
+		// 기본 커비 Damaged
+		// 체력 깎고?
+		BeforeState = State;
+		StateChange(EKirbyState::Damaged);
+		return;
 	}
 
 	FVector PlayerPos = GetActorLocation();
@@ -211,7 +236,7 @@ void APlayer::StateChange(EKirbyState _State)
 			JumpStart();
 			break;
 		case EKirbyState::Brake:
-			BreakStart();
+			BrakeStart();
 			break;
 		case EKirbyState::Inhale:
 			InhaleStart();
@@ -236,6 +261,9 @@ void APlayer::StateChange(EKirbyState _State)
 			break;
 		case EKirbyState::Exhale:
 			ExhaleStart();
+			break;
+		case EKirbyState::Damaged:
+			DamagedStart();
 			break;
 		default:
 			break;
@@ -272,7 +300,7 @@ void APlayer::StateUpdate(float _DeltaTime) {
 		break;
 	case EKirbyState::Brake:
 		// 브레이크
-		Break(_DeltaTime);
+		Brake(_DeltaTime);
 		break;
 	case EKirbyState::Inhale:
 		// 흡입
@@ -303,8 +331,12 @@ void APlayer::StateUpdate(float _DeltaTime) {
 		LadderDown(_DeltaTime);
 		break;
 	case EKirbyState::Exhale:
-		// 공기 뱉기
+		// 풍선일 때 공기 뱉기
 		Exhale(_DeltaTime);
+		break;
+	case EKirbyState::Damaged:
+		// 피격
+		Damaged(_DeltaTime);
 		break;
 	case EKirbyState::FreeMove:
 		// 자유 이동
@@ -324,6 +356,7 @@ void APlayer::IdleStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
+	JumpVector = FVector::Zero;
 }
 void  APlayer::Idle(float _DeltaTime)
 {
@@ -351,7 +384,7 @@ void  APlayer::Idle(float _DeltaTime)
 	if (true == UEngineInput::IsPress(VK_UP))
 	{
 		std::vector<UCollision*> Result;
-		if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
+		if (false == IsEating && true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 		{
 			// 사다리 오르기
 			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY() - 1.f;
@@ -364,7 +397,7 @@ void  APlayer::Idle(float _DeltaTime)
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
 		std::vector<UCollision*> Result;
-		if (true == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
+		if (false == IsEating && true == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 		{
 			// 사다리 내리기
 			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY() - 1.f;
@@ -388,7 +421,7 @@ void  APlayer::Idle(float _DeltaTime)
 
 	if (true == UEngineInput::IsDown('Z'))
 	{
-		BeforeJumpState = EKirbyState::Idle;
+		BeforeState = EKirbyState::Idle;
 		StateChange(EKirbyState::Jump);
 		return;
 	}
@@ -522,7 +555,7 @@ void APlayer::Move(float _DeltaTime)
 
 	if (true == UEngineInput::IsDown('Z'))
 	{
-		BeforeJumpState = EKirbyState::Move;
+		BeforeState = EKirbyState::Move;
 		StateChange(EKirbyState::Jump);
 		return;
 	}
@@ -606,7 +639,7 @@ void APlayer::Run(float _DeltaTime)
 
 	if (true == UEngineInput::IsDown('Z'))
 	{
-		BeforeJumpState = EKirbyState::Run;
+		BeforeState = EKirbyState::Run;
 		StateChange(EKirbyState::Jump);
 		return;
 	}
@@ -722,13 +755,13 @@ void APlayer::Jump(float _DeltaTime)
 			}
 			if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpEnd")) && PlayerRenderer->IsCurAnimationEnd() == true)
 			{
-				StateChange(BeforeJumpState);
+				StateChange(BeforeState);
 				return;
 			}
 		}
 		else if(false == IsEating)	// Eating 아닌 상태에서 점프 마무리
 		{
-			if (BeforeJumpState == EKirbyState::Idle)
+			if (BeforeState == EKirbyState::Idle)
 			{
 				if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpEnd")) && PlayerRenderer->IsCurAnimationEnd() == true)
 				{
@@ -736,26 +769,26 @@ void APlayer::Jump(float _DeltaTime)
 				}
 				if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("Crouch")) && PlayerRenderer->IsCurAnimationEnd() == true)
 				{
-					StateChange(BeforeJumpState);
+					StateChange(BeforeState);
 					return;
 				}
 			}
 			else
 			{
-				StateChange(BeforeJumpState);
+				StateChange(BeforeState);
 				return;
 			}
 		}
 	}
 }
 
-// Break : 이동 멈추는 상태
-void APlayer::BreakStart()
+// Brake : 이동 멈추는 상태
+void APlayer::BrakeStart()
 {
 	DirCheck();
 	if (false == IsEating)
 	{
-		PlayerRenderer->ChangeAnimation(GetAnimationName("Break"));
+		PlayerRenderer->ChangeAnimation(GetAnimationName("Brake"));
 	}
 	else
 	{
@@ -763,7 +796,7 @@ void APlayer::BreakStart()
 		return;
 	}
 }
-void APlayer::Break(float _DeltaTime)
+void APlayer::Brake(float _DeltaTime)
 {
 	MoveVector = FVector::Zero;
 	if (PlayerRenderer->IsCurAnimationEnd())
@@ -862,7 +895,7 @@ void APlayer::Inhale(float _DeltaTime)
 	}
 }
 
-// Eating : 입에 몬스터 넣은 상태, 사용하지 않고 있음.
+// Eating : 입에 몬스터 넣은 상태
 void APlayer::EatingStart()
 {
 	DirCheck();
@@ -884,6 +917,7 @@ void APlayer::SwallowStart()
 }
 void APlayer::Swallow(float _DeltaTime)
 {
+	bool test = UContentsHelper::EatingFireMonster;
 	if (true == UContentsHelper::EatingFireMonster)
 	{
 		IsFireKirby = true;
@@ -939,6 +973,7 @@ void APlayer::Attack(float _DeltaTime)
 	if (true == IsEating && PlayerRenderer->IsCurAnimationEnd())
 	{
 		IsEating = false;
+		UContentsHelper::EatingFireMonster = false; 
 		StateChange(EKirbyState::Idle);
 		return;
 	}
@@ -1115,6 +1150,50 @@ void APlayer::Exhale(float _DeltaTime)
 	MoveUpdate(_DeltaTime);
 	if (PlayerRenderer->IsCurAnimationEnd() == true)
 	{
+		StateChange(EKirbyState::Idle);
+		return;
+	}
+}
+
+void APlayer::DamagedStart()
+{
+	DirCheck();
+	PlayerRenderer->ChangeAnimation(GetAnimationName("Damaged"));
+	BodyCollision->SetActive(true, 3.f);
+
+	MoveVector = FVector::Zero;
+	switch (DirState)
+	{
+	case EActorDir::Left:
+		MoveVector += FVector::Right * 100.f;
+		break;
+	case EActorDir::Right:
+		MoveVector += FVector::Left * 100.f;
+		break;
+	default:
+		break;
+	}
+}
+void APlayer::Damaged(float _DeltaTime)
+{
+	// 감속
+	switch (DirState)
+	{
+	case EActorDir::Left:
+		AddMoveVector(FVector::Left * _DeltaTime, SmallMoveAcc);
+		break;
+	case EActorDir::Right:
+		AddMoveVector(FVector::Right * _DeltaTime, SmallMoveAcc);
+		break;
+	default:
+		break;
+	}
+	MoveUpdate(_DeltaTime);
+
+	// 일정 속도 이하면 멈추기
+	if (true == PlayerRenderer->IsCurAnimationEnd() && abs(FinalMoveVector.X) < 100.0f)
+	{
+		MoveVector = FVector::Zero;
 		StateChange(EKirbyState::Idle);
 		return;
 	}

@@ -31,6 +31,7 @@ protected:
 
 	virtual void StateUpdate(float _DeltaTime);
 	virtual void StateChange(EBulletState _State);
+	virtual bool IsWall();
 
 	virtual void IdleStart();
 	virtual void Idle(float _DeltaTime);

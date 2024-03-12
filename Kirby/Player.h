@@ -29,6 +29,10 @@ public:
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();
 
+	bool GetEatingFireType()
+	{
+		return EatingFireType;
+	}
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -56,7 +60,7 @@ protected:
 	void Slide(float _DeltaTime);
 	void Run(float _DeltaTime);
 	void Jump(float _DeltaTime);
-	void Break(float _DeltaTime);
+	void Brake(float _DeltaTime);
 	void Inhale(float _DeltaTime);
 	void Eating(float _DeltaTime);
 	void Swallow(float _DeltaTime);
@@ -65,6 +69,7 @@ protected:
 	void LadderUp(float _DeltaTime);
 	void LadderDown(float _DeltaTime);
 	void Exhale(float _DeltaTime);
+	void Damaged(float _DeltaTime);
 
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
@@ -76,7 +81,7 @@ protected:
 	void RunStart();
 	void CrouchStart();
 	void JumpStart();
-	void BreakStart();
+	void BrakeStart();
 	void InhaleStart();
 	void EatingStart();
 	void SwallowStart();
@@ -85,13 +90,14 @@ protected:
 	void LadderUpStart();
 	void LadderDownStart();
 	void ExhaleStart();
+	void DamagedStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
 	void StateChange(EKirbyState _State);
 
 	EKirbyState State = EKirbyState::None;
-	EKirbyState BeforeJumpState = EKirbyState::None;				// 점프 이전 State가 무엇인지 저장
+	EKirbyState BeforeState = EKirbyState::None;			// 점프 이전 State가 무엇인지 저장
 	EActorDir DirState = EActorDir::Right;						// DirCheck에 쓰이는 DirState
 	EActorDir MyDir = EActorDir::Right;							// Move, Run 함수에서 쓸 Dir
 	std::string CurAnimationName = "Idle";
@@ -99,6 +105,7 @@ protected:
 	// 변신 관련 상태 변수
 	bool IsEating = false;
 	bool IsFireKirby = false;
+	bool EatingFireType = false;	// 입 안에 먹은 변신체가 Fire 타입인지
 private:
 	UCollision* BodyCollision = nullptr;
 	UCollision* BottomCollision = nullptr;
@@ -117,6 +124,7 @@ private:
 	// 가속 운동 관련 변수
 	FVector MoveVector = FVector::Zero;
 	FVector MoveAcc = FVector::Right * 200.0f;
+	FVector SmallMoveAcc = FVector::Right * 50.0f;
 	float MovePower = 150.f;
 	float MoveMaxSpeed = 200.0f;
 	FVector RunVector = FVector::Zero;

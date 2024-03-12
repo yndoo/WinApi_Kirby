@@ -1,7 +1,6 @@
 #include "MrFrosty.h"
 #include "ContentsHelper.h"
 #include "Player.h"
-#include "IceBullet.h"
 #include <EngineCore/EngineDebug.h>
 
 AMrFrosty::AMrFrosty()
@@ -60,7 +59,7 @@ void AMrFrosty::Tick(float _DeltaTime)
 
 	if (true == IsDamaged)
 	{
-		SwitchIsDamaged(_DeltaTime, 2.0f);
+		SwitchIsDamaged(_DeltaTime, 2.0f);	// 2초간 무적
 	}
 
 	int CurHp = GetCurHp();
@@ -253,6 +252,7 @@ void AMrFrosty::HitWall(float _DeltaTime)
 	// MoveVector가 일정 이하 됐을 때는
 	if (abs(MoveVector.X) < 80.f)
 	{
+		MoveVector = FVector::Zero;
 		// 커비가 가까이 있으면 ShootReady
 		std::vector<UCollision*> Result;
 		if (true == WideCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
@@ -262,7 +262,6 @@ void AMrFrosty::HitWall(float _DeltaTime)
 		}
 		// 커비가 멀리 있으면 Move 
 		// 커비가 닿으면 Throw(이건 나중에)
-		MoveVector = FVector::Zero;
 		StateChange(EEnemyState::Move);
 		return;
 	}
@@ -283,6 +282,7 @@ void AMrFrosty::ShootReady(float _DeltaTime)
 		StateChange(EEnemyState::ShootJump);
 		return;
 	}
+
 }
 
 void AMrFrosty::ShootJumpStart()
@@ -290,20 +290,20 @@ void AMrFrosty::ShootJumpStart()
 	DirCheck();
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Move"));
 	// 얼음 위로 던져야 함.
-	AIceBullet* bullet = GetWorld()->SpawnActor<AIceBullet>();
+	bullet = GetWorld()->SpawnActor<AIceBullet>();
 	bullet->SetActorLocation(GetActorLocation() + FVector({ 0, -100 }));
 	bullet->SetDir(DirState);
-	bullet->Destroy(3.f);
 }
 void AMrFrosty::ShootJump(float _DeltaTime)
 {
-	// 충돌하면 ShootStart
+	// 몬스터랑 IceBullet이랑 충돌하면 ShootStart
 	std::vector<UCollision*> Result;
-	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::EdibleBullet, Result))
+	if (true == bullet->GetDeathCheck() || true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::EdibleBullet, Result))
 	{
 		StateChange(EEnemyState::Shoot);
 		return;
 	}
+
 }
 
 void AMrFrosty::ShootStart()
@@ -370,6 +370,7 @@ void AMrFrosty::Die(float _DeltaTime)
 		MoveVector = FVector::Zero;
 		if (false == DeathCheck)
 		{
+			MonsterCollision->Destroy();
 			MonsterRenderer->Destroy(3.f);
 			//Destroy(5.f);
 			DeathCheck = true;

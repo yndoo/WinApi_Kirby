@@ -91,6 +91,16 @@ void KirbyCore::Tick(float _DeltaTime) {
 	{
 		GEngine->EngineDebugSwitch();
 	}
+
+	// 테스트용 레벨 전환
+	if (true == UEngineInput::IsDown(VK_F3))
+	{
+		GEngine->ChangeLevel("BossLevel");
+	}
+	if (true == UEngineInput::IsDown(VK_F4))
+	{
+		GEngine->ChangeLevel("EndingLevel");
+	}
 }
 
 void KirbyCore::End() {

@@ -52,6 +52,7 @@ enum class EKirbyState
 	LadderUp,
 	LadderDown,
 	Exhale,
+	Damaged,
 };
 
 enum class ECopyType

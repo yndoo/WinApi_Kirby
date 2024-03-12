@@ -31,8 +31,6 @@ void UEndingLevel::BeginPlay()
 	}
 
 	Map = SpawnActor<AMap>();
-	AEndingKirby* Kb = SpawnActor<AEndingKirby>();
-	Kb->SetActorLocation({ 317, 338 });
 }
 
 void UEndingLevel::Tick(float _DeltaTime)
@@ -48,8 +46,11 @@ void UEndingLevel::LevelStart(ULevel* _Level)
 	Map->SetBackMapImage("ending_background_map.png");
 	//Map->ColRenderer->ActiveOff();
 	Map->BackRenderer->ActiveOff();
+
+	AEndingKirby* Kb = SpawnActor<AEndingKirby>();
+	Kb->SetActorLocation({ 317, 338 });
 }
 void UEndingLevel::LevelEnd(ULevel* _Level)
 {
-
+	
 }

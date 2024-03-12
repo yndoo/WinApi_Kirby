@@ -15,6 +15,10 @@ public:
 	AIceBullet& operator=(const AIceBullet& _Other) = delete;
 	AIceBullet& operator=(AIceBullet&& _Other) noexcept = delete;
 
+	bool GetDeathCheck()
+	{
+		return DeathCheck;
+	}
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -26,8 +30,8 @@ protected:
 	void Idle(float _DeltaTime) override;
 	void MoveStart() override;
 	void Move(float _DeltaTime) override;
-	//void DamageStart() override;
-	//void Damage(float _DeltaTime) override;
+	void DamageStart() override;
+	void Damage(float _DeltaTime) override;
 	//void FinishStart() override;
 	//void Finish(float _DeltaTime) override;
 
@@ -55,5 +59,7 @@ private:
 	void UpMoving(float _DeltaTime, Color8Bit _Color);
 	bool IsPlayerBottomMagentaA();
 	bool IsPlayerBottomYellowA();
+
+	bool DeathCheck = false;
 };
 

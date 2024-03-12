@@ -45,22 +45,25 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("Jump", 9, 1);
 	CuttingImgLR("Inhale", 13, 1);
 	CuttingImgLR("Fly", 10, 1);
+	CuttingImgLR("Damaged", 9, 1);
+
+	CuttingImgLR("Swallow", 5, 1);
 	CuttingImgLR("Eating", 7, 1);
 	CuttingImgLR("EatingMove", 15, 1);
 	CuttingImgLR("EatingJump", 9, 1);
-	CuttingImgLR("Swallow", 5, 1);
 	CuttingImgLR("EatingAttack", 5, 1);
 	CuttingImgLR("FireIdle", 8, 1);
 	CuttingImgLR("FireSlide", 5, 1);
 	CuttingImgLR("FireMove", 10, 2);
 	CuttingImgLR("FireRun", 8, 1);
-	CuttingImgLR("FireBreak", 2, 1);
+	CuttingImgLR("FireBrake", 2, 1);
 	CuttingImgLR("FireCrouch", 8, 1);
 	CuttingImgLR("FireJump", 11, 1);
 	CuttingImgLR("FireAttack", 4, 1);
 	CuttingImgLR("FireFlyStart", 5, 1);
 	CuttingImgLR("FireFlying", 5, 3);
 	CuttingImgLR("FireExhale", 3, 1);
+
 	
 	UEngineResourcesManager::GetInst().CuttingImage("LadderMove.png", 13, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("FireLadderUp.png", 4, 10);
@@ -90,12 +93,6 @@ void UPlayLevel::Tick(float _DeltaTime)
 		{
 			GEngine->ChangeLevel("BossLevel");
 		}
-	}
-
-	// 테스트용 레벨 전환
-	if (true == UEngineInput::IsDown(VK_F3))
-	{
-		GEngine->ChangeLevel("BossLevel");
 	}
 }
 

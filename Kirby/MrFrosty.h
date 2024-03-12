@@ -1,6 +1,7 @@
 #pragma once
 #include <EngineCore/Actor.h>
 #include "MonsterHelper.h"
+#include "IceBullet.h"
 
 // 설명 :
 class AMrFrosty : public MonsterHelper
@@ -63,6 +64,8 @@ protected:
 	UCollision* WideCollision = nullptr;	// 가까이에 커비가 있는지 확인하는 용도
 	//UImageRenderer* Renderer = nullptr;
 private:
+	AIceBullet* bullet = nullptr;
+
 	bool DirCheck() override;	// 얘는 커비를 향하는 방향을 체크해주는 함수임
 	void UpMoving(float _DeltaTime, Color8Bit _Color);
 	bool IsPlayerBottomMagentaA();
@@ -70,5 +73,6 @@ private:
 
 	float Timer = 0.f;
 	float ShootReadyCoolTime = 2.f;
+	bool BulletDestroyCheck = false;
 };
 

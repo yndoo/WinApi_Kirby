@@ -40,7 +40,15 @@ void AIceBullet::Tick(float _DeltaTime)
 
 	if (nullptr != BulletCollision && true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
-		Destroy();
+		StateChange(EBulletState::Damage);
+		return;
+	}
+
+	// 벽에 닿으면 없어지기(Damage)
+	if (true == IsWall())
+	{
+		StateChange(EBulletState::Damage);
+		return;
 	}
 }
 
@@ -58,6 +66,7 @@ void AIceBullet::Idle(float _DeltaTime)
 	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Boss, Result))
 	{
 		StateChange(EBulletState::Move);
+		return;
 	}
 }
 
@@ -88,6 +97,19 @@ void AIceBullet::Move(float _DeltaTime)
 	}
 
 	JumpVector += FVector::Down * _DeltaTime * 200.f;
+}
+
+void AIceBullet::DamageStart()
+{
+	// 터지는 애니메이션
+	DeathCheck = true;
+}
+void AIceBullet::Damage(float _DeltaTime)
+{
+	// 터지는 애니메이션 했다 치고~
+	// true == IsCurAnimationEnd() 면
+	Destroy();
+
 }
 
 void AIceBullet::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Acc /*= FVector::Zero*/)

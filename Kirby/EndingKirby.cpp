@@ -26,6 +26,8 @@ void AEndingKirby::BeginPlay()
 }
 void AEndingKirby::Tick(float _DeltaTime)
 {
+	// ÀÌÆåÆ® : CircleÀÌÆåÆ® -> TwinkleÀÌÆåÆ®
+	// Ä¿ºñ : »ý¼º ÈÄ 1~2ÃÊ ÈÄ Ãã ½ÃÀÛ...
 	if (EffectRenderer1->GetCurAnimation()->Name == UEngineString::ToUpper("CircleEffect") && true == EffectRenderer1->IsCurAnimationEnd())
 	{
 		EffectRenderer1->ChangeAnimation("TwinkleEffect");

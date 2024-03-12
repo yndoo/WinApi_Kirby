@@ -94,7 +94,8 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	WinScale = GEngine->MainWindow.GetWindowScale();
 
 	SetCameraPos({ 0.f, MapSize.Y - WinScale.Y});
-	this->SpawnActor<APlayer>();
+	APlayer* kb = this->SpawnActor<APlayer>();
+	UContentsHelper::EatingFireMonster = Kirby->GetEatingFireType();
 
 	ALadder* FirstLadder = SpawnActor<ALadder>();
 	FirstLadder->SetActorLocation({ 580,1020 });

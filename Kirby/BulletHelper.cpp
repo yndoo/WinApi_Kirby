@@ -91,6 +91,13 @@ void BulletHelper::Idle(float _DeltaTime)
 		StateChange(EBulletState::Damage);
 		return;
 	}
+
+	// 벽에 닿으면 없어지기(Damage)
+	if (true == IsWall())
+	{
+		StateChange(EBulletState::Damage);
+		return;
+	}
 }
 
 void BulletHelper::MoveStart()
@@ -105,6 +112,7 @@ void BulletHelper::Move(float _DeltaTime)
 void BulletHelper::DamageStart()
 {
 	// 터지는 애니메이션
+
 }
 void BulletHelper::Damage(float _DeltaTime)
 {
@@ -142,4 +150,16 @@ std::string BulletHelper::GetAnimationName(std::string _Name)
 	CurAnimationName = _Name;
 
 	return BulletName + _Name + DirName;
+}
+
+bool BulletHelper::IsWall()
+{
+	FVector CurPos = GetActorLocation();
+	Color8Bit FColor = UContentsHelper::ColMapImage->GetColor(CurPos.iX() + 30, CurPos.iY() - 10, Color8Bit::MagentaA);
+	Color8Bit BColor = UContentsHelper::ColMapImage->GetColor(CurPos.iX() - 30, CurPos.iY() - 10, Color8Bit::MagentaA);
+	if (FColor == Color8Bit::MagentaA || BColor == Color8Bit::MagentaA)
+	{
+		return true;
+	}
+	return false;
 }
