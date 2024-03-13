@@ -27,10 +27,11 @@ protected:
 private:
 	UImageRenderer* TypeNameUI = nullptr;
 	UImageRenderer* KirbyLifeUI = nullptr;
+	UImageRenderer* KirbyHpCaseUI = nullptr;
 	UImageRenderer* KirbyHpUI = nullptr;
 
 	EKirbyType TypeState = EKirbyType::None;
 
-	FVector TypeNamePos = { -1, 500 };
+	FVector TypeNamePos = { -1, 490 };
+	FVector HpCasePos = { 120, 460 };
 };
-

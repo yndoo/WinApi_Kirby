@@ -17,7 +17,14 @@ void KirbyUI::BeginPlay()
 	FVector TypeNameUIScale = TypeNameUI->GetImage()->GetScale();
 	TypeNameUI->SetTransform({ TypeNamePos, TypeNameUIScale });
 	TypeNameUI->CameraEffectOff();
+
+	KirbyHpCaseUI = CreateImageRenderer(EKirbyRenderOrder::UI);
+	KirbyHpCaseUI->SetImage("KirbyHpBarCase.png");
+	FVector KirbyHpCaseUIScale = KirbyHpCaseUI->GetImage()->GetScale();
+	KirbyHpCaseUI->SetTransform({ HpCasePos + KirbyHpCaseUIScale.Half2D(), KirbyHpCaseUIScale});
+	KirbyHpCaseUI->CameraEffectOff();
 }
+
 void KirbyUI::Tick(float _DeltaTime)
 {
 	TypeUIUpdate();
