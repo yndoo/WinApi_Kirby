@@ -129,8 +129,8 @@ void AWaddleDee::Damaged(float _DeltaTime)
 
 void AWaddleDee::DieStart()
 {
-	MonsterRenderer->AddPosition({ 0, -20 });
 	MonsterRenderer->ChangeAnimation("DieEffect");
+	MonsterRenderer->AddPosition({ 0, -20 });
 }
 void AWaddleDee::Die(float _DeltaTime)
 {
@@ -138,6 +138,7 @@ void AWaddleDee::Die(float _DeltaTime)
 	{
 		MonsterCollision->ActiveOff();
 		MonsterRenderer->ActiveOff();
+		Destroy();
 	}
 }
 
