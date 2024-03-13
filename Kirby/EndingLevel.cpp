@@ -4,6 +4,7 @@
 #include <EngineCore/EngineResourcesManager.h>
 #include "EndingKirby.h"
 #include <EngineCore/EngineCore.h>
+#include "KirbyUI.h"
 
 UEndingLevel::UEndingLevel()
 {
@@ -48,11 +49,12 @@ void UEndingLevel::Tick(float _DeltaTime)
 
 void UEndingLevel::LevelStart(ULevel* _Level)
 {
+	KirbyUI* UI = SpawnActor<KirbyUI>();
+
 	Map->SetMapImage("ending_foreground_map.png");
 	Map->SetColMapImage("ending_background_colmap.png");
 	Map->SetBackMapImage("ending_background_map.png");
 	Map->ColRenderer->ActiveOff();
-	//Map->Renderer->ActiveOff();
 
 	Map->BackRenderer->ChangeAnimation("Dance");
 }

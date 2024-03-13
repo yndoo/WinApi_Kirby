@@ -2,6 +2,7 @@
 #include <EngineBase/EngineDirectory.h>
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
+#include "KirbyUI.h"
 
 URestAreaLevel::URestAreaLevel()
 {
@@ -53,6 +54,7 @@ void URestAreaLevel::LevelStart(ULevel* _Level)
 	Map->Renderer->ChangeAnimation("RestAreaMapAnimation");
 
 	this->SpawnActor<APlayer>();
+	KirbyUI* UI = SpawnActor<KirbyUI>();
 }
 void URestAreaLevel::LevelEnd(ULevel* _Level)
 {
