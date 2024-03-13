@@ -65,14 +65,12 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("FireFlying", 5, 3);
 	CuttingImgLR("FireExhale", 3, 1);
 
-	
 	UEngineResourcesManager::GetInst().CuttingImage("LadderMove.png", 13, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("FireLadderUp.png", 4, 10);
 	UEngineResourcesManager::GetInst().CuttingImage("FireLadderDown.png", 4, 4);
 	UEngineResourcesManager::GetInst().CuttingImage("KirbyDance.png", 10, 3);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
-	
 	Map = SpawnActor<AMap>();
 
 	Map->Renderer->CreateAnimation("MapAnimation", "1_3_foreground", 0, 3, 0.5f, true);
@@ -124,6 +122,8 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	AWaddleDee* WaddleDee1 = SpawnActor<AWaddleDee>();
 	AWaddleDee* WaddleDee2 = SpawnActor<AWaddleDee>();
 	WaddleDee2->SetActorLocation({ 2000, 200 });
+
+	KirbyUI* UI = SpawnActor<KirbyUI>();
 }
 
 void UPlayLevel::LevelEnd(ULevel* _Level)

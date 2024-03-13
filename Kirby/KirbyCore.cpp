@@ -17,7 +17,8 @@ KirbyCore::~KirbyCore()
 {
 }
 
-void KirbyCore::BeginPlay() {
+void KirbyCore::BeginPlay() 
+{
 	float MyX = 2.5f;
 	float MyY = 2.5f;
 
@@ -27,26 +28,9 @@ void KirbyCore::BeginPlay() {
 	UEngineDirectory NewPath;
 	NewPath.MoveParent();
 	NewPath.Move("KirbyResources");
-	NewPath.Move("Kirby");
-	std::list<UEngineFile> AllFileList_K = NewPath.AllFile({ ".png", ".bmp" }, true);
-	for (UEngineFile& File : AllFileList_K)
-	{
-		std::string FullPath = File.GetFullPath();
-		UEngineResourcesManager::GetInst().LoadImg(FullPath);
-	}
-	NewPath.MoveParent();
-	NewPath.Move("Monster");
-	std::list<UEngineFile> AllFileList_M = NewPath.AllFile({ ".png", ".bmp" }, true);
-	for (UEngineFile& File : AllFileList_M)
-	{
-		std::string FullPath = File.GetFullPath();
-		UEngineResourcesManager::GetInst().LoadImg(FullPath);
-	}
-	
-	NewPath.MoveParent();
-	NewPath.Move("Effects");
-	std::list<UEngineFile> AllFileList_E = NewPath.AllFile({ ".png", ".bmp" }, true);
-	for (UEngineFile& File : AllFileList_E)
+	NewPath.Move("CoreResources");
+	std::list<UEngineFile> AllFileList_Core = NewPath.AllFile({ ".png", ".bmp" }, true);
+	for (UEngineFile& File : AllFileList_Core)
 	{
 		std::string FullPath = File.GetFullPath();
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
@@ -83,6 +67,8 @@ void KirbyCore::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedShoot_Left.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedHitWall_Right.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedHitWall_Left.png", 2, 1);
+	//UI
+	//..
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");
@@ -90,13 +76,14 @@ void KirbyCore::BeginPlay() {
 	CreateLevel<UBossLevel>("BossLevel");
 	CreateLevel<UEndingLevel>("EndingLevel");
 
-	ChangeLevel("TitleLevel");
+	ChangeLevel("PlayLevel");
 	//ChangeLevel("TitleLevel");	// Àá½Ã »©µÒ
 
 
 }
 
-void KirbyCore::Tick(float _DeltaTime) {
+void KirbyCore::Tick(float _DeltaTime)
+{
 	if (true == UEngineInput::IsDown(VK_F2))
 	{
 		GEngine->EngineDebugSwitch();
@@ -113,6 +100,7 @@ void KirbyCore::Tick(float _DeltaTime) {
 	}
 }
 
-void KirbyCore::End() {
+void KirbyCore::End() 
+{
 	int a = 0;
 }

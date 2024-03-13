@@ -4,12 +4,6 @@
 #include <EngineBase/EngineTime.h>
 #include <EngineCore/EngineCore.h>
 
-enum class EKirbyType
-{
-	Base,
-	Fire,
-};
-
 // 설명 :
 class APlayer : public AActor
 {
@@ -49,8 +43,9 @@ protected:
 	void AutoCreateAnimation(std::string_view _AnimationName, std::string_view _ImageName, std::vector<int> _Indexs, float _Inter, bool _Loop);
 	void AutoCreateAnimation(std::string_view _AnimationName, std::string_view _ImageName, int _Start, int _End, float _Inter, bool _Loop);
 
-	// 커비 상태 복사해주는 함수
-	void KirbyCopy();
+	
+	void KirbyCopy();		// 커비 상태 복사해주는 함수
+	void KirbyTypeUpdate();	// 커비 타입 업데이트하는 함수	
 
 	// 상태 보조 함수
 	bool DirCheck(); // 방향 체크하고, 방향이 바뀌었는지를 리턴
@@ -114,8 +109,6 @@ protected:
 	bool IsEating = false;
 	bool IsFireKirby = false;
 	bool EatingFireType = false;	// 입 안에 먹은 변신체가 Fire 타입인지
-
-	EKirbyType KirbyType = EKirbyType::Base;
 private:
 	UCollision* BodyCollision = nullptr;
 	UCollision* BottomCollision = nullptr;

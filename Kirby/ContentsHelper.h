@@ -8,6 +8,7 @@ enum class EKirbyRenderOrder
 	Player,
 	Bullet,
 	Effect,
+	UI,
 };
 
 enum class EKirbyCollisionOrder
@@ -56,9 +57,10 @@ enum class EKirbyState
 	InhaleFail,
 };
 
-enum class ECopyType
+enum class EKirbyType
 {
 	None,
+	Normal,
 	Fire,
 };
 
@@ -92,6 +94,7 @@ public:
 	static UWindowImage* ColMapImage;
 	static UWindowImage* BackgroundImage;
 	static bool EatingFireMonster;			// 입 안에 Fire속성 몬스터가 있는 지(아직 삼키지X)
+	static EKirbyType KirbyType;
 protected:
 
 private:

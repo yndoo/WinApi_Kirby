@@ -19,8 +19,6 @@ public:
 	AFlamer& operator=(AFlamer&& _Other) noexcept = delete;
 
 	Color8Bit MoveColor = Color8Bit::YellowA;
-	ECopyType CopyAbilityType = ECopyType::Fire;
-
 	bool LateStart = false;
 protected:
 

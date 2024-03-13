@@ -1,6 +1,5 @@
 #include "Player.h"
-#include<EnginePlatform/EngineInput.h>
-#include "ContentsHelper.h"
+#include <EnginePlatform/EngineInput.h>
 #include <EngineCore/EngineCore.h>
 #include <EngineCore/EngineDebug.h>
 #include "StarBullet.h"
@@ -45,6 +44,18 @@ void APlayer::KirbyCopy()
 	IsEating = Kirby->IsEating;
 	IsFireKirby = Kirby->IsFireKirby;
 	EatingFireType = UContentsHelper::EatingFireMonster;
+}
+
+void APlayer::KirbyTypeUpdate()
+{
+	if (IsFireKirby == true)
+	{
+		UContentsHelper::KirbyType = EKirbyType::Fire;
+	}
+	else
+	{
+		UContentsHelper::KirbyType = EKirbyType::Normal;
+	}
 }
 
 void APlayer::BeginPlay() {
@@ -178,6 +189,7 @@ void APlayer::BeginPlay() {
 void APlayer::Tick(float _DeltaTime) {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
+	KirbyTypeUpdate();
 
 	std::vector<UCollision*> Result;
 	if (State != EKirbyState::Eating &&

@@ -4,6 +4,7 @@
 #include "Flamer.h"
 #include "Map.h"
 #include "WaddleDee.h"
+#include "KirbyUI.h"
 
 // Ό³Έν :
 class UPlayLevel : public ULevel
