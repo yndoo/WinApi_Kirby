@@ -26,10 +26,11 @@ protected:
 
 private:
 	UImageRenderer* TypeNameUI = nullptr;
-	UImageRenderer* TypeImgUI = nullptr;
 	UImageRenderer* KirbyLifeUI = nullptr;
 	UImageRenderer* KirbyHpUI = nullptr;
 
 	EKirbyType TypeState = EKirbyType::None;
+
+	FVector TypeNamePos = { -1, 500 };
 };
 

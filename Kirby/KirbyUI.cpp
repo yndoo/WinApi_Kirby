@@ -15,7 +15,7 @@ void KirbyUI::BeginPlay()
 	TypeNameUI = CreateImageRenderer(EKirbyRenderOrder::UI);
 	TypeNameUI->SetImage("nametag_normal.png");
 	FVector TypeNameUIScale = TypeNameUI->GetImage()->GetScale();
-	TypeNameUI->SetTransform({ {TypeNameUIScale.hX(), TypeNameUIScale.hY() + 450}, TypeNameUIScale });
+	TypeNameUI->SetTransform({ TypeNamePos, TypeNameUIScale });
 	TypeNameUI->CameraEffectOff();
 }
 void KirbyUI::Tick(float _DeltaTime)
