@@ -117,6 +117,7 @@ void AWaddleDee::DamagedStart()
 {
 	AddDamageHp(60);
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
+	IsDamaged = true;
 }
 void AWaddleDee::Damaged(float _DeltaTime)
 {

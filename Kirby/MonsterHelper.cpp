@@ -20,7 +20,7 @@ void MonsterHelper::Tick(float _DeltaTime)
 
 	// 커비 흡입 충돌체와 몬스터의 충돌 확인
 	std::vector<UCollision*> Result;
-	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
+	if (false == IsDamaged && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
 	{
 		// 커비쪽으로 당겨지기
 		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();

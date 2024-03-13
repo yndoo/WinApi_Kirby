@@ -26,9 +26,9 @@ protected:
 
 private:
 	UImageRenderer* TypeNameUI = nullptr;
-	UImageRenderer* KirbyLifeUI = nullptr;
 	UImageRenderer* KirbyHpCaseUI = nullptr;
 	UImageRenderer* KirbyHpUI = nullptr;
+	UImageRenderer* KirbyLifeUI = nullptr;
 
 	EKirbyType TypeState = EKirbyType::None;
 
