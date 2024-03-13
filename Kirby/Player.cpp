@@ -214,7 +214,6 @@ void APlayer::Tick(float _DeltaTime) {
 		}
 
 		// 기본 커비 Damaged
-		// 체력 깎고?
 		BeforeState = State;
 		StateChange(EKirbyState::Damaged);
 		return;
@@ -1186,8 +1185,9 @@ void APlayer::Exhale(float _DeltaTime)
 void APlayer::DamagedStart()
 {
 	DirCheck();
+	AddDamageHp(80);	// 80 데미지 입힘, 커비 죽는 거 없이 무적이긴 함!!
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Damaged"));
-	BodyCollision->SetActive(true, 2.f);
+	BodyCollision->SetActive(true, 1.f);	// 1초간 무적일 수 있도록
 
 	MoveVector = FVector::Zero;
 	switch (DirState)

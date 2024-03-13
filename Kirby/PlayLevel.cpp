@@ -94,6 +94,10 @@ void UPlayLevel::Tick(float _DeltaTime)
 			GEngine->ChangeLevel("BossLevel");
 		}
 	}
+
+	// 0314 할 일
+	// 커비 Hp 변화 있으면 UI Update
+	// 몬스터 각각 변화 있으면 UI Update
 }
 
 void UPlayLevel::LevelStart(ULevel* _Level)

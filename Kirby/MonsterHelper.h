@@ -40,6 +40,10 @@ public:
 		{
 			CurHp = MaxHp;
 		}
+		else if (CurHp < 0)
+		{
+			CurHp = 0;
+		}
 	}
 
 	// 체력 깎는 == 데미지 입히는 함수

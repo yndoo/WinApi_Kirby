@@ -33,6 +33,41 @@ public:
 	{
 		return EatingFireType;
 	}
+
+	int GetMaxHp()
+	{
+		return MaxHp;
+	}
+
+	void SetMaxHp(int _MaxHp)
+	{
+		MaxHp = _MaxHp;
+		CurHp = MaxHp;
+	}
+
+	int GetCurHp()
+	{
+		return CurHp;
+	}
+
+	void SetCurHp(int _CurHp)
+	{
+		CurHp = _CurHp;
+		if (CurHp > MaxHp)
+		{
+			CurHp = MaxHp;
+		}
+		else if (CurHp < 0)
+		{
+			CurHp = 0;
+		}
+	}
+
+	// 체력 깎는 == 데미지 입히는 함수
+	void AddDamageHp(int _Damage)
+	{
+		SetCurHp(CurHp - _Damage);
+	}
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -109,12 +144,16 @@ protected:
 	bool IsEating = false;
 	bool IsFireKirby = false;
 	bool EatingFireType = false;	// 입 안에 먹은 변신체가 Fire 타입인지
+
 private:
 	UCollision* BodyCollision = nullptr;
 	UCollision* BottomCollision = nullptr;
-	UCollision* RealBottomCollision = nullptr;
+	UCollision* RealBottomCollision = nullptr; // WoodBlock 사용 시 필요 (현재 사용X, 일단 둠)
 	UCollision* InhaleCollision = nullptr;
 	UImageRenderer* PlayerRenderer = nullptr;
+
+	int MaxHp = 200;
+	int CurHp = 200;
 
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);	// 방향 벡터에 DeltaTime 곱한 값으로 들어옴
 	void FinalMove(float _DeltaTime);							// 최종 계산된 방향과 힘으로 이동시키는 함수
