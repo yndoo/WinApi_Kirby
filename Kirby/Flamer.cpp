@@ -13,7 +13,7 @@ void AFlamer::BeginPlay() {
 	AActor::BeginPlay();
 
 	SetActorLocation({ 500,250 });
-	SetMaxHp(100);
+	SetMaxHp(50);
 	SetName("Flamer");
 
 	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
@@ -23,6 +23,7 @@ void AFlamer::BeginPlay() {
 
 	MonsterRenderer->CreateAnimation("Spin", "Flamer_Spin.png", 0, 3, 0.2f, true);
 	MonsterRenderer->CreateAnimation("Damaged", "Flamer_Damaged.png", { 0,0,0,0,1 }, 0.2f, false);
+	MonsterRenderer->CreateAnimation("DieEffect", "MonDieEffects.png", 0, 23, 0.05f, false);
 	MonsterRenderer->ChangeAnimation("Spin");
 
 	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Monster);
@@ -37,7 +38,32 @@ void AFlamer::BeginPlay() {
 
 void AFlamer::Tick(float _DeltaTime) 
 {
-	MonsterHelper::Tick(_DeltaTime);
+	AActor::Tick(_DeltaTime);
+	StateUpdate(_DeltaTime);
+
+	// 커비 흡입 충돌체와 몬스터의 충돌 확인
+	std::vector<UCollision*> Result;
+	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
+	{
+		// 커비쪽으로 당겨지기
+		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
+		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
+		StateChange(EEnemyState::Inhaled);
+		return;
+	}
+
+	if (State != EEnemyState::Inhaled && false == DeathCheck && nullptr != MonsterCollision && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	{
+		StateChange(EEnemyState::Damaged);
+		return;
+	}
+
+	if (false == DeathCheck && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	{
+		// Bullet종류로 공격 받았을 때
+		StateChange(EEnemyState::Damaged);
+		return;
+	}
 }
 
 
@@ -59,21 +85,11 @@ void AFlamer::Idle(float _DeltaTime)
 		FallDown(MoveColor);
 	}
 	ColorLineMove(_DeltaTime, MoveColor);
-
-	std::vector<UCollision*> Result;
-	if (nullptr != MonsterCollision && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
-	{
-		if (GetCurHp() <= 0)
-		{
-			UContentsHelper::EatingFireMonster = true;
-		}
-		StateChange(EEnemyState::Damaged);
-		return;
-	}
 }
 
 void AFlamer::DamagedStart()
 {
+	AddDamageHp(60);
 	MonsterRenderer->ChangeAnimation("Damaged");
 }
 void AFlamer::Damaged(float _DeltaTime)
@@ -86,7 +102,7 @@ void AFlamer::Damaged(float _DeltaTime)
 	}
 
 	// 바닥에 떨어진 후 Move
-	if (MonsterRenderer->IsCurAnimationEnd() == true)
+	if (true == MonsterRenderer->IsCurAnimationEnd())
 	{
 		FallDown(Color8Bit::MagentaA);
 		StateChange(EEnemyState::Move);
@@ -98,11 +114,14 @@ void AFlamer::Damaged(float _DeltaTime)
 void AFlamer::DieStart()
 {
 	//Die 애니메이션 실행
-	
+	MonsterRenderer->ChangeAnimation("DieEffect");
 }
 void AFlamer::Die(float _DeltaTime)
 {
-
+	if (true == MonsterRenderer->IsCurAnimationEnd())
+	{
+		Destroy();
+	}
 }
 
 void AFlamer::MoveStart()
@@ -132,6 +151,7 @@ void AFlamer::Inhaled(float _DeltaTime)
 	std::vector<UCollision*> Result;
 	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
+		UContentsHelper::EatingFireMonster = true;
 		Destroy();
 	}
 }

@@ -13,7 +13,7 @@ void AWaddleDee::BeginPlay()
 	AActor::BeginPlay();
 
 	SetActorLocation({ 1500, 200 });
-	SetMaxHp(60);
+	SetMaxHp(50);
 
 	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
 	MonsterRenderer->SetImage("WaddleDee_Right.png");

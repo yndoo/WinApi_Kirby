@@ -42,6 +42,15 @@ void KirbyCore::BeginPlay() {
 		std::string FullPath = File.GetFullPath();
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
+	
+	NewPath.MoveParent();
+	NewPath.Move("Effects");
+	std::list<UEngineFile> AllFileList_E = NewPath.AllFile({ ".png", ".bmp" }, true);
+	for (UEngineFile& File : AllFileList_E)
+	{
+		std::string FullPath = File.GetFullPath();
+		UEngineResourcesManager::GetInst().LoadImg(FullPath);
+	}
 
 	//Effects
 	UEngineResourcesManager::GetInst().CuttingImage("DoorStar.png", 2, 1);

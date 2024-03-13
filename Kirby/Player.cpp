@@ -1175,7 +1175,7 @@ void APlayer::DamagedStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Damaged"));
-	BodyCollision->SetActive(true, 3.f);
+	BodyCollision->SetActive(true, 2.f);
 
 	MoveVector = FVector::Zero;
 	switch (DirState)

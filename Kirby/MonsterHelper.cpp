@@ -24,10 +24,14 @@ void MonsterHelper::Tick(float _DeltaTime)
 	{
 		// 커비쪽으로 당겨지기
 		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
-		//FVector test = InhaleDir.Normalize2DReturn();
 		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
 		StateChange(EEnemyState::Inhaled);
 		return;
+	}
+
+	if (true == IsDamaged)
+	{
+		SwitchIsDamaged(_DeltaTime, 2.0f);	// 피격 시 2초간 IsDamaged 변수 true, 활용해서 무적 만들기 가능
 	}
 
 	if (false == DeathCheck && nullptr != MonsterCollision && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
