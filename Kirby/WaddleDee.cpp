@@ -131,6 +131,7 @@ void AWaddleDee::DieStart()
 {
 	MonsterRenderer->ChangeAnimation("DieEffect");
 	MonsterRenderer->AddPosition({ 0, -20 });
+	DeathCheck = true;
 }
 void AWaddleDee::Die(float _DeltaTime)
 {
@@ -139,6 +140,8 @@ void AWaddleDee::Die(float _DeltaTime)
 		MonsterCollision->ActiveOff();
 		MonsterRenderer->ActiveOff();
 		Destroy();
+		StateChange(EEnemyState::None);
+		return;
 	}
 }
 
