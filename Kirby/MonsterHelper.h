@@ -53,6 +53,7 @@ public:
 	}
 
 	bool DeathCheck = false;
+	bool IsDamaged = false;
 protected:
 	UCollision* MonsterCollision = nullptr;
 	UImageRenderer* MonsterRenderer = nullptr;
@@ -85,7 +86,6 @@ protected:
 	EEnemyState State = EEnemyState::None;
 	FVector InhaleDir = FVector::Zero;
 	std::string CurAnimationName = "Idle";
-	bool IsDamaged = false;
 	float SwitchIsDamagedTimer = 0.f;
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();

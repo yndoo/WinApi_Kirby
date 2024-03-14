@@ -22,6 +22,7 @@ public:
 	void SetKirbyLifeUI(int _CurLife);
 	void SetBossHpUI(int _MaxHp, int _CurHp);
 	void BossUIOn();
+	void MonsterAniOn();
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -37,6 +38,7 @@ private:
 
 	UImageRenderer* BossHpCaseUI = nullptr;
 	UImageRenderer* BossHpBarUI = nullptr;
+	UImageRenderer* MonHpRenderer = nullptr;
 
 	EKirbyType TypeState = EKirbyType::None;
 
@@ -46,4 +48,6 @@ private:
 	FVector LifeNumUIPos = LifeImgPos + FVector({ 60, 6 });	
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
+
+	bool IsMonHpRenderOn = false;
 };

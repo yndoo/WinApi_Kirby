@@ -15,6 +15,14 @@ void KirbyUI::BossUIOn()
 	BossHpBarUI->ActiveOn();
 }
 
+void KirbyUI::MonsterAniOn()
+{
+	IsMonHpRenderOn = true;
+	MonHpRenderer->ActiveOn();
+	MonHpRenderer->AnimationReset();	// ChangeAnimation함수에서 똑같은 애니메이션 다시 실행이 안 돼서 리셋 한 번 해줘야 함.
+	MonHpRenderer->ChangeAnimation("MonHpAni");
+}
+
 void KirbyUI::BeginPlay()
 {
 	SetActorLocation({ 0, 0 });
@@ -59,6 +67,16 @@ void KirbyUI::BeginPlay()
 	BossHpBarUI->CameraEffectOff();
 	BossHpBarUI->ActiveOff();
 
+	MonHpRenderer = CreateImageRenderer(EKirbyRenderOrder::UI);
+	MonHpRenderer->SetImage("MonHp.png");
+	MonHpRenderer->SetPosition({ WinScale.X - 100.f, KirbyHpCaseUI->GetPosition().Y });
+	MonHpRenderer->SetScale(BCaseScale);
+	MonHpRenderer->CreateAnimation("MonHpAni", "MonHpAnimation", {0,1,2,2,2,2}, 0.1f, false);
+	MonHpRenderer->ChangeAnimation("MonHpAni");
+	MonHpRenderer->CameraEffectOff();
+	MonHpRenderer->ActiveOff();
+
+	// 커비 목숨 UI
 	int Life = Kirby->GetKirbyLife();
 	for (int i = 0; i < 2; i++)
 	{
@@ -78,6 +96,11 @@ void KirbyUI::BeginPlay()
 void KirbyUI::Tick(float _DeltaTime)
 {
 	TypeUIUpdate();
+	if (true == IsMonHpRenderOn && true == MonHpRenderer->IsCurAnimationEnd())
+	{
+		IsMonHpRenderOn = false;
+		MonHpRenderer->ActiveOff();
+	}
 }
 
 void KirbyUI::TypeUIUpdate()

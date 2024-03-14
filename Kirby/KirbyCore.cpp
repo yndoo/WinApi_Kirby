@@ -68,7 +68,7 @@ void KirbyCore::BeginPlay()
 	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedHitWall_Right.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedHitWall_Left.png", 2, 1);
 	//UI
-	//..
+	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("UI\\MonHpAnimation"));
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");

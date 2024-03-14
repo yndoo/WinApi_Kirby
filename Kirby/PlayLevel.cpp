@@ -108,6 +108,15 @@ void UPlayLevel::Tick(float _DeltaTime)
 		UI->SetKirbyLifeUI(KirbyLifeData);
 	}
 	// 몬스터 각각 변화 있으면 UI Update
+	// Flamer
+	for (int i = 0; i < 2; i++)
+	{
+		if (FlamerHpData[i] != Flamers[i]->GetCurHp())
+		{
+			FlamerHpData[i] = Flamers[i]->GetCurHp();
+			UI->MonsterAniOn();
+		}
+	}
 }
 
 void UPlayLevel::LevelStart(ULevel* _Level)

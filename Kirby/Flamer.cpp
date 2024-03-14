@@ -89,6 +89,7 @@ void AFlamer::Idle(float _DeltaTime)
 
 void AFlamer::DamagedStart()
 {
+	IsDamaged = true;
 	AddDamageHp(60);
 	MonsterRenderer->ChangeAnimation("Damaged");
 }
@@ -113,6 +114,7 @@ void AFlamer::Damaged(float _DeltaTime)
 
 void AFlamer::DieStart()
 {
+	IsDamaged = false;
 	//Die 애니메이션 실행
 	MonsterRenderer->ChangeAnimation("DieEffect");
 }
@@ -120,7 +122,9 @@ void AFlamer::Die(float _DeltaTime)
 {
 	if (true == MonsterRenderer->IsCurAnimationEnd())
 	{
-		Destroy();
+		MonsterRenderer->ActiveOff();
+		MonsterCollision->ActiveOff();
+		//Destroy();
 	}
 }
 
