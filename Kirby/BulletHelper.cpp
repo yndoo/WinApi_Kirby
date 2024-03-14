@@ -37,6 +37,9 @@ void  BulletHelper::StateChange(EBulletState _State)
 		case EBulletState::Finish:
 			FinishStart();
 			break;
+		case EBulletState::Inhaled:
+			InhaledStart();
+			break;
 		default:
 			break;
 		}
@@ -59,6 +62,8 @@ void  BulletHelper::StateUpdate(float _DeltaTime)
 		break;
 	case EBulletState::Finish:
 		Finish(_DeltaTime);
+	case EBulletState::Inhaled:
+		Inhaled(_DeltaTime);
 		break;
 	default:
 		break;
@@ -126,6 +131,15 @@ void BulletHelper::FinishStart()
 
 }
 void BulletHelper::Finish(float _DeltaTime)
+{
+
+}
+
+void BulletHelper::InhaledStart()
+{
+
+}
+void BulletHelper::Inhaled(float _DeltaTime)
 {
 
 }

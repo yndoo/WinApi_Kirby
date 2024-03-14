@@ -41,6 +41,8 @@ protected:
 	virtual void Damage(float _DeltaTime);
 	virtual void FinishStart();
 	virtual void Finish(float _DeltaTime);
+	virtual void InhaledStart();
+	virtual void Inhaled(float _DeltaTime);
 
 	EBulletState State = EBulletState::None;
 	EActorDir Dir = EActorDir::Left;

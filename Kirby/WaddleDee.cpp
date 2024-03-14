@@ -118,6 +118,7 @@ void AWaddleDee::DamagedStart()
 	AddDamageHp(60);
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 	IsDamaged = true;
+	MonsterCollision->ActiveOff();
 }
 void AWaddleDee::Damaged(float _DeltaTime)
 {

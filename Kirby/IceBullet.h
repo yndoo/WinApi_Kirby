@@ -34,6 +34,8 @@ protected:
 	void Damage(float _DeltaTime) override;
 	//void FinishStart() override;
 	//void Finish(float _DeltaTime) override;
+	void InhaledStart() override;
+	void Inhaled(float _DeltaTime) override;
 
 	void MoveUpdate(float _DeltaTime, float MaxSpeed = 0.0f, FVector Acc = FVector::Zero);
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);

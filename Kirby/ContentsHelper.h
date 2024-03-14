@@ -85,6 +85,7 @@ enum class EBulletState
 	Move,
 	Damage,
 	Finish,
+	Inhaled, // EdibleBullet은 Inhaled가 필요함
 };
 
 // 설명 :

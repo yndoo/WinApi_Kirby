@@ -30,11 +30,9 @@ void AIceBullet::Tick(float _DeltaTime)
 
 	// 커비 흡입 충돌체와 몬스터의 충돌 확인
 	std::vector<UCollision*> Result;
-	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
+	if (nullptr != BulletCollision && true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
 	{
-		// 커비쪽으로 당겨지기
-		FVector InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
-		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
+		StateChange(EBulletState::Inhaled);
 		return;
 	}
 
@@ -109,7 +107,28 @@ void AIceBullet::Damage(float _DeltaTime)
 	// 터지는 애니메이션 했다 치고~
 	// true == IsCurAnimationEnd() 면
 	Destroy();
+}
 
+void AIceBullet::InhaledStart()
+{
+
+}
+void AIceBullet::Inhaled(float _DeltaTime)
+{
+	std::vector<UCollision*> Result;
+	if (nullptr != BulletCollision && true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	{
+		// 먹히는 거임
+		Destroy();
+		return;
+	}
+
+	// 커비쪽으로 당겨지기
+	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
+	{
+		FVector InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
+		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
+	}
 }
 
 void AIceBullet::MoveUpdate(float _DeltaTime, float MaxSpeed/* = 0.0f*/, FVector Acc /*= FVector::Zero*/)
