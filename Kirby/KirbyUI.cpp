@@ -30,6 +30,13 @@ void KirbyUI::BeginPlay()
 	FVector KirbyHpUIScale = KirbyHpUI->GetImage()->GetScale();
 	KirbyHpUI->SetTransform({ HpCasePos + KirbyHpCaseUIScale.Half2D(), KirbyHpUIScale });
 	KirbyHpUI->CameraEffectOff();
+
+	KirbyLifeImgUI = CreateImageRenderer(EKirbyRenderOrder::UI);
+	KirbyLifeImgUI->SetImage("KLifeUI.png");
+	FVector KirbyLifeUIScale = KirbyLifeImgUI->GetImage()->GetScale();
+	KirbyLifeImgUI->SetTransform({ LifeImgPos + KirbyLifeUIScale.Half2D(), KirbyLifeUIScale });
+	KirbyLifeImgUI->CameraEffectOff();
+
 }
 
 void KirbyUI::Tick(float _DeltaTime)

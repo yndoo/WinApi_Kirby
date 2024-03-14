@@ -29,11 +29,12 @@ private:
 	UImageRenderer* TypeNameUI = nullptr;
 	UImageRenderer* KirbyHpCaseUI = nullptr;
 	UImageRenderer* KirbyHpUI = nullptr;
-	UImageRenderer* KirbyLifeImgUI[2] = { nullptr, };	// 목숨 이미지, x 이미지
+	UImageRenderer* KirbyLifeImgUI = nullptr;	// 목숨 이미지, x 이미지
 	UImageRenderer* KirbyLifeNumUI[2] = { nullptr, };	// 목숨 개수 숫자 UI
 
 	EKirbyType TypeState = EKirbyType::None;
 
 	FVector TypeNamePos = { -1, 490 };
 	FVector HpCasePos = { 120, 460 };
+	FVector LifeImgPos = HpCasePos + FVector({ 30, -32 });
 };
