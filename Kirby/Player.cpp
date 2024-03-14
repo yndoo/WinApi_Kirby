@@ -297,6 +297,9 @@ void APlayer::StateChange(EKirbyState _State)
 		case EKirbyState::InhaleFail:
 			InhaleFailStart();
 			break;
+		case EKirbyState::Changing:
+			ChangingStart();
+			break;
 		default:
 			break;
 		}
@@ -373,6 +376,10 @@ void APlayer::StateUpdate(float _DeltaTime) {
 	case EKirbyState::InhaleFail:
 		// 흡입 실패
 		InhaleFail(_DeltaTime);
+		break;
+	case EKirbyState::Changing:
+		// 변신 중
+		Changing(_DeltaTime);
 		break;
 	case EKirbyState::FreeMove:
 		// 자유 이동
@@ -970,6 +977,8 @@ void APlayer::Swallow(float _DeltaTime)
 	{
 		IsFireKirby = true;
 		UContentsHelper::EatingFireMonster = false;
+		StateChange(EKirbyState::Changing);
+		return;
 	}
 	if (PlayerRenderer->IsCurAnimationEnd())
 	{
@@ -1256,6 +1265,27 @@ void APlayer::InhaleFail(float _DeltaTime)
 {
 	if (true == PlayerRenderer->IsCurAnimationEnd())
 	{
+		StateChange(EKirbyState::Idle);
+		return;
+	}
+}
+
+void APlayer::ChangingStart()
+{
+	ChangingTime = 0.f;
+	// 변신하는 이미지 추가해야 함
+	PlayerRenderer->AnimationReset();
+	PlayerRenderer->SetImage("HappyKirby.png"); // 임시 리소스
+
+	GetWorld()->SetOtherTimeScale(EKirbyRenderOrder::Player, 0.f);
+	GetWorld()->SetTimeScale(EKirbyRenderOrder::UI, 1.f);	
+}
+void APlayer::Changing(float _DeltaTime)
+{
+	ChangingTime += _DeltaTime;
+	if (ChangingTime > 2.f)
+	{
+		GetWorld()->SetAllTimeScale(1.0f);
 		StateChange(EKirbyState::Idle);
 		return;
 	}

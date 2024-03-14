@@ -112,6 +112,7 @@ protected:
 	void Exhale(float _DeltaTime);
 	void Damaged(float _DeltaTime);
 	void InhaleFail(float _DeltaTime);
+	void Changing(float _DeltaTime);
 
 	void FreeMove(float _DeltaTime);	
 	void CameraFreeMove(float _DeltaTime);
@@ -134,13 +135,14 @@ protected:
 	void ExhaleStart();
 	void DamagedStart();
 	void InhaleFailStart();
+	void ChangingStart();
 
 	// 상태 업데이트
 	void StateUpdate(float _DeltaTime);
 	void StateChange(EKirbyState _State);
 
 	EKirbyState State = EKirbyState::None;
-	EKirbyState BeforeState = EKirbyState::None;			// 점프 이전 State가 무엇인지 저장
+	EKirbyState BeforeState = EKirbyState::None;				// 이전 State가 무엇인지 저장
 	EActorDir DirState = EActorDir::Right;						// DirCheck에 쓰이는 DirState
 	EActorDir MyDir = EActorDir::Right;							// Move, Run 함수에서 쓸 Dir
 	std::string CurAnimationName = "Idle";
@@ -202,6 +204,7 @@ private:
 	float InhaleMaxScale = 100.f;
 	float InhaleMaxTime = 0.f;
 	float FireTime = 0.0f;			// FireKirby 공격 텀에 사용되는 변수
+	float ChangingTime = 0.f;		// 변신하는 시간
 
 
 	float LadderTop = 0.f;

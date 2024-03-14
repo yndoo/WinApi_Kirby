@@ -55,6 +55,7 @@ enum class EKirbyState
 	Exhale,
 	Damaged,
 	InhaleFail,
+	Changing,
 };
 
 enum class EKirbyType

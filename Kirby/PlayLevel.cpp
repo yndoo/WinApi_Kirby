@@ -141,7 +141,7 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Map->Renderer->ChangeAnimation("MapAnimation");
 
 	// Kirby
-	this->SpawnActor<APlayer>();
+	this->SpawnActor<APlayer>(EKirbyRenderOrder::Player);
 
 	// Flamer
 	for (int i = 0; i < 2; i++)
@@ -164,7 +164,7 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 		WDeeHpData[i] = WDees[i]->GetMaxHp();
 	}
 
-	UI = SpawnActor<KirbyUI>();
+	UI = SpawnActor<KirbyUI>(EKirbyRenderOrder::UI);
 	KirbyHpData = Kirby->GetCurHp();
 	UI->SetKirbyHpUI(KirbyHpData);
 	KirbyLifeData = Kirby->GetKirbyLife();
