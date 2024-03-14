@@ -154,7 +154,9 @@ void AFlamer::Inhaled(float _DeltaTime)
 	if (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
 		UContentsHelper::EatingFireMonster = true;
-		Destroy();
+		MonsterRenderer->ActiveOff();
+		MonsterCollision->ActiveOff();
+		//Destroy();
 	}
 }
 

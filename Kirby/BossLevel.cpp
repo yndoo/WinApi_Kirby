@@ -64,6 +64,7 @@ void UBossLevel::Tick(float _DeltaTime)
 		{
 			ADoorStar* DStar = SpawnActor<ADoorStar>();
 			DStar->SetActorLocation({ 540, 261 });
+			DStar->BigStarOn();
 			OpenDoorOnce = true;
 		}
 		

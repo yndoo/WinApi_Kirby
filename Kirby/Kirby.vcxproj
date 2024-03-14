@@ -180,6 +180,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="IceBullet.h" />
+    <ClInclude Include="Item.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="KirbyUI.h">
       <SubType>
       </SubType>
@@ -269,6 +273,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="IceBullet.cpp" />
+    <ClCompile Include="Item.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="KirbyUI.cpp">
       <SubType>
       </SubType>

@@ -71,6 +71,9 @@
     <ClInclude Include="KirbyUI.h">
       <Filter>Actor\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Actor\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -143,6 +146,9 @@
     <ClCompile Include="KirbyUI.cpp">
       <Filter>Actor\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Actor\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PlayLevel">
@@ -180,6 +186,9 @@
     </Filter>
     <Filter Include="Actor\UI">
       <UniqueIdentifier>{c8001d89-d011-4178-88bf-f965eb1b2bae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Item">
+      <UniqueIdentifier>{2975e071-c270-4ca5-97f3-65b89a05d0d1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
