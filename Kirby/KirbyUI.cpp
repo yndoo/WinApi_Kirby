@@ -15,28 +15,42 @@ void KirbyUI::BeginPlay()
 
 	TypeNameUI = CreateImageRenderer(EKirbyRenderOrder::UI);
 	TypeNameUI->SetImage("nametag_normal.png");
-	FVector TypeNameUIScale = TypeNameUI->GetImage()->GetScale();
-	TypeNameUI->SetTransform({ TypeNamePos, TypeNameUIScale });
+	FVector TypeNameImgScale = TypeNameUI->GetImage()->GetScale();
+	TypeNameUI->SetTransform({ TypeNamePos, TypeNameImgScale });
 	TypeNameUI->CameraEffectOff();
 
 	KirbyHpCaseUI = CreateImageRenderer(EKirbyRenderOrder::UI);
 	KirbyHpCaseUI->SetImage("KirbyHpBarCase.png");
-	FVector KirbyHpCaseUIScale = KirbyHpCaseUI->GetImage()->GetScale();
-	KirbyHpCaseUI->SetTransform({ HpCasePos + KirbyHpCaseUIScale.Half2D(), KirbyHpCaseUIScale });
+	FVector KHpCaseImgScale = KirbyHpCaseUI->GetImage()->GetScale();
+	KirbyHpCaseUI->SetTransform({ HpCasePos + KHpCaseImgScale.Half2D(), KHpCaseImgScale });
 	KirbyHpCaseUI->CameraEffectOff();
 
 	KirbyHpUI = CreateImageRenderer(EKirbyRenderOrder::UI);
 	KirbyHpUI->SetImage("KirbyHp.png");
-	FVector KirbyHpUIScale = KirbyHpUI->GetImage()->GetScale();
-	KirbyHpUI->SetTransform({ HpCasePos + KirbyHpCaseUIScale.Half2D(), KirbyHpUIScale });
+	FVector KHpImgScale = KirbyHpUI->GetImage()->GetScale();
+	KirbyHpUI->SetTransform({ HpCasePos + KHpCaseImgScale.Half2D(), KHpImgScale });
 	KirbyHpUI->CameraEffectOff();
 
 	KirbyLifeImgUI = CreateImageRenderer(EKirbyRenderOrder::UI);
 	KirbyLifeImgUI->SetImage("KLifeUI.png");
-	FVector KirbyLifeUIScale = KirbyLifeImgUI->GetImage()->GetScale();
-	KirbyLifeImgUI->SetTransform({ LifeImgPos + KirbyLifeUIScale.Half2D(), KirbyLifeUIScale });
+	FVector KLifeImgScale = KirbyLifeImgUI->GetImage()->GetScale();
+	KirbyLifeImgUI->SetTransform({ LifeImgPos + KLifeImgScale.Half2D(), KLifeImgScale });
 	KirbyLifeImgUI->CameraEffectOff();
 
+	int Life = Kirby->GetKirbyLife();
+	for (int i = 0; i < 2; i++)
+	{
+		KirbyLifeNumUI[i] = CreateImageRenderer(EKirbyRenderOrder::UI);
+
+		int num = Life / (pow(10, 1-i));
+		Life -= num * 10;
+
+		KirbyLifeNumUI[i]->SetImage(std::to_string(num) + ".png");
+		FVector KirbyLifeNumScale = KirbyLifeNumUI[i]->GetImage()->GetScale();
+		LifeNumUIPos.X += i * 24;
+		KirbyLifeNumUI[i]->SetTransform({ LifeNumUIPos + KirbyLifeNumScale.Half2D(), KirbyLifeNumScale });
+		KirbyLifeNumUI[i]->CameraEffectOff();
+	}
 }
 
 void KirbyUI::Tick(float _DeltaTime)
