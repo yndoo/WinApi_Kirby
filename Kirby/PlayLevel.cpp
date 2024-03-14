@@ -97,6 +97,11 @@ void UPlayLevel::Tick(float _DeltaTime)
 
 	// 0314 할 일
 	// 커비 Hp 변화 있으면 UI Update
+	if (KirbyHpData != Kirby->GetCurHp())
+	{
+		KirbyHpData = Kirby->GetCurHp();
+		UI->SetKirbyHpUI(KirbyHpData);
+	}
 	// 몬스터 각각 변화 있으면 UI Update
 }
 
@@ -112,22 +117,31 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	
 	Map->Renderer->ChangeAnimation("MapAnimation");
 
+	// Kirby
 	this->SpawnActor<APlayer>();
 
-	AFlamer* Flamer1 = this->SpawnActor<AFlamer>();
-	Flamer1->SetActorLocation({ 500,250 });
-	Flamer1->MoveColor = Color8Bit::YellowA;
+	// Flamer
+	for (int i = 0; i < 2; i++)
+	{
+		Flamers[i] = SpawnActor<AFlamer>();
+		FlamerHpData[i] = Flamers[i]->GetMaxHp();
+	}
+	Flamers[0]->SetActorLocation({500,250});
+	Flamers[0]->MoveColor = Color8Bit::YellowA;
 
-	AFlamer* Flamer2 = this->SpawnActor<AFlamer>();
-	Flamer2->SetActorLocation({ 1000,300 });
-	Flamer2->MoveColor = Color8Bit::MagentaA;
-	Flamer2->LateStart = true;
+	Flamers[1]->SetActorLocation({ 1000,300 });
+	Flamers[1]->MoveColor = Color8Bit::MagentaA;
+	Flamers[1]->LateStart = true;
 
-	AWaddleDee* WaddleDee1 = SpawnActor<AWaddleDee>();
-	AWaddleDee* WaddleDee2 = SpawnActor<AWaddleDee>();
-	WaddleDee2->SetActorLocation({ 2000, 200 });
+	// WaddleDee
+	for (int i = 0; i < 2; i++)
+	{
+		WDees[i] = SpawnActor<AWaddleDee>();
+		WDees[i]->SetActorLocation({(i+1) * 1000, 200});
+		WDeeHpData[i] = WDees[i]->GetMaxHp();
+	}
 
-	KirbyUI* UI = SpawnActor<KirbyUI>();
+	UI = SpawnActor<KirbyUI>();
 }
 
 void UPlayLevel::LevelEnd(ULevel* _Level)

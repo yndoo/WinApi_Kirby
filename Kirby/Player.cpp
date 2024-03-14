@@ -205,11 +205,15 @@ void APlayer::Tick(float _DeltaTime) {
 		if (true == IsEating)
 		{
 			// 먹은 거 뱉어지기
+			IsEating = false;
+			AddDamageHp(DamagePower);
 			return;
 		}
 		if (true == IsFireKirby)
 		{
 			// 변신 풀리기
+			IsFireKirby = false;
+			AddDamageHp(DamagePower);
 			return;
 		}
 
@@ -1185,7 +1189,7 @@ void APlayer::Exhale(float _DeltaTime)
 void APlayer::DamagedStart()
 {
 	DirCheck();
-	AddDamageHp(80);	// 80 데미지 입힘, 커비 죽는 거 없이 무적이긴 함!!
+	AddDamageHp(DamagePower);	// 80 데미지 입힘, 커비 죽는 거 없이 무적이긴 함!!
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 	BodyCollision->SetActive(true, 1.f);	// 1초간 무적일 수 있도록
 

@@ -17,6 +17,7 @@ public:
 	KirbyUI& operator=(KirbyUI&& _Other) noexcept = delete;
 
 	void SetTypeNameUI(EKirbyType _Type);
+	void SetKirbyHpUI(int _CurHp);
 
 protected:
 	void BeginPlay() override;
@@ -28,7 +29,8 @@ private:
 	UImageRenderer* TypeNameUI = nullptr;
 	UImageRenderer* KirbyHpCaseUI = nullptr;
 	UImageRenderer* KirbyHpUI = nullptr;
-	UImageRenderer* KirbyLifeUI = nullptr;
+	UImageRenderer* KirbyLifeImgUI[2] = { nullptr, };	// 목숨 이미지, x 이미지
+	UImageRenderer* KirbyLifeNumUI[2] = { nullptr, };	// 목숨 개수 숫자 UI
 
 	EKirbyType TypeState = EKirbyType::None;
 
