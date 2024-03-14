@@ -103,8 +103,10 @@ void APlayer::BeginPlay() {
 
 	}
 
+	// 전역 커비에 넘겨주기
 	Kirby = this;
 
+	// 커비 렌더러
 	PlayerRenderer = CreateImageRenderer(EKirbyRenderOrder::Player);
 	PlayerRenderer->SetImage("Kirby.png");
 	PlayerRenderer->SetTransform({ {0,0}, {300, 300} });
@@ -162,12 +164,20 @@ void APlayer::BeginPlay() {
 
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
 
-
+	// 커비 몸통
 	BodyCollision = CreateCollision(EKirbyCollisionOrder::Player);
 	BodyCollision->SetScale({ 39, 0 });
 	BodyCollision->SetPosition({ 0, -20 });
 	BodyCollision->SetColType(ECollisionType::CirCle);
 
+	// 커비 앞쪽 충돌체 (커비 충돌시에 뒤로 밀어질 때 몬스터와 동시 충돌하기 위해 일시적으로 필요)
+	FrontCollision = CreateCollision(EKirbyCollisionOrder::Player);
+	FrontCollision->SetScale({ 39, 0 });
+	FrontCollision->SetPosition({ 0, -20 });
+	FrontCollision->SetColType(ECollisionType::CirCle);
+	FrontCollision->ActiveOff();
+
+	// 커비 바닥
 	BottomCollision = CreateCollision(EKirbyCollisionOrder::Player);
 	BottomCollision->SetScale({ 5, 5 });
 	BottomCollision->SetPosition({ 0, 5 });
@@ -178,6 +188,7 @@ void APlayer::BeginPlay() {
 	RealBottomCollision->SetPosition({ 0, 0 });
 	RealBottomCollision->SetColType(ECollisionType::Rect);
 
+	// 커비 흡입 충돌체
 	InhaleCollision = CreateCollision(EKirbyCollisionOrder::InhaleCol);
 	InhaleCollision->SetScale({ 100, 0 });		// 흡입 충돌체 크기는 흡입 입력 시간에 따라 달라진다.
 	InhaleCollision->SetPosition({ 0, -20 });	// 흡입 충돌체 위치는 흡입 시마다 바뀌어야 한다.
@@ -1191,11 +1202,13 @@ void APlayer::Exhale(float _DeltaTime)
 void APlayer::DamagedStart()
 {
 	DirCheck();
-	AddDamageHp(DamagePower);	// 80 데미지 입힘, 커비 죽는 거 없이 무적이긴 함!!
+	AddDamageHp(DamagePower);	// 데미지 입힘, 커비 죽는 거 없이 무적이긴 함!!
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 	BodyCollision->SetActive(true, 1.f);	// 1초간 무적일 수 있도록
+	FrontCollision->ActiveOn();
 
 	MoveVector = FVector::Zero;
+	// 뒤로 튕기게 했더니 동시충돌이 안 됨 ㅠ
 	switch (DirState)
 	{
 	case EActorDir::Left:
@@ -1227,6 +1240,7 @@ void APlayer::Damaged(float _DeltaTime)
 	// 일정 속도 이하면 멈추기
 	if (true == PlayerRenderer->IsCurAnimationEnd() && abs(FinalMoveVector.X) < 100.0f)
 	{
+		FrontCollision->ActiveOff();
 		MoveVector = FVector::Zero;
 		StateChange(EKirbyState::Idle);
 		return;

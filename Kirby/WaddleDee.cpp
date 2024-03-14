@@ -24,11 +24,10 @@ void AWaddleDee::BeginPlay()
 	MonsterRenderer->CreateAnimation("Idle_Left", "WaddleDee_Left.png", 0, 4, 0.3f, true);
 	MonsterRenderer->CreateAnimation("Inhaled_Right", "WaddleDee_Right.png", 8, 8, 0.1f, false);
 	MonsterRenderer->CreateAnimation("Inhaled_Left", "WaddleDee_Left.png", 8, 8, 0.1f, false);
-	MonsterRenderer->CreateAnimation("Damaged_Right", "WaddleDee_Right.png", { 8,8,8,8 }, 0.2f, false);
-	MonsterRenderer->CreateAnimation("Damaged_Left", "WaddleDee_Left.png", { 8,8,8,8 }, 0.2f, false);
+	MonsterRenderer->CreateAnimation("Damaged_Right", "WaddleDee_Right.png", { 8,8,8,8 }, 0.1f, false);
+	MonsterRenderer->CreateAnimation("Damaged_Left", "WaddleDee_Left.png", { 8,8,8,8 }, 0.1f, false);
 	MonsterRenderer->CreateAnimation("DieEffect", "MonDieEffects.png", 0, 23, 0.05f, false);
 	
-
 	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Monster);
 	MonsterCollision->SetScale({ 40, 40 });
 	MonsterCollision->SetPosition({ 0, -20 });
@@ -118,7 +117,6 @@ void AWaddleDee::DamagedStart()
 	AddDamageHp(60);
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 	IsDamaged = true;
-	MonsterCollision->ActiveOff();
 }
 void AWaddleDee::Damaged(float _DeltaTime)
 {
@@ -141,8 +139,8 @@ void AWaddleDee::Die(float _DeltaTime)
 	{
 		MonsterCollision->ActiveOff();
 		MonsterRenderer->ActiveOff();
-		Destroy();
-		StateChange(EEnemyState::None);
+		//Destroy();
+		//StateChange(EEnemyState::None);
 		return;
 	}
 }

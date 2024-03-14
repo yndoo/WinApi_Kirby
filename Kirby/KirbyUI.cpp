@@ -71,7 +71,7 @@ void KirbyUI::BeginPlay()
 	MonHpRenderer->SetImage("MonHp.png");
 	MonHpRenderer->SetPosition({ WinScale.X - 100.f, KirbyHpCaseUI->GetPosition().Y });
 	MonHpRenderer->SetScale(BCaseScale);
-	MonHpRenderer->CreateAnimation("MonHpAni", "MonHpAnimation", {0,1,2,2,2,2}, 0.1f, false);
+	MonHpRenderer->CreateAnimation("MonHpAni", "MonHpAnimation", {0,0,1,2,3,3,3,3,3,3}, 0.05f, false);
 	MonHpRenderer->ChangeAnimation("MonHpAni");
 	MonHpRenderer->CameraEffectOff();
 	MonHpRenderer->ActiveOff();

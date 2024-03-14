@@ -152,6 +152,7 @@ protected:
 
 private:
 	UCollision* BodyCollision = nullptr;
+	UCollision* FrontCollision = nullptr;
 	UCollision* BottomCollision = nullptr;
 	UCollision* RealBottomCollision = nullptr; // WoodBlock 사용 시 필요 (현재 사용X, 일단 둠)
 	UCollision* InhaleCollision = nullptr;

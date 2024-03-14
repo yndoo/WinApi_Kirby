@@ -117,6 +117,15 @@ void UPlayLevel::Tick(float _DeltaTime)
 			UI->MonsterAniOn();
 		}
 	}
+	// WaddleDee
+	for (int i = 0; i < 2; i++)
+	{
+		if (WDeeHpData[i] != WDees[i]->GetCurHp())
+		{
+			WDeeHpData[i] = WDees[i]->GetCurHp();
+			UI->MonsterAniOn();
+		}
+	}
 }
 
 void UPlayLevel::LevelStart(ULevel* _Level)

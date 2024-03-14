@@ -22,7 +22,7 @@ void AFlamer::BeginPlay() {
 	MonsterRenderer->SetTransColor(Color8Bit::Magenta);
 
 	MonsterRenderer->CreateAnimation("Spin", "Flamer_Spin.png", 0, 3, 0.2f, true);
-	MonsterRenderer->CreateAnimation("Damaged", "Flamer_Damaged.png", { 0,0,0,0,1 }, 0.2f, false);
+	MonsterRenderer->CreateAnimation("Damaged", "Flamer_Damaged.png", { 0,0,0,0,1 }, 0.1f, false);
 	MonsterRenderer->CreateAnimation("DieEffect", "MonDieEffects.png", 0, 23, 0.05f, false);
 	MonsterRenderer->ChangeAnimation("Spin");
 
@@ -95,7 +95,6 @@ void AFlamer::DamagedStart()
 }
 void AFlamer::Damaged(float _DeltaTime)
 {
-	// 나중에 체력 넣으면 체력이 0될 때 죽어야 함(미완)
 	if (GetCurHp() <= 0)
 	{
 		StateChange(EEnemyState::Die);
@@ -109,7 +108,6 @@ void AFlamer::Damaged(float _DeltaTime)
 		StateChange(EEnemyState::Move);
 		return;
 	}
-
 }
 
 void AFlamer::DieStart()
