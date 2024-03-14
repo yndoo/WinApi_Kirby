@@ -76,5 +76,5 @@ void URestAreaLevel::LevelStart(ULevel* _Level)
 }
 void URestAreaLevel::LevelEnd(ULevel* _Level)
 {
-
+	UI->Destroy();
 }

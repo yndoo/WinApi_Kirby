@@ -62,7 +62,6 @@ protected:
 	FVector FinalMoveVector = FVector::Zero;
 
 	UCollision* WideCollision = nullptr;	// 가까이에 커비가 있는지 확인하는 용도
-	//UImageRenderer* Renderer = nullptr;
 private:
 	AIceBullet* bullet = nullptr;
 

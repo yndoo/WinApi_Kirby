@@ -9,6 +9,12 @@ KirbyUI::~KirbyUI()
 {
 }
 
+void KirbyUI::BossUIOn()
+{
+	BossHpCaseUI->ActiveOn();
+	BossHpBarUI->ActiveOn();
+}
+
 void KirbyUI::BeginPlay()
 {
 	SetActorLocation({ 0, 0 });
@@ -36,6 +42,22 @@ void KirbyUI::BeginPlay()
 	FVector KLifeImgScale = KirbyLifeImgUI->GetImage()->GetScale();
 	KirbyLifeImgUI->SetTransform({ LifeImgPos + KLifeImgScale.Half2D(), KLifeImgScale });
 	KirbyLifeImgUI->CameraEffectOff();
+
+	BossHpCaseUI = CreateImageRenderer(EKirbyRenderOrder::UI);
+	BossHpCaseUI->SetImage("MonHpBarCase.png");
+	FVector BCaseScale = BossHpCaseUI->GetImage()->GetScale();
+	BossHpCaseUI->SetPosition({ WinScale.X - 100.f, KirbyHpCaseUI->GetPosition().Y });	// 몬스터 체력바 높이는 커비 체력바 높이랑 같아야 함.
+	BossHpCaseUI->SetScale(BCaseScale);
+	BossHpCaseUI->CameraEffectOff();
+	BossHpCaseUI->ActiveOff();
+
+	BossHpBarUI = CreateImageRenderer(EKirbyRenderOrder::UI);
+	BossHpBarUI->SetImage("MonHp.png");
+	FVector BBarScale = BossHpBarUI->GetImage()->GetScale();
+	BossHpBarUI->SetPosition({ WinScale.X - 100.f, KirbyHpCaseUI->GetPosition().Y });
+	BossHpBarUI->SetScale(BBarScale);
+	BossHpBarUI->CameraEffectOff();
+	BossHpBarUI->ActiveOff();
 
 	int Life = Kirby->GetKirbyLife();
 	for (int i = 0; i < 2; i++)
@@ -92,6 +114,17 @@ void KirbyUI::SetKirbyLifeUI(int _CurLife)
 		LifeNumUIPos.X += i * 24;
 		KirbyLifeNumUI[i]->SetTransform({ LifeNumUIPos + KirbyLifeNumScale.Half2D(), KirbyLifeNumScale });
 	}
+}
+
+void KirbyUI::SetBossHpUI(int _MaxHp, int _CurHp)
+{
+	FVector CurHpScale = BossHpBarUI->GetTransform().GetScale();
+	FVector CurHpPos = BossHpBarUI->GetPosition();
+	float NewHpScaleX = (96.f / _MaxHp) * _CurHp;	// 96은 Hp리소스 가로 scale
+	float NewHpPosX = (CurHpScale.X - NewHpScaleX) / 2.f;
+
+	BossHpBarUI->SetScale({ NewHpScaleX, CurHpScale.Y });
+	BossHpBarUI->SetPosition({ CurHpPos.X - NewHpPosX, CurHpPos.Y });
 }
 
 void KirbyUI::SetTypeNameUI(EKirbyType _Type)

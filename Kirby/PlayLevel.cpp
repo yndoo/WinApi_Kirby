@@ -147,9 +147,13 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	}
 
 	UI = SpawnActor<KirbyUI>();
+	KirbyHpData = Kirby->GetCurHp();
+	UI->SetKirbyHpUI(KirbyHpData);
+	KirbyLifeData = Kirby->GetKirbyLife();
+	UI->SetKirbyLifeUI(KirbyLifeData);
 }
 
 void UPlayLevel::LevelEnd(ULevel* _Level)
 {
-	
+	UI->Destroy();
 }

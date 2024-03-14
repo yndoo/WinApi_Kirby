@@ -48,6 +48,12 @@ void UBossLevel::Tick(float _DeltaTime)
 		KirbyLifeData = Kirby->GetKirbyLife();
 		UI->SetKirbyLifeUI(KirbyLifeData);
 	}
+	// 보스(Mr.Frosty) Hp 변화 있으면 UI Update
+	if (nullptr != OneFrosty && FrostyHpData != OneFrosty->GetCurHp())
+	{
+		FrostyHpData = OneFrosty->GetCurHp();
+		UI->SetBossHpUI(OneFrosty->GetMaxHp(), FrostyHpData);
+	}
 
 	//FVector CamPos = GetCameraPos();
 	//UEngineDebug::DebugTextPrint("X : " + std::to_string(CamPos.X) + ", Y : " + std::to_string(CamPos.Y), 30.0f);
@@ -73,7 +79,9 @@ void UBossLevel::Tick(float _DeltaTime)
 		//보스 스폰
 		OneFrosty = SpawnActor<AMrFrosty>();
 		OneFrosty->SetActorLocation({ 520, 300 });
-		OneFrosty->SetMaxHp(100);
+		OneFrosty->SetMaxHp(200);
+		UI->BossUIOn();
+		FrostyHpData = OneFrosty->GetCurHp();
 		FrostySpawner->SpawnCollision->Destroy();
 		FrostySpawner = nullptr;
 	}
@@ -145,5 +153,5 @@ void UBossLevel::LevelStart(ULevel* _Level)
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {
-
+	UI->Destroy();
 }

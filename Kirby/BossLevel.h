@@ -42,6 +42,7 @@ private:
 	bool OpenDoorOnce = false;
 	int KirbyHpData = 0;
 	int KirbyLifeData = 0;
+	int FrostyHpData = 0;
 
 	FVector MapSize = FVector::Zero;
 	FVector WinScale = FVector::Zero;

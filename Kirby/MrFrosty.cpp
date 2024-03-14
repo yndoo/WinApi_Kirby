@@ -27,7 +27,6 @@ void AMrFrosty::BeginPlay()
 	MonsterCollision->SetPosition({ 0, -50 });
 	MonsterCollision->SetColType(ECollisionType::Rect);
 
-
 	MonsterRenderer->CreateAnimation("Idle_Right", "MrFrostyIdle_Right.png", { 0,1,0,1 }, 0.5f, true);
 	MonsterRenderer->CreateAnimation("Idle_Left", "MrFrostyIdle_Left.png", { 0,1,0,1 }, 0.5f, true);
 	MonsterRenderer->CreateAnimation("Move_Right", "MrFrostyMove_Right.png", 0, 2, 0.1f, true);
