@@ -8,6 +8,7 @@
 #include "MrFrosty.h"
 #include "DoorStar.h"
 #include "WaddleDee.h"
+#include "KirbyUI.h"
 
 // Ό³Έν :
 class UBossLevel : public ULevel
@@ -35,9 +36,12 @@ private:
 	ASpawner* FrostySpawner = nullptr;
 	ASpawner* FrostyStarter = nullptr;
 	AMap* Map = nullptr;
+	KirbyUI* UI = nullptr;
 
 	//bool FrostySpawned = false;
 	bool OpenDoorOnce = false;
+	int KirbyHpData = 0;
+	int KirbyLifeData = 0;
 
 	FVector MapSize = FVector::Zero;
 	FVector WinScale = FVector::Zero;

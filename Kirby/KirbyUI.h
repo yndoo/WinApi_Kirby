@@ -18,6 +18,7 @@ public:
 
 	void SetTypeNameUI(EKirbyType _Type);
 	void SetKirbyHpUI(int _CurHp);
+	void SetKirbyLifeUI(int _CurLife);
 
 protected:
 	void BeginPlay() override;

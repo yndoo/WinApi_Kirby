@@ -44,6 +44,8 @@ void APlayer::KirbyCopy()
 	IsEating = Kirby->IsEating;
 	IsFireKirby = Kirby->IsFireKirby;
 	EatingFireType = UContentsHelper::EatingFireMonster;
+	CurHp = Kirby->CurHp;
+	LifeNum = Kirby->LifeNum;
 }
 
 void APlayer::KirbyTypeUpdate()

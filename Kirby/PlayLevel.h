@@ -33,6 +33,7 @@ private:
 	KirbyUI* UI = nullptr;
 
 	int KirbyHpData = 0;
+	int KirbyLifeData = 0;
 	
 	AFlamer* Flamers[2] = {};
 	int FlamerHpData[2] = {};

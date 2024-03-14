@@ -2,6 +2,7 @@
 #include <EngineCore/Level.h>
 #include "Player.h"
 #include "Map.h"
+#include "KirbyUI.h"
 
 // Ό³Έν :
 class URestAreaLevel : public ULevel
@@ -24,7 +25,11 @@ protected:
 	void LevelEnd(ULevel* _Level) override;
 
 private:
-	APlayer* NewKirby = nullptr;
+	//APlayer* NewKirby = nullptr;
 	AMap* Map = nullptr;
+	KirbyUI* UI = nullptr;
+
+	int KirbyHpData = 0;
+	int KirbyLifeData = 0;
 };
 

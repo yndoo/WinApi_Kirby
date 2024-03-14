@@ -4,7 +4,7 @@
 #include <EngineCore/EngineResourcesManager.h>
 #include "EndingKirby.h"
 #include <EngineCore/EngineCore.h>
-#include "KirbyUI.h"
+#include "Player.h"
 
 UEndingLevel::UEndingLevel()
 {
@@ -49,7 +49,9 @@ void UEndingLevel::Tick(float _DeltaTime)
 
 void UEndingLevel::LevelStart(ULevel* _Level)
 {
-	KirbyUI* UI = SpawnActor<KirbyUI>();
+	UI = SpawnActor<KirbyUI>();
+	UI->SetKirbyHpUI(Kirby->GetCurHp());
+	UI->SetKirbyLifeUI(Kirby->GetKirbyLife());
 
 	Map->SetMapImage("ending_foreground_map.png");
 	Map->SetColMapImage("ending_background_colmap.png");

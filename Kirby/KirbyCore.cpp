@@ -78,8 +78,6 @@ void KirbyCore::BeginPlay()
 
 	ChangeLevel("PlayLevel");
 	//ChangeLevel("TitleLevel");	// ¿·Ω√ ª©µ“
-
-
 }
 
 void KirbyCore::Tick(float _DeltaTime)

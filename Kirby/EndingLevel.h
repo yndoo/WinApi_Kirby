@@ -1,6 +1,7 @@
 #pragma once
 #include <EngineCore/Level.h>
 #include "Map.h"
+#include "KirbyUI.h"
 
 // Ό³Έν :
 class UEndingLevel : public ULevel
@@ -24,6 +25,6 @@ protected:
 
 private:
 	AMap* Map = nullptr;
-
+	KirbyUI* UI = nullptr;
 };
 

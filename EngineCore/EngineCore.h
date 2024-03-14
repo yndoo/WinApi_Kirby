@@ -31,8 +31,6 @@ public:
 
 	void CoreInit(HINSTANCE _Init);
 
-	void Exit();
-
 	virtual void BeginPlay();
 	virtual void Tick(float _DeltaTime);
 	virtual void End();
@@ -51,6 +49,8 @@ public:
 		LevelInit(NewLevel, _Name);
 		AllLevel.insert(std::pair<std::string, ULevel*>(UpperName, NewLevel));
 	}
+
+	virtual void WindowOpen(std::string& _OutWindowTitle, std::string& _SmallIconPath) {}
 
 	void DestroyLevel(std::string_view _Name);
 
@@ -79,6 +79,9 @@ private:
 	int Frame = -1;
 	float FrameTime = 0.0f;
 	float CurFrameTime = 0.0f;
+
+	std::string WindowTitle;
+	std::string WindowIconPath;
 
 	bool EngineInit = false;
 	std::map<std::string, ULevel*> AllLevel;

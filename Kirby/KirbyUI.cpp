@@ -79,6 +79,21 @@ void KirbyUI::SetKirbyHpUI(int _CurHp)
 	KirbyHpUI->SetPosition({ CurHpPos.X - NewHpPosX, CurHpPos.Y });
 }
 
+void KirbyUI::SetKirbyLifeUI(int _CurLife)
+{
+	int Life = _CurLife;
+	for (int i = 0; i < 2; i++)
+	{
+		int num = Life / (pow(10, 1 - i));
+		Life -= num * 10;
+
+		KirbyLifeNumUI[i]->SetImage(std::to_string(num) + ".png");
+		FVector KirbyLifeNumScale = KirbyLifeNumUI[i]->GetImage()->GetScale();
+		LifeNumUIPos.X += i * 24;
+		KirbyLifeNumUI[i]->SetTransform({ LifeNumUIPos + KirbyLifeNumScale.Half2D(), KirbyLifeNumScale });
+	}
+}
+
 void KirbyUI::SetTypeNameUI(EKirbyType _Type)
 {
 	std::string resource = "nametag";

@@ -4,7 +4,6 @@
 #include <EngineCore/EngineResourcesManager.h>
 #include <EngineCore/EngineCore.h>
 #include <EngineCore/EngineDebug.h>
-#include "KirbyUI.h"
 																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								
 UBossLevel::UBossLevel()
 {
@@ -36,6 +35,20 @@ void UBossLevel::BeginPlay()
 void UBossLevel::Tick(float _DeltaTime)
 {
 	ULevel::Tick(_DeltaTime);
+
+	// 커비 Hp 변화 있으면 UI Update
+	if (KirbyHpData != Kirby->GetCurHp())
+	{
+		KirbyHpData = Kirby->GetCurHp();
+		UI->SetKirbyHpUI(KirbyHpData);
+	}
+	// 커비 Life 수 변화 있으면 UI Update
+	if (KirbyLifeData != Kirby->GetKirbyLife())
+	{
+		KirbyLifeData = Kirby->GetKirbyLife();
+		UI->SetKirbyLifeUI(KirbyLifeData);
+	}
+
 	//FVector CamPos = GetCameraPos();
 	//UEngineDebug::DebugTextPrint("X : " + std::to_string(CamPos.X) + ", Y : " + std::to_string(CamPos.Y), 30.0f);
 	if (nullptr != OneFrosty && true == OneFrosty->DeathCheck)
@@ -97,7 +110,11 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	APlayer* kb = this->SpawnActor<APlayer>();
 	UContentsHelper::EatingFireMonster = Kirby->GetEatingFireType();
 
-	KirbyUI* UI = SpawnActor<KirbyUI>();
+	UI = SpawnActor<KirbyUI>();
+	KirbyHpData = Kirby->GetCurHp();
+	UI->SetKirbyHpUI(KirbyHpData);
+	KirbyLifeData = Kirby->GetKirbyLife();
+	UI->SetKirbyLifeUI(KirbyLifeData);
 
 	ALadder* FirstLadder = SpawnActor<ALadder>();
 	FirstLadder->SetActorLocation({ 580,1020 });

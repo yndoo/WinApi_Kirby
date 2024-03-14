@@ -95,12 +95,17 @@ void UPlayLevel::Tick(float _DeltaTime)
 		}
 	}
 
-	// 0314 할 일
 	// 커비 Hp 변화 있으면 UI Update
 	if (KirbyHpData != Kirby->GetCurHp())
 	{
 		KirbyHpData = Kirby->GetCurHp();
 		UI->SetKirbyHpUI(KirbyHpData);
+	}
+	// 커비 Life 수 변화 있으면 UI Update
+	if (KirbyLifeData != Kirby->GetKirbyLife())
+	{
+		KirbyLifeData = Kirby->GetKirbyLife();
+		UI->SetKirbyLifeUI(KirbyLifeData);
 	}
 	// 몬스터 각각 변화 있으면 UI Update
 }
