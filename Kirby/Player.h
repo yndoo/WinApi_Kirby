@@ -73,6 +73,22 @@ public:
 	{
 		return LifeNum;
 	}
+
+	void SetKirbyLife(int _Life)
+	{
+		LifeNum = _Life;
+	}
+
+	void SubKirbyLife()
+	{
+		LifeNum--;
+	}
+
+	void RestartKirby()
+	{
+		SubKirbyLife();
+		SetCurHp(GetMaxHp());
+	}
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -163,7 +179,7 @@ private:
 	int MaxHp = 200;
 	int CurHp = 200;
 	int DamagePower = 80;	// 피격 데미지 항상 동일하게 둠
-	int LifeNum = 87;		// 생명 개수
+	int LifeNum = 0;		// 생명 개수
 
 	void AddMoveVector(const FVector& _DirDelta, FVector Acc);	// 방향 벡터에 DeltaTime 곱한 값으로 들어옴
 	void FinalMove(float _DeltaTime);							// 최종 계산된 방향과 힘으로 이동시키는 함수

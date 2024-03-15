@@ -99,6 +99,7 @@ void APlayer::BeginPlay() {
 		else	// 커비 찐 최초 생성
 		{
 			SetActorLocation({ 100, 100 });
+			SetKirbyLife(2);
 		}
 
 	}

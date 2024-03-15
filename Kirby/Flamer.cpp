@@ -92,6 +92,7 @@ void AFlamer::DamagedStart()
 	IsDamaged = true;
 	AddDamageHp(60);
 	MonsterRenderer->ChangeAnimation("Damaged");
+	MonsterCollision->ActiveOff();
 }
 void AFlamer::Damaged(float _DeltaTime)
 {
@@ -121,8 +122,6 @@ void AFlamer::Die(float _DeltaTime)
 	if (true == MonsterRenderer->IsCurAnimationEnd())
 	{
 		MonsterRenderer->ActiveOff();
-		MonsterCollision->ActiveOff();
-		//Destroy();
 	}
 }
 
@@ -156,7 +155,6 @@ void AFlamer::Inhaled(float _DeltaTime)
 		UContentsHelper::EatingFireMonster = true;
 		MonsterRenderer->ActiveOff();
 		MonsterCollision->ActiveOff();
-		//Destroy();
 	}
 }
 

@@ -144,8 +144,9 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	//(background 크기 - 윈도우 창 X크기) / (foreground 크기 - 윈도우 창 X크기)
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	Map->BackRenderer->SetCameraRatio((1386.f - WinScale.X) / (4720.f - WinScale.X));
-	
 	Map->Renderer->ChangeAnimation("MapAnimation");
+
+	SetCameraPos({ 0,0 });
 
 	// Kirby
 	this->SpawnActor<APlayer>(EKirbyRenderOrder::Player);
@@ -181,4 +182,12 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 void UPlayLevel::LevelEnd(ULevel* _Level)
 {
 	UI->Destroy();
+	for (int i = 0; i < 2; i++)
+	{
+		Flamers[i]->Destroy();
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		WDees[i]->Destroy();
+	}
 }

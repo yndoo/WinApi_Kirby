@@ -78,6 +78,13 @@ void AMrFrosty::Tick(float _DeltaTime)
 		AddDamageHp(60);
 	}
 
+	std::vector<UCollision*> Result2;
+	if (false == IsDamaged && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result2))
+	{
+		IsDamaged = true;
+		AddDamageHp(30);
+	}
+
 	// 몬스터 체력 디버깅용
 	//UEngineDebug::DebugTextPrint("Mr.Frosty HP : " + std::to_string(CurHp), 30.0f);
 }
@@ -329,6 +336,7 @@ void AMrFrosty::DieStart()
 	Timer = 0.f;
 	DirCheck();
 	MonsterRenderer->ChangeAnimation(GetAnimationName("HitWall"));
+	MonsterCollision->ActiveOff();
 
 	// 뒤로 튕겨나가기
 	JumpVector = SmallJumpPower;
@@ -378,7 +386,6 @@ void AMrFrosty::Die(float _DeltaTime)
 		MoveVector = FVector::Zero;
 		if (false == DeathCheck && Timer >= DieEffectBeforeTime)
 		{
-			MonsterCollision->Destroy();
 			MonsterRenderer->AddPosition({ 0, -40 });
 			MonsterRenderer->ChangeAnimation("DieEffect");
 			DeathCheck = true;

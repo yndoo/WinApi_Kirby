@@ -31,6 +31,17 @@ void UBossLevel::BeginPlay()
 	}
 
 	Map = SpawnActor<AMap>();
+
+	// 사다리
+	for (int i = 0; i < 2; i++)
+	{
+		Ladders[i] = SpawnActor<ALadder>();
+	}
+	Ladders[0]->SetActorLocation({ 580,1020 });
+	Ladders[0]->Collision->SetScale({ 40, 199 });
+
+	Ladders[1]->SetActorLocation({ 60,800 });
+	Ladders[1]->Collision->SetScale({ 40, 240 });
 }
 void UBossLevel::Tick(float _DeltaTime)
 {
@@ -83,8 +94,7 @@ void UBossLevel::Tick(float _DeltaTime)
 		OneFrosty->SetMaxHp(200);
 		UI->BossUIOn();
 		FrostyHpData = OneFrosty->GetCurHp();
-		FrostySpawner->SpawnCollision->Destroy();
-		FrostySpawner = nullptr;
+		FrostySpawner->SpawnCollision->ActiveOff();
 	}
 
 	std::vector<UCollision*> Result2;
@@ -95,7 +105,7 @@ void UBossLevel::Tick(float _DeltaTime)
 	{
 		//보스 움직임시작?
 		OneFrosty->IsStart = true;
-		FrostyStarter->SpawnCollision->Destroy();
+		FrostyStarter->SpawnCollision->ActiveOff();
 	}
 
 	//테스트용
@@ -125,13 +135,6 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	KirbyLifeData = Kirby->GetKirbyLife();
 	UI->SetKirbyLifeUI(KirbyLifeData);
 
-	ALadder* FirstLadder = SpawnActor<ALadder>();
-	FirstLadder->SetActorLocation({ 580,1020 });
-	FirstLadder->Collision->SetScale({ 40, 199 });
-
-	ALadder* SecondLadder = SpawnActor<ALadder>();
-	SecondLadder->SetActorLocation({ 60,800 });
-	SecondLadder->Collision->SetScale({ 40, 240 });
 
 	//// 1층 나무블록 두 개
 	//std::vector<AWoodBlock*> WBV1;
@@ -149,10 +152,14 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	FrostyStarter = SpawnActor<ASpawner>();
 	FrostyStarter->SetActorLocation({ 320, 300 });
 
-	AWaddleDee* WMon1 = SpawnActor<AWaddleDee>();
+	WMon1 = SpawnActor<AWaddleDee>();
 	WMon1->SetActorLocation({ 485, 1116 });
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {
 	UI->Destroy();
+	OneFrosty->Destroy();
+	FrostySpawner->Destroy();
+	FrostyStarter->Destroy();
+	WMon1->Destroy();
 }

@@ -7,6 +7,7 @@
 #include <EngineBase/EngineDirectory.h>
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
+#include "Player.h"
 
 KirbyCore::KirbyCore()
 	: UEngineCore()
@@ -86,6 +87,15 @@ void KirbyCore::Tick(float _DeltaTime)
 	if (true == UEngineInput::IsDown(VK_F2))
 	{
 		GEngine->EngineDebugSwitch();
+	}
+
+	// 커비 죽어있고 목숨 남아있으면 현재 레벨 재시작 (일단 피 0되면 바로 재시작)
+	if (0 == Kirby->GetCurHp() && 0 < Kirby->GetKirbyLife())
+	{
+		Kirby->RestartKirby();
+		ULevel* RestartLevel = Kirby->GetWorld();
+		Kirby->GetWorld()->LevelEnd(RestartLevel);
+		Kirby->GetWorld()->LevelStart(RestartLevel);
 	}
 
 	// 테스트용 레벨 전환

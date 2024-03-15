@@ -31,12 +31,16 @@ protected:
 	void LevelEnd(ULevel* _Level) override;
 
 private:
-	APlayer* NewKirby = nullptr;
+	//APlayer* NewKirby = nullptr;
 	AMrFrosty* OneFrosty = nullptr;
 	ASpawner* FrostySpawner = nullptr;
 	ASpawner* FrostyStarter = nullptr;
-	AMap* Map = nullptr;
 	KirbyUI* UI = nullptr;
+	AWaddleDee* WMon1 = nullptr;
+
+	// 맵과 사다리는 한 번만 생김
+	AMap* Map = nullptr;
+	ALadder* Ladders[2] = { nullptr, };
 
 	//bool FrostySpawned = false;
 	bool OpenDoorOnce = false;

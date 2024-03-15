@@ -115,6 +115,7 @@ void AWaddleDee::Inhaled(float _DeltaTime)
 void AWaddleDee::DamagedStart()
 {
 	AddDamageHp(60);
+	MonsterCollision->ActiveOff();
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 	IsDamaged = true;
 }
@@ -137,11 +138,7 @@ void AWaddleDee::Die(float _DeltaTime)
 {
 	if (true == MonsterRenderer->IsCurAnimationEnd())
 	{
-		MonsterCollision->ActiveOff();
 		MonsterRenderer->ActiveOff();
-		//Destroy();
-		//StateChange(EEnemyState::None);
-		return;
 	}
 }
 
