@@ -92,12 +92,12 @@ void AFlamer::DamagedStart()
 	IsDamaged = true;
 	AddDamageHp(60);
 	MonsterRenderer->ChangeAnimation("Damaged");
-	MonsterCollision->ActiveOff();
 }
 void AFlamer::Damaged(float _DeltaTime)
 {
 	if (GetCurHp() <= 0)
 	{
+		MonsterCollision->ActiveOff();
 		StateChange(EEnemyState::Die);
 		return;
 	}

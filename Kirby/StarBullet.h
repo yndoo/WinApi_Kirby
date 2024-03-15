@@ -18,7 +18,8 @@ public:
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
-
+	void DamageStart() override;
+	void Damage(float _DeltaTime) override;
 private:
 
 };

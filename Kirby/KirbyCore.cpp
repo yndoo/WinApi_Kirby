@@ -42,6 +42,7 @@ void KirbyCore::BeginPlay()
 	UEngineResourcesManager::GetInst().CuttingImage("BigDoorStar.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("EndingStartEffects.png", 8, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("MonDieEffects.png", 12, 3);
+	UEngineResourcesManager::GetInst().CuttingImage("StarBulletDieEffect.png", 10, 1);
 	//Bullets
 	UEngineResourcesManager::GetInst().CuttingImage("StarBulletIdle_Right.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("StarBulletIdle_Left.png", 2, 1);

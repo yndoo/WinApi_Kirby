@@ -115,7 +115,6 @@ void AWaddleDee::Inhaled(float _DeltaTime)
 void AWaddleDee::DamagedStart()
 {
 	AddDamageHp(60);
-	MonsterCollision->ActiveOff();
 	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 	IsDamaged = true;
 }
@@ -124,6 +123,7 @@ void AWaddleDee::Damaged(float _DeltaTime)
 	if (GetCurHp() <= 0 && true == MonsterRenderer->IsCurAnimationEnd())
 	{
 		// 원래 게임 : 한 대 맞고 이펙트터지면서 죽어야 함. 
+		MonsterCollision->ActiveOff();
 		StateChange(EEnemyState::Die);
 	}
 }
