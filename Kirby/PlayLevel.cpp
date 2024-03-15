@@ -37,8 +37,8 @@ void UPlayLevel::BeginPlay() {
 	}
 
 	//UEngineResourcesManager::GetInst().CuttingImage("Kirby.png", 40, 13);
-	CuttingImgLR("Move", 10, 1);
 	CuttingImgLR("Idle", 3, 1);
+	CuttingImgLR("Move", 10, 1);
 	CuttingImgLR("Crouch", 2, 1);
 	CuttingImgLR("Slide", 2, 1);
 	CuttingImgLR("Run", 8, 1);
@@ -46,13 +46,13 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("Inhale", 13, 1);
 	CuttingImgLR("Fly", 10, 1);
 	CuttingImgLR("Damaged", 9, 1);
-	//CuttingImgLR("InhaleFail", 4, 1);
-
 	CuttingImgLR("Swallow", 5, 1);
+
 	CuttingImgLR("Eating", 7, 1);
 	CuttingImgLR("EatingMove", 15, 1);
 	CuttingImgLR("EatingJump", 9, 1);
 	CuttingImgLR("EatingAttack", 5, 1);
+	
 	CuttingImgLR("FireIdle", 8, 1);
 	CuttingImgLR("FireSlide", 5, 1);
 	CuttingImgLR("FireMove", 10, 2);
@@ -64,6 +64,16 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("FireFlyStart", 5, 1);
 	CuttingImgLR("FireFlying", 5, 3);
 	CuttingImgLR("FireExhale", 3, 1);
+
+	CuttingImgLR("IceIdle", 2, 1);
+	CuttingImgLR("IceMove", 10, 1);
+	CuttingImgLR("IceCrouch", 2, 1);
+	CuttingImgLR("IceSlide", 2, 1);
+	CuttingImgLR("IceRun", 8, 1);
+	CuttingImgLR("IceJump", 10, 1);
+	CuttingImgLR("IceFlyStart", 5, 1);
+	CuttingImgLR("IceFlying", 8, 1);
+	CuttingImgLR("IceExhale", 2, 1);
 
 	UEngineResourcesManager::GetInst().CuttingImage("LadderMove.png", 13, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("FireLadderUp.png", 4, 10);

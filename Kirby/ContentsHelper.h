@@ -66,6 +66,7 @@ enum class EKirbyType
 	None,
 	Normal,
 	Fire,
+	Ice,
 };
 
 enum class EEnemyState

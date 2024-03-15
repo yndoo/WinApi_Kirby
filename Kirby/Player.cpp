@@ -43,6 +43,7 @@ void APlayer::KirbyCopy()
 	BeforePos = Kirby->BeforePos;
 	IsEating = Kirby->IsEating;
 	IsFireKirby = Kirby->IsFireKirby;
+	IsIceKirby = Kirby->IsIceKirby;
 	EatingFireType = UContentsHelper::EatingFireMonster;
 	CurHp = Kirby->CurHp;
 	LifeNum = Kirby->LifeNum;
@@ -53,6 +54,10 @@ void APlayer::KirbyTypeUpdate()
 	if (IsFireKirby == true)
 	{
 		UContentsHelper::KirbyType = EKirbyType::Fire;
+	}
+	else if (IsIceKirby == true)
+	{
+		UContentsHelper::KirbyType = EKirbyType::Ice;
 	}
 	else
 	{
@@ -134,7 +139,6 @@ void APlayer::BeginPlay()
 	AutoCreateAnimation("Flying", "Fly", 5, 9, 0.1f, true);
 	AutoCreateAnimation("Exhale", "Fly", { 2, 1, 0 }, 0.15f, false);
 	AutoCreateAnimation("Damaged", 0, 8, 0.05f, false);
-	//AutoCreateAnimation("InhaleFail", 0, 3, 0.1f, false);
 
 	AutoCreateAnimation("EatingAttack", 0, 4, 0.1f, false);
 	AutoCreateAnimation("EatingEating", "Eating", 2, 6, 0.1f, false);
@@ -158,6 +162,21 @@ void APlayer::BeginPlay()
 	AutoCreateAnimation("FireFlyStart", 2, 4, 0.05f, false);
 	AutoCreateAnimation("FireFlying", 0, 14, 0.1f, true);
 	AutoCreateAnimation("FireExhale", 0, 2, 0.15f, false);
+
+	AutoCreateAnimation("IceIdle", 0, 1, 0.1f, true);
+	AutoCreateAnimation("IceMove", 0, 9, 0.1f, true);
+	AutoCreateAnimation("IceSlide", 0, 1, 0.12f, false);
+	AutoCreateAnimation("IceBrake", 0, 0, 0.1f, false);
+	AutoCreateAnimation("IceRun", 0, 7, 0.05f, true); 
+	AutoCreateAnimation("IceCrouch", 0, 1, 0.03f, false);
+	AutoCreateAnimation("IceAttack", 0, 7, 0.025f, false);
+	AutoCreateAnimation("IceJumpStart", "IceJump", 0, 0, 0.1f, false);
+	AutoCreateAnimation("IceJumpTurn", "IceJump", 1, 6, 0.02f, false);
+	AutoCreateAnimation("IceJumpEnd", "IceJump", 7, 8, 0.05f, false);
+	AutoCreateAnimation("IceJumpCrouch", "IceJump", 9, 9, 0.06f, false);
+	AutoCreateAnimation("IceFlyStart", 0, 4, 0.05f, false);
+	AutoCreateAnimation("IceFlying", 0, 7, 0.1f, true);
+	AutoCreateAnimation("IceExhale", 0, 1, 0.15f, false);
 
 	PlayerRenderer->CreateAnimation("LadderUp", "LadderMove.png", 0, 9, 0.1f, true);
 	PlayerRenderer->CreateAnimation("LadderDown", "LadderMove.png", 10, 12, 0.2f, true);
@@ -229,6 +248,13 @@ void APlayer::Tick(float _DeltaTime)
 		{
 			// 변신 풀리기
 			IsFireKirby = false;
+			AddDamageHp(DamagePower);
+			return;
+		}
+		if (true == IsIceKirby)
+		{
+			// 변신 풀리기
+			IsIceKirby = false;
 			AddDamageHp(DamagePower);
 			return;
 		}
@@ -510,6 +536,13 @@ void  APlayer::Idle(float _DeltaTime)
 	if (true == UEngineInput::IsDown('F'))
 	{
 		IsFireKirby = !IsFireKirby;
+		IdleStart();
+		return;
+	}
+
+	if (true == UEngineInput::IsDown('I'))
+	{
+		IsIceKirby = !IsIceKirby;
 		IdleStart();
 		return;
 	}
@@ -1031,6 +1064,10 @@ void APlayer::AttackStart()
 			break;
 		}
 	}
+	else if (true == IsIceKirby)
+	{
+		// Ice 커비 공격
+	}
 }
 void APlayer::Attack(float _DeltaTime)
 {
@@ -1045,7 +1082,7 @@ void APlayer::Attack(float _DeltaTime)
 
 	FireTime -= _DeltaTime;
 
-	if (true == IsFireKirby && UEngineInput::IsFree('X'))
+	if ((true == IsFireKirby || true == IsIceKirby) && UEngineInput::IsFree('X'))
 	{
 		StateChange(EKirbyState::Idle);
 		return;
@@ -1071,6 +1108,11 @@ void APlayer::Attack(float _DeltaTime)
 		default:
 			break;
 		};
+	}
+	if (true == IsIceKirby && UEngineInput::IsPress('X') && 0.0f > FireTime)
+	{
+		// Ice 커비 공격
+
 	}
 }
 
@@ -1401,6 +1443,14 @@ std::string APlayer::GetAnimationName(std::string _Name)
 		}
 		return std::string("Fire") + _Name + DirName;
 	}
+	else if (IsIceKirby == true)
+	{
+		if (_Name == "LadderUp" || _Name == "LadderDown")
+		{
+			return std::string("Ice") + _Name;
+		}
+		return std::string("Ice") + _Name + DirName;
+	}
 	else
 	{
 		if (_Name == "LadderUp" || _Name == "LadderDown")
@@ -1548,7 +1598,7 @@ void APlayer::FinalMove(float _DeltaTime)
 	if (TopColor == Color8Bit::MagentaA || TopColor == Color8Bit::YellowA)
 	{
 		MovePos.Y = 0.f;
-		if (false == IsEating && false == IsFireKirby)
+		if (false == IsEating && false == IsFireKirby && false == IsIceKirby)
 		{
 			PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));	// 머리박을 때 찌부되는거 TestCode
 			return;

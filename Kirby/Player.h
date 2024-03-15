@@ -168,6 +168,7 @@ protected:
 	// 변신 관련 상태 변수
 	bool IsEating = false;
 	bool IsFireKirby = false;
+	bool IsIceKirby = false;
 	bool EatingFireType = false;	// 입 안에 먹은 변신체가 Fire 타입인지
 
 private:

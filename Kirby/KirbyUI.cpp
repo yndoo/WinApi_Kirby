@@ -161,6 +161,9 @@ void KirbyUI::SetTypeNameUI(EKirbyType _Type)
 	case EKirbyType::Fire:
 		resource += "_fire";
 		break;
+	case EKirbyType::Ice:
+		resource += "_ice";
+		break;
 	default:
 		break;
 	}
