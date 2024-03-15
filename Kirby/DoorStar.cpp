@@ -17,7 +17,7 @@ void ADoorStar::BeginPlay()
 
 	StarRenderer = CreateImageRenderer(EKirbyRenderOrder::DoorStar);
 	StarRenderer->SetImage("DoorStar.png");
-	StarRenderer->CreateAnimation("Twinkle", "DoorStar.png", 0, 1, 0.05f, true);
+	StarRenderer->CreateAnimation("Twinkle", "DoorStar.png", 0, 1, 0.1f, true);
 	StarRenderer->SetTransform({ {0,0}, {300, 300} });
 
 	EndingStarRenderer = CreateImageRenderer(EKirbyRenderOrder::DoorStar);

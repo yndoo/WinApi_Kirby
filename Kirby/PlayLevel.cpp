@@ -71,9 +71,16 @@ void UPlayLevel::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("KirbyDance.png", 10, 3);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
-	Map = SpawnActor<AMap>();
-
+	Map = SpawnActor<AMap>(EKirbyRenderOrder::Map);
 	Map->Renderer->CreateAnimation("MapAnimation", "1_3_foreground", 0, 3, 0.5f, true);
+
+	restDoor = SpawnActor<ADoorStar>(EKirbyRenderOrder::DoorStar);
+	restDoor->SetActorLocation({ 3380, 107 });
+	restDoor->SmallStarOn();
+	
+	bossDoor = SpawnActor<ADoorStar>(EKirbyRenderOrder::DoorStar);
+	bossDoor->SetActorLocation({ 4580, 223 });
+	bossDoor->SmallStarOn();
 }
 
 void UPlayLevel::Tick(float _DeltaTime)
