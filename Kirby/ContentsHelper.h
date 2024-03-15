@@ -21,7 +21,7 @@ enum class EKirbyCollisionOrder
 	PlayerBullet,	// 공격 충돌체
 	EdibleBullet,
 	LifeItem,
-	TypeChangingItem,
+	TypeItem,
 	Player,
 	Ladder,
 	Block,

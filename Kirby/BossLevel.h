@@ -9,6 +9,7 @@
 #include "DoorStar.h"
 #include "WaddleDee.h"
 #include "KirbyUI.h"
+#include "Item.h"
 
 // 설명 :
 class UBossLevel : public ULevel
@@ -41,6 +42,7 @@ private:
 	// 맵과 사다리는 한 번만 생김
 	AMap* Map = nullptr;
 	ALadder* Ladders[2] = { nullptr, };
+	AItem* TypeItem = nullptr;
 
 	//bool FrostySpawned = false;
 	bool OpenDoorOnce = false;

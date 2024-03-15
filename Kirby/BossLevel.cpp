@@ -30,7 +30,7 @@ void UBossLevel::BeginPlay()
 		UEngineResourcesManager::GetInst().LoadImg(FullPath);
 	}
 
-	Map = SpawnActor<AMap>();
+	Map = SpawnActor<AMap>(EKirbyRenderOrder::Map);
 
 	// 사다리
 	for (int i = 0; i < 2; i++)
@@ -42,6 +42,11 @@ void UBossLevel::BeginPlay()
 
 	Ladders[1]->SetActorLocation({ 60,800 });
 	Ladders[1]->Collision->SetScale({ 40, 240 });
+
+	// 아이템
+	TypeItem = SpawnActor<AItem>(EKirbyRenderOrder::Item);
+	TypeItem->SetTypeItem();
+	TypeItem->SetActorLocation({ 184, 513 });
 }
 void UBossLevel::Tick(float _DeltaTime)
 {
@@ -134,7 +139,6 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	UI->SetKirbyHpUI(KirbyHpData);
 	KirbyLifeData = Kirby->GetKirbyLife();
 	UI->SetKirbyLifeUI(KirbyLifeData);
-
 
 	//// 1층 나무블록 두 개
 	//std::vector<AWoodBlock*> WBV1;

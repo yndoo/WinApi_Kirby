@@ -72,6 +72,9 @@ void KirbyCore::BeginPlay()
 	UEngineResourcesManager::GetInst().CuttingImage("MF_DamagedHitWall_Left.png", 2, 1);
 	//UI
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("UI\\MonHpAnimation"));
+	//Item
+	UEngineResourcesManager::GetInst().CuttingImage("Item_IceCopy_ani.png", 5, 1);
+
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");

@@ -17,13 +17,17 @@ public:
 	AItem& operator=(AItem&& _Other) noexcept = delete;
 
 	void SetLifeItem();
+	void SetTypeItem();
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 
 	UImageRenderer* ItemRenderer = nullptr;
 	UCollision* ItemCollision = nullptr;
+	
 private:
-
+	float Angle = 0.f;
+	FVector Center = { 184, 513 };
+	FVector SpinDir = FVector::Zero;
 };
 
