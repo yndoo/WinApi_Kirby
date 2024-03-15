@@ -1215,10 +1215,10 @@ void APlayer::DamagedStart()
 	AddDamageHp(DamagePower);	// 데미지 입힘, 커비 죽는 거 없이 무적이긴 함!!
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 	BodyCollision->SetActive(true, 1.f);	// 1초간 무적일 수 있도록
-	FrontCollision->ActiveOn();
+	FrontCollision->ActiveOn();				// 동시충돌 가능하게 하기위해 콜리전 잔상?을 남김..
+	AlphaTime = 1.f;
 
 	MoveVector = FVector::Zero;
-	// 뒤로 튕기게 했더니 동시충돌이 안 됨 ㅠ
 	switch (DirState)
 	{
 	case EActorDir::Left:
@@ -1233,6 +1233,14 @@ void APlayer::DamagedStart()
 }
 void APlayer::Damaged(float _DeltaTime)
 {
+	AlphaTime -= _DeltaTime;
+
+	if (AlphaTime > 0.f)
+	{
+		PlayerRenderer->SetAlpha(AlphaVar);
+		AlphaVar = 1.f - AlphaVar;
+	}
+
 	// 감속
 	switch (DirState)
 	{
@@ -1251,6 +1259,7 @@ void APlayer::Damaged(float _DeltaTime)
 	if (true == PlayerRenderer->IsCurAnimationEnd() && abs(FinalMoveVector.X) < 100.0f)
 	{
 		FrontCollision->ActiveOff();
+		PlayerRenderer->SetAlpha(1.0f);
 		MoveVector = FVector::Zero;
 		StateChange(EKirbyState::Idle);
 		return;

@@ -89,6 +89,7 @@ public:
 		SubKirbyLife();
 		SetCurHp(GetMaxHp());
 	}
+
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -211,7 +212,6 @@ private:
 	FVector FinalMoveVector = FVector::Zero;
 	float FreeMoveSpeed = 1000.0f;
 	float FlySpeed = 100.f;
-	
 
 	float InhaleScaleVar = 40.f;
 	float InhaleScaleAdd = 100.f;
@@ -221,11 +221,12 @@ private:
 	float InhaleMaxTime = 0.f;
 	float FireTime = 0.0f;			// FireKirby 공격 텀에 사용되는 변수
 	float ChangingTime = 0.f;		// 변신하는 시간
-
+	float AlphaVar = 0.2f;			// alpha값 조정할 때 사용하는 변수	
+	float AlphaTime = 1.f;			// 깜빡이는 시간
 
 	float LadderTop = 0.f;
 	float LadderBottom = 0.f;
-	//FVector LadderCamPos = FVector::Zero;
+
 };
 
 extern APlayer* Kirby;
