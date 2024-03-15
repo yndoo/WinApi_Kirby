@@ -60,7 +60,8 @@ void APlayer::KirbyTypeUpdate()
 	}
 }
 
-void APlayer::BeginPlay() {
+void APlayer::BeginPlay() 
+{
 	AActor::BeginPlay();
 
  	if (nullptr != Kirby)
@@ -200,7 +201,8 @@ void APlayer::BeginPlay() {
 	UContentsHelper::EatingFireMonster = false;
 }
 
-void APlayer::Tick(float _DeltaTime) {
+void APlayer::Tick(float _DeltaTime) 
+{
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
 	KirbyTypeUpdate();
@@ -235,6 +237,11 @@ void APlayer::Tick(float _DeltaTime) {
 		BeforeState = State;
 		StateChange(EKirbyState::Damaged);
 		return;
+	}
+
+	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::LifeItem, Result))
+	{
+		LifeNum++;
 	}
 
 	FVector PlayerPos = GetActorLocation();
@@ -1214,9 +1221,9 @@ void APlayer::DamagedStart()
 	DirCheck();
 	AddDamageHp(DamagePower);	// 데미지 입힘, 커비 죽는 거 없이 무적이긴 함!!
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Damaged"));
-	BodyCollision->SetActive(true, 1.f);	// 1초간 무적일 수 있도록
+	BodyCollision->SetActive(true, 1.5f);	// 1.5초간 무적일 수 있도록
 	FrontCollision->ActiveOn();				// 동시충돌 가능하게 하기위해 콜리전 잔상?을 남김..
-	AlphaTime = 1.f;
+	AlphaTime = 1.5f;
 
 	MoveVector = FVector::Zero;
 	switch (DirState)
@@ -1293,7 +1300,7 @@ void APlayer::ChangingStart()
 void APlayer::Changing(float _DeltaTime)
 {
 	ChangingTime += _DeltaTime;
-	if (ChangingTime > 2.f)
+	if (ChangingTime > 1.5f)
 	{
 		GetWorld()->SetAllTimeScale(1.0f);
 		StateChange(EKirbyState::Idle);

@@ -4,6 +4,7 @@ enum class EKirbyRenderOrder
 {
 	Map,
 	DoorStar,
+	Item,
 	Monster,
 	Player,
 	Bullet,
@@ -19,6 +20,8 @@ enum class EKirbyCollisionOrder
 	Boss,
 	PlayerBullet,	// 공격 충돌체
 	EdibleBullet,
+	LifeItem,
+	TypeChangingItem,
 	Player,
 	Ladder,
 	Block,
@@ -95,8 +98,9 @@ class UContentsHelper
 public:
 	static UWindowImage* ColMapImage;
 	static UWindowImage* BackgroundImage;
-	static bool EatingFireMonster;			// 입 안에 Fire속성 몬스터가 있는 지(아직 삼키지X)
 	static EKirbyType KirbyType;
+	static bool EatingFireMonster;			// 입 안에 Fire속성 몬스터가 있는 지(아직 삼키지X)
+	static bool CameraRestart;				// LevelRestart시에 카메라도 리스타트 해야하는지의 여부 (true면 카메라 위치 리셋 필요)
 protected:
 
 private:

@@ -1,21 +1,28 @@
 #pragma once
+#include <EngineCore/Actor.h>
+#include "ContentsHelper.h"
 
 // Ό³Έν :
-class Item
+class AItem : public AActor
 {
 public:
 	// constrcuter destructer
-	Item();
-	~Item();
+	AItem();
+	~AItem();
 
 	// delete Function
-	Item(const Item& _Other) = delete;
-	Item(Item&& _Other) noexcept = delete;
-	Item& operator=(const Item& _Other) = delete;
-	Item& operator=(Item&& _Other) noexcept = delete;
+	AItem(const AItem& _Other) = delete;
+	AItem(AItem&& _Other) noexcept = delete;
+	AItem& operator=(const AItem& _Other) = delete;
+	AItem& operator=(AItem&& _Other) noexcept = delete;
 
+	void SetLifeItem();
 protected:
+	void BeginPlay() override;
+	void Tick(float _DeltaTime) override;
 
+	UImageRenderer* ItemRenderer = nullptr;
+	UCollision* ItemCollision = nullptr;
 private:
 
 };

@@ -33,6 +33,10 @@ void URestAreaLevel::BeginPlay()
 
 	Map = SpawnActor<AMap>();
 	Map->Renderer->CreateAnimation("RestAreaMapAnimation", "restarea_foreground", 0, 3, 0.5f, true);
+
+	LifeItem = SpawnActor<AItem>(EKirbyRenderOrder::Item);
+	LifeItem->SetLifeItem();
+	LifeItem->SetActorLocation({ 320, 160 });
 }
 
 void URestAreaLevel::Tick(float _DeltaTime)
@@ -73,6 +77,7 @@ void URestAreaLevel::LevelStart(ULevel* _Level)
 	UI->SetKirbyHpUI(KirbyHpData);
 	KirbyLifeData = Kirby->GetKirbyLife();
 	UI->SetKirbyLifeUI(KirbyLifeData);
+
 }
 void URestAreaLevel::LevelEnd(ULevel* _Level)
 {

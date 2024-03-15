@@ -146,7 +146,11 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Map->BackRenderer->SetCameraRatio((1386.f - WinScale.X) / (4720.f - WinScale.X));
 	Map->Renderer->ChangeAnimation("MapAnimation");
 
-	SetCameraPos({ 0,0 });
+	if (true == UContentsHelper::CameraRestart)
+	{
+		SetCameraPos({ 0,0 });
+		UContentsHelper::CameraRestart = false;
+	}
 
 	// Kirby
 	this->SpawnActor<APlayer>(EKirbyRenderOrder::Player);

@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "KirbyUI.h"
+#include "Item.h"
 
 // Ό³Έν :
 class URestAreaLevel : public ULevel
@@ -28,6 +29,7 @@ private:
 	//APlayer* NewKirby = nullptr;
 	AMap* Map = nullptr;
 	KirbyUI* UI = nullptr;
+	AItem* LifeItem = nullptr;
 
 	int KirbyHpData = 0;
 	int KirbyLifeData = 0;
