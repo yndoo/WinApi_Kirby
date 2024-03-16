@@ -17,6 +17,7 @@ enum class EKirbyCollisionOrder
 	InhaleCol,		// 흡입 충돌체
 	MonsterAround,
 	Monster,
+	IcedMonster,
 	Boss,
 	PlayerBullet,	// 공격 충돌체
 	IceBreathBullet,

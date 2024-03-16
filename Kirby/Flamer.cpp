@@ -28,6 +28,7 @@ void AFlamer::BeginPlay() {
 
 	MonsterCollision = CreateCollision(EKirbyCollisionOrder::Monster);
 	MonsterCollision->SetScale({ 40, 40 });
+	MonsterCollision->SetPosition({ 0, 0 });
 	MonsterCollision->SetColType(ECollisionType::Rect);
 
 	MapSize = UContentsHelper::ColMapImage->GetScale();
@@ -62,6 +63,13 @@ void AFlamer::Tick(float _DeltaTime)
 	{
 		// Bullet종류로 공격 받았을 때
 		StateChange(EEnemyState::Damaged);
+		return;
+	}
+
+	if (false == DeathCheck && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::IceBreathBullet, Result))
+	{
+		// IceBreathBullet 종류로 공격 받았을 때
+		StateChange(EEnemyState::Iced);
 		return;
 	}
 }

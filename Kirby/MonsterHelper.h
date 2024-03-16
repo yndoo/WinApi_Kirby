@@ -56,6 +56,8 @@ public:
 	bool IsDamaged = false;
 protected:
 	UCollision* MonsterCollision = nullptr;
+	UCollision* IceCollision = nullptr;				// 얼려졌을 경우
+	UCollision* IcePlayerBulletCollision = nullptr; // 얼려져서 공격체가 된 경우
 	UImageRenderer* MonsterRenderer = nullptr;
 
 	void BeginPlay() override;
@@ -83,8 +85,8 @@ protected:
 	void FallDown(Color8Bit _Color);
 	void SwitchIsDamaged(float _DeltaTime, float _CoolTime);
 
-	EActorDir DirState = EActorDir::Left;
-	EActorDir MonsterDir = EActorDir::Left;	// 몬스터의 현재 방향, 방향전환을 아직 안 만들어서 항상 Left임
+	EActorDir DirState = EActorDir::Left;	// 커비의 Dir
+	EActorDir MonsterDir = EActorDir::Left;	// 몬스터의 현재 방향
 	EEnemyState State = EEnemyState::None;
 	FVector InhaleDir = FVector::Zero;
 	std::string CurAnimationName = "Idle";
@@ -95,5 +97,8 @@ protected:
 private:
 	int MaxHp = 200;
 	int CurHp = 200;
+
+	bool IsIced = false;
+	bool IcePushed = false;
 };
 

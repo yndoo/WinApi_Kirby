@@ -282,6 +282,11 @@ void APlayer::Tick(float _DeltaTime)
 		StateChange(EKirbyState::Changing);
 		return;
 	}
+	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::IcedMonster, Result))
+	{
+		MoveVector.X = 0;
+		return;
+	}
 
 	FVector PlayerPos = GetActorLocation();
 	UEngineDebug::DebugTextPrint("X : " + std::to_string(PlayerPos.X) + ", Y : " + std::to_string(PlayerPos.Y), 30.0f);

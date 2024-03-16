@@ -49,6 +49,7 @@ void MonsterHelper::Tick(float _DeltaTime)
 	if (false == DeathCheck && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::IceBreathBullet, Result))
 	{
 		// IceBreathBullet 종류로 공격 받았을 때
+		IsIced = true;
 		StateChange(EEnemyState::Iced);
 		return;
 	}
@@ -160,12 +161,59 @@ void MonsterHelper::Die(float _DeltaTime)
 
 void MonsterHelper::IcedStart()
 {
+	IcePushed = false; 
 	MonsterRenderer->AnimationReset();
 	MonsterRenderer->SetImage("IceBlock.png");
+	MonsterRenderer->SetScale({ 40, 40 });
+	MonsterRenderer->SetPosition({ 0, -20 });
+	MonsterCollision->ActiveOff();
+
+	IceCollision = CreateCollision(EKirbyCollisionOrder::IcedMonster);
+	IceCollision->SetScale({ 40, 40 });
+	IceCollision->SetPosition({ 0, -20 });
+	IceCollision->SetColType(ECollisionType::Rect);
 }
 void MonsterHelper::Iced(float _DeltaTime)
 {
+	std::vector<UCollision*> Result;
+	if (true == IceCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	{
+		DirCheck();
+		IcePushed = true;
+		IceCollision->ActiveOff();
 
+		// 얼음이 된 몬스터를 밀치는 순간 커비의 공격체가 됨
+		IcePlayerBulletCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);
+		IcePlayerBulletCollision->SetScale({ 40, 40 });
+		IcePlayerBulletCollision->SetPosition({ 0, -20 });
+		IcePlayerBulletCollision->SetColType(ECollisionType::Rect);
+
+		MonsterRenderer->SetImage("IceBlock.png");
+		MonsterRenderer->SetScale({ 40, 40 });
+		MonsterRenderer->SetPosition({ 0, -20 });
+	}
+	if (true == IcePushed)
+	{
+		// 커비에게 밀렸다면 그 방향으로 돌진됨
+		switch (DirState)
+		{
+		case EActorDir::Left:
+			AddActorLocation(FVector::Left * 200.f * _DeltaTime);
+			break;
+		case EActorDir::Right:
+			AddActorLocation(FVector::Right * 200.f * _DeltaTime);
+			break;
+		default:
+			break;
+		}
+		// 벽에 닿거나 몬스터에 닿으면 없애기
+		std::vector<UCollision*> Result;
+		if (true == IsWall() || true == IcePlayerBulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
+		{
+			IcePlayerBulletCollision->ActiveOff();
+			MonsterRenderer->ActiveOff();
+		}
+	}
 }
 
 void MonsterHelper::FallDown(Color8Bit _Color)
