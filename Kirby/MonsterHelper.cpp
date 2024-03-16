@@ -46,6 +46,13 @@ void MonsterHelper::Tick(float _DeltaTime)
 		StateChange(EEnemyState::Damaged);
 		return;
 	}
+	if (false == DeathCheck && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::IceBreathBullet, Result))
+	{
+		// IceBreathBullet 종류로 공격 받았을 때
+		StateChange(EEnemyState::Iced);
+		return;
+	}
+	
 }
 
 void MonsterHelper::StateChange(EEnemyState _State)
@@ -68,6 +75,9 @@ void MonsterHelper::StateChange(EEnemyState _State)
 			break;
 		case EEnemyState::Die:
 			DieStart();
+			break;
+		case EEnemyState::Iced:
+			IcedStart();
 			break;
 		default:
 			break;
@@ -94,6 +104,9 @@ void MonsterHelper::StateUpdate(float _DeltaTime)
 		break;
 	case EEnemyState::Die:
 		Die(_DeltaTime);
+		break;
+	case EEnemyState::Iced:
+		Iced(_DeltaTime);
 		break;
 	default:
 		break;
@@ -141,6 +154,16 @@ void MonsterHelper::DieStart()
 
 }
 void MonsterHelper::Die(float _DeltaTime)
+{
+
+}
+
+void MonsterHelper::IcedStart()
+{
+	MonsterRenderer->AnimationReset();
+	MonsterRenderer->SetImage("IceBlock.png");
+}
+void MonsterHelper::Iced(float _DeltaTime)
 {
 
 }

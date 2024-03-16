@@ -48,6 +48,10 @@ void KirbyCore::BeginPlay()
 	UEngineResourcesManager::GetInst().CuttingImage("StarBulletIdle_Left.png", 2, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("FireBulletIdle_Right.png", 7, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("FireBulletIdle_Left.png", 7, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("IceBreath_Right.png", 7, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("IceBreath_Left.png", 7, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("IceBreath_back_Right.png", 7, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("IceBreath_back_Left.png", 7, 1);
 	// Monsters
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Spin.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Flamer_Damaged.png", 2, 1);
@@ -74,6 +78,7 @@ void KirbyCore::BeginPlay()
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("UI\\MonHpAnimation"));
 	//Item
 	UEngineResourcesManager::GetInst().CuttingImage("Item_IceCopy_ani.png", 5, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("Item_FireCopy_ani.png", 5, 1);
 
 
 	CreateLevel<UTitleLevel>("TitleLevel");

@@ -19,9 +19,11 @@ enum class EKirbyCollisionOrder
 	Monster,
 	Boss,
 	PlayerBullet,	// 공격 충돌체
+	IceBreathBullet,
 	EdibleBullet,
 	LifeItem,
-	TypeItem,
+	IceTypeItem,
+	FireTypeItem,
 	Player,
 	Ladder,
 	Block,
@@ -81,6 +83,7 @@ enum class EEnemyState
 	ShootReady,
 	ShootJump,
 	Shoot,
+	Iced,
 };
 
 enum class EBulletState

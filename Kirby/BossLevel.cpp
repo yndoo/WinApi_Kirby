@@ -45,7 +45,7 @@ void UBossLevel::BeginPlay()
 
 	// æ∆¿Ã≈€
 	TypeItem = SpawnActor<AItem>(EKirbyRenderOrder::Item);
-	TypeItem->SetTypeItem();
+	TypeItem->SetFireTypeItem();
 	TypeItem->SetActorLocation({ 184, 513 });
 }
 void UBossLevel::Tick(float _DeltaTime)
@@ -131,7 +131,7 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	WinScale = GEngine->MainWindow.GetWindowScale();
 
 	SetCameraPos({ 0.f, MapSize.Y - WinScale.Y});
-	APlayer* kb = this->SpawnActor<APlayer>();
+	APlayer* kb = this->SpawnActor<APlayer>(EKirbyRenderOrder::Player);
 	UContentsHelper::EatingFireMonster = Kirby->GetEatingFireType();
 
 	UI = SpawnActor<KirbyUI>();

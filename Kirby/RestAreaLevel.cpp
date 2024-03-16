@@ -70,7 +70,7 @@ void URestAreaLevel::LevelStart(ULevel* _Level)
 
 	Map->Renderer->ChangeAnimation("RestAreaMapAnimation");
 
-	this->SpawnActor<APlayer>();
+	this->SpawnActor<APlayer>(EKirbyRenderOrder::Player);
 	
 	UI = SpawnActor<KirbyUI>();
 	KirbyHpData = Kirby->GetCurHp();

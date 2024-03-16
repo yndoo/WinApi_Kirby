@@ -25,6 +25,7 @@ public:
 protected:
 	UCollision* BulletCollision = nullptr;
 	UImageRenderer* BulletRenderer = nullptr;
+	UImageRenderer* BulletRenderer2 = nullptr;	// IceBreath에 Bullet이펙트를 두겹으로 넣어볼것임
 
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;

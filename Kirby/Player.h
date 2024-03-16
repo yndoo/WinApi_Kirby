@@ -221,7 +221,7 @@ private:
 	float InhaleSecondMax = 80.f;
 	float InhaleMaxScale = 100.f;
 	float InhaleMaxTime = 0.f;
-	float FireTime = 0.0f;			// FireKirby 공격 텀에 사용되는 변수
+	float TypeAttackTime = 0.0f;			// FireKirby, IceKirby 공격 텀에 사용되는 변수
 	float ChangingTime = 0.f;		// 변신하는 시간
 	float AlphaVar = 1.f;			// alpha값 조정할 때 사용하는 변수	
 	float AlphaTime = 1.f;			// 깜빡이는 시간

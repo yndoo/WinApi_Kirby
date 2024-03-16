@@ -71,6 +71,7 @@ void UPlayLevel::BeginPlay() {
 	CuttingImgLR("IceSlide", 2, 1);
 	CuttingImgLR("IceRun", 8, 1);
 	CuttingImgLR("IceJump", 10, 1);
+	CuttingImgLR("IceAttack", 8, 1);
 	CuttingImgLR("IceFlyStart", 5, 1);
 	CuttingImgLR("IceFlying", 8, 1);
 	CuttingImgLR("IceExhale", 2, 1);

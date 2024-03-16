@@ -4,6 +4,7 @@
 #include <EngineCore/EngineDebug.h>
 #include "StarBullet.h"
 #include "FireBullet.h"
+#include "IceBreathBullet.h"
 
 APlayer* Kirby = nullptr;
 
@@ -168,8 +169,8 @@ void APlayer::BeginPlay()
 	AutoCreateAnimation("IceSlide", 0, 1, 0.12f, false);
 	AutoCreateAnimation("IceBrake", 0, 0, 0.1f, false);
 	AutoCreateAnimation("IceRun", 0, 7, 0.05f, true); 
-	AutoCreateAnimation("IceCrouch", 0, 1, 0.03f, false);
-	AutoCreateAnimation("IceAttack", 0, 7, 0.025f, false);
+	AutoCreateAnimation("IceCrouch", 1, 1, 0.03f, false);
+	AutoCreateAnimation("IceAttack", 0, 7, 0.05f, false);
 	AutoCreateAnimation("IceJumpStart", "IceJump", 0, 0, 0.1f, false);
 	AutoCreateAnimation("IceJumpTurn", "IceJump", 1, 6, 0.02f, false);
 	AutoCreateAnimation("IceJumpEnd", "IceJump", 7, 8, 0.05f, false);
@@ -268,6 +269,18 @@ void APlayer::Tick(float _DeltaTime)
 	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::LifeItem, Result))
 	{
 		LifeNum++;
+	}
+	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::IceTypeItem, Result))
+	{
+		IsIceKirby = true;
+		StateChange(EKirbyState::Changing);
+		return;
+	}
+	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::FireTypeItem, Result))
+	{
+		IsFireKirby = true;
+		StateChange(EKirbyState::Changing);
+		return;
 	}
 
 	FVector PlayerPos = GetActorLocation();
@@ -505,7 +518,7 @@ void  APlayer::Idle(float _DeltaTime)
 
 	if (true == UEngineInput::IsDown('X') && false == IsEating)
 	{
-		if (true == IsFireKirby)
+		if (true == IsFireKirby || true == IsIceKirby)
 		{
 			StateChange(EKirbyState::Attack);
 			return;
@@ -1029,7 +1042,7 @@ void APlayer::Swallow(float _DeltaTime)
 }
 
 // Attack : 공격(별 쏘기 등등)
-const float FireMaxTime = 0.15f;
+const float AttackMaxTime = 0.15f;
 void APlayer::AttackStart()
 {
 	DirCheck();
@@ -1045,7 +1058,7 @@ void APlayer::AttackStart()
 	}
 	else if (true == IsFireKirby)
 	{
-		FireTime = FireMaxTime;
+		TypeAttackTime = AttackMaxTime;
 
 		// 파이어 커비 공격
 		AFireBullet* bullet = GetWorld()->SpawnActor<AFireBullet>();
@@ -1066,7 +1079,24 @@ void APlayer::AttackStart()
 	}
 	else if (true == IsIceKirby)
 	{
+		TypeAttackTime = AttackMaxTime;
+
 		// Ice 커비 공격
+		AIceBreathBullet* bullet = GetWorld()->SpawnActor<AIceBreathBullet>();
+		bullet->SetDir(DirState);
+		bullet->SetActorLocation(GetActorLocation());
+		//bullet->AddActorLocation(FVector::Down * 20.0f);
+		switch (DirState)
+		{
+		case EActorDir::Left:
+			bullet->AddActorLocation(FVector::Left * 80.0f);
+			break;
+		case EActorDir::Right:
+			bullet->AddActorLocation(FVector::Right * 80.0f);
+			break;
+		default:
+			break;
+		}
 	}
 }
 void APlayer::Attack(float _DeltaTime)
@@ -1080,7 +1110,6 @@ void APlayer::Attack(float _DeltaTime)
 		return;
 	}
 
-	FireTime -= _DeltaTime;
 
 	if ((true == IsFireKirby || true == IsIceKirby) && UEngineInput::IsFree('X'))
 	{
@@ -1088,9 +1117,11 @@ void APlayer::Attack(float _DeltaTime)
 		return;
 	}
 
-	if (true == IsFireKirby && UEngineInput::IsPress('X') && 0.0f > FireTime)
+	TypeAttackTime -= _DeltaTime;
+
+	if (true == IsFireKirby && UEngineInput::IsPress('X') && 0.0f > TypeAttackTime)
 	{
-		FireTime = FireMaxTime;
+		TypeAttackTime = AttackMaxTime;
 
 		// 파이어 커비 공격
 		AFireBullet* bullet = GetWorld()->SpawnActor<AFireBullet>();
@@ -1109,10 +1140,25 @@ void APlayer::Attack(float _DeltaTime)
 			break;
 		};
 	}
-	if (true == IsIceKirby && UEngineInput::IsPress('X') && 0.0f > FireTime)
+	if (true == IsIceKirby && UEngineInput::IsPress('X') && 0.0f > TypeAttackTime)
 	{
+		TypeAttackTime = AttackMaxTime;
 		// Ice 커비 공격
-
+		AIceBreathBullet* bullet = GetWorld()->SpawnActor<AIceBreathBullet>();
+		bullet->SetDir(DirState);
+		bullet->SetActorLocation(GetActorLocation());
+		//bullet->AddActorLocation(FVector::Down * 20.0f);
+		switch (DirState)
+		{
+		case EActorDir::Left:
+			bullet->AddActorLocation(FVector::Left * 80.0f);
+			break;
+		case EActorDir::Right:
+			bullet->AddActorLocation(FVector::Right * 80.0f);
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -1597,9 +1643,9 @@ void APlayer::FinalMove(float _DeltaTime)
 	Color8Bit TopColor = UContentsHelper::ColMapImage->GetColor(NextPlayerPos.iX(), NextPlayerPos.iY() - 20, Color8Bit::MagentaA);
 	if (TopColor == Color8Bit::MagentaA || TopColor == Color8Bit::YellowA)
 	{
-		MovePos.Y = 0.f;
 		if (false == IsEating && false == IsFireKirby && false == IsIceKirby)
 		{
+			MovePos.Y = 0.f;
 			PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));	// 머리박을 때 찌부되는거 TestCode
 			return;
 		}

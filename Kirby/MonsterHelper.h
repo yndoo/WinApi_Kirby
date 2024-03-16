@@ -69,12 +69,14 @@ protected:
 	virtual void Move(float _DeltaTime);
 	virtual void Inhaled(float _DeltaTime);
 	virtual void Die(float _DeltaTime);
+	virtual void Iced(float _DeltaTime);
 	
 	virtual void IdleStart();
 	virtual void DamagedStart();
 	virtual void MoveStart();
 	virtual void InhaledStart();
 	virtual void DieStart();
+	virtual void IcedStart();
 
 	virtual bool DirCheck();	// 얘는 현재 커비의 Dir을 Check하는데?
 	virtual std::string GetAnimationName(std::string _Name);

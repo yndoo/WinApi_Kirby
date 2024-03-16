@@ -17,7 +17,8 @@ public:
 	AItem& operator=(AItem&& _Other) noexcept = delete;
 
 	void SetLifeItem();
-	void SetTypeItem();
+	void SetIceTypeItem();
+	void SetFireTypeItem();
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;

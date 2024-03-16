@@ -179,6 +179,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="IceBreathBullet.h" />
     <ClInclude Include="IceBullet.h" />
     <ClInclude Include="Item.h">
       <SubType>
@@ -272,6 +273,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="IceBreathBullet.cpp" />
     <ClCompile Include="IceBullet.cpp" />
     <ClCompile Include="Item.cpp">
       <SubType>

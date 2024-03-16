@@ -58,15 +58,4 @@ void AFireBullet::Idle(float _DeltaTime)
 	default:
 		break;
 	}
-
-	// 공격이 Monster에 닿으면
-	//std::vector<UCollision*> Result;
-	//if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
-	//{
-	//	AActor* temp = Result[0]->GetOwner();
-	//	int a = 0;
-
-	//	StateChange(EBulletState::Damage);
-	//	return;
-	//}
 }
