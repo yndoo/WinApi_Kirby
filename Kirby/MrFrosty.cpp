@@ -409,7 +409,10 @@ void AMrFrosty::Die(float _DeltaTime)
 		{
 			MonsterRenderer->AddPosition({ 0, -40 });
 			MonsterRenderer->ChangeAnimation("DieEffect");
-			bullet->ActiveOff();
+			if(nullptr != bullet)
+			{
+				bullet->ActiveOff();
+			}
 			DeathCheck = true;
 		}
 	}
