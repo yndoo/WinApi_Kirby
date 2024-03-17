@@ -6,6 +6,7 @@
 #include "WaddleDee.h"
 #include "KirbyUI.h"
 #include "DoorStar.h"
+#include "Item.h"
 
 // 설명 :
 class UPlayLevel : public ULevel
@@ -31,6 +32,7 @@ private:
 	void CuttingImgLR(std::string_view _Name, int _X, int _Y);	// CuttingImage함수 사용할 때 왼쪽 오른쪽 동시에 만들어주는 편의목적 함수
 
 	AMap* Map = nullptr;
+	AItem* IceItem = nullptr;
 	ADoorStar* restDoor = nullptr;
 	ADoorStar* bossDoor = nullptr;
 	KirbyUI* UI = nullptr;
@@ -41,6 +43,6 @@ private:
 	AFlamer* Flamers[2] = {};
 	int FlamerHpData[2] = {};
 	
-	AWaddleDee* WDees[2] = {};
-	int WDeeHpData[2] = {};
+	AWaddleDee* WDees[4] = {};
+	int WDeeHpData[4] = {};
 };

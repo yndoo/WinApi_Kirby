@@ -30,6 +30,7 @@ private:
 	AMap* Map = nullptr;
 	KirbyUI* UI = nullptr;
 	AItem* LifeItem = nullptr;
+	AItem* IceItem = nullptr;
 
 	int KirbyHpData = 0;
 	int KirbyLifeData = 0;

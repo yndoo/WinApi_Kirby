@@ -19,6 +19,8 @@ public:
 	void SetLifeItem();
 	void SetIceTypeItem();
 	void SetFireTypeItem();
+
+	void SetSpinCenter(FVector _Center);
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;

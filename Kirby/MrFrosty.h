@@ -25,6 +25,7 @@ protected:
 	void StateUpdate(float _DeltaTime) override;
 	void StateChange(EEnemyState _State) override;
 	std::string GetAnimationName(std::string _Name) override;
+	bool IsWall() override;
 
 	void IdleStart() override;
 	void Idle(float _DeltaTime) override;
@@ -66,6 +67,7 @@ private:
 	AIceBullet* bullet = nullptr;
 
 	bool DirCheck() override;	// 얘는 커비를 향하는 방향을 체크해주는 함수임
+	EActorDir WallDir = EActorDir::Right;
 	void UpMoving(float _DeltaTime, Color8Bit _Color);
 	bool IsPlayerBottomMagentaA();
 	bool IsPlayerBottomYellowA();

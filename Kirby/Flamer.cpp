@@ -10,7 +10,7 @@ AFlamer::~AFlamer()
 }
 
 void AFlamer::BeginPlay() {
-	AActor::BeginPlay();
+	MonsterHelper::BeginPlay();
 
 	SetActorLocation({ 500,250 });
 	SetMaxHp(50);
@@ -30,6 +30,12 @@ void AFlamer::BeginPlay() {
 	MonsterCollision->SetScale({ 40, 40 });
 	MonsterCollision->SetPosition({ 0, 0 });
 	MonsterCollision->SetColType(ECollisionType::Rect);
+
+	MonsterFrontCollision = CreateCollision(EKirbyCollisionOrder::Monster);
+	MonsterFrontCollision->SetScale({ 40, 40 });
+	MonsterFrontCollision->SetPosition({ 0, -20 });
+	MonsterFrontCollision->SetColType(ECollisionType::Rect);
+	MonsterFrontCollision->ActiveOff();
 
 	MapSize = UContentsHelper::ColMapImage->GetScale();
 
@@ -77,6 +83,7 @@ void AFlamer::Tick(float _DeltaTime)
 
 void AFlamer::IdleStart()
 {
+	CurDir = 0;
 	FVector ActorPos = GetActorLocation();
 	Color8Bit Color = UContentsHelper::ColMapImage->GetColor(ActorPos.iX(), ActorPos.iY(), Color8Bit::MagentaA);
 	if (Color != MoveColor)
@@ -100,12 +107,13 @@ void AFlamer::DamagedStart()
 	IsDamaged = true;
 	AddDamageHp(60);
 	MonsterRenderer->ChangeAnimation("Damaged");
+	MonsterCollision->ActiveOff();
+	MonsterFrontCollision->ActiveOn();
 }
 void AFlamer::Damaged(float _DeltaTime)
 {
 	if (GetCurHp() <= 0)
 	{
-		MonsterCollision->ActiveOff();
 		StateChange(EEnemyState::Die);
 		return;
 	}
@@ -121,6 +129,12 @@ void AFlamer::Damaged(float _DeltaTime)
 
 void AFlamer::DieStart()
 {
+	MonsterFrontCollision->ActiveOff();
+	if (IceCollision != nullptr)
+	{
+		IceCollision->ActiveOff();
+	}
+
 	IsDamaged = false;
 	//Die 애니메이션 실행
 	MonsterRenderer->ChangeAnimation("DieEffect");

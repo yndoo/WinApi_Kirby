@@ -45,6 +45,7 @@ private:
 	FVector TypeNamePos = { -1, 490 };
 	FVector HpCasePos = { 120, 460 };
 	FVector LifeImgPos = HpCasePos + FVector({ 30, -32 });
+	FVector LifeNumUIDefaultPos = LifeImgPos + FVector({ 60, 6 });
 	FVector LifeNumUIPos = LifeImgPos + FVector({ 60, 6 });	
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();

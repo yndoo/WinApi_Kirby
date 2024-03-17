@@ -127,6 +127,7 @@ void KirbyUI::SetKirbyHpUI(int _CurHp)
 void KirbyUI::SetKirbyLifeUI(int _CurLife)
 {
 	int Life = _CurLife;
+	LifeNumUIPos = LifeNumUIDefaultPos;
 	for (int i = 0; i < 2; i++)
 	{
 		int num = Life / (pow(10, 1 - i));

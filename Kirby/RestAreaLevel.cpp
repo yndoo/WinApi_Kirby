@@ -36,7 +36,12 @@ void URestAreaLevel::BeginPlay()
 
 	LifeItem = SpawnActor<AItem>(EKirbyRenderOrder::Item);
 	LifeItem->SetLifeItem();
-	LifeItem->SetActorLocation({ 320, 160 });
+	LifeItem->SetActorLocation({ 320, 340 });
+
+	IceItem = SpawnActor<AItem>(EKirbyRenderOrder::Item);
+	IceItem->SetIceTypeItem();
+	IceItem->SetSpinCenter({ 320, 130 });
+	IceItem->SetActorLocation({ 320, 130 });
 }
 
 void URestAreaLevel::Tick(float _DeltaTime)

@@ -10,9 +10,9 @@ AWaddleDee::~AWaddleDee()
 
 void AWaddleDee::BeginPlay()
 {
-	AActor::BeginPlay();
+	MonsterHelper::BeginPlay();
 
-	SetActorLocation({ 1500, 200 });
+	//SetActorLocation({ 1500, 200 });
 	SetMaxHp(50);
 
 	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
@@ -32,6 +32,12 @@ void AWaddleDee::BeginPlay()
 	MonsterCollision->SetScale({ 40, 40 });
 	MonsterCollision->SetPosition({ 0, -20 });
 	MonsterCollision->SetColType(ECollisionType::Rect);
+
+	MonsterFrontCollision = CreateCollision(EKirbyCollisionOrder::Monster);
+	MonsterFrontCollision->SetScale({ 40, 40 });
+	MonsterFrontCollision->SetPosition({ 0, -20 });
+	MonsterFrontCollision->SetColType(ECollisionType::Rect);
+	MonsterFrontCollision->ActiveOff();
 
 	MapSize = UContentsHelper::ColMapImage->GetScale();
 
@@ -114,22 +120,27 @@ void AWaddleDee::Inhaled(float _DeltaTime)
 
 void AWaddleDee::DamagedStart()
 {
-	AddDamageHp(60);
-	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 	IsDamaged = true;
+	AddDamageHp(60);
+	MonsterFrontCollision->ActiveOn();
+	MonsterCollision->ActiveOff();
+	MonsterRenderer->ChangeAnimation(GetAnimationName("Damaged"));
 }
 void AWaddleDee::Damaged(float _DeltaTime)
 {
 	if (GetCurHp() <= 0 && true == MonsterRenderer->IsCurAnimationEnd())
 	{
-		// 원래 게임 : 한 대 맞고 이펙트터지면서 죽어야 함. 
-		MonsterCollision->ActiveOff();
 		StateChange(EEnemyState::Die);
 	}
 }
 
 void AWaddleDee::DieStart()
 {
+	MonsterFrontCollision->ActiveOff();
+	if (IceCollision != nullptr)
+	{
+		IceCollision->ActiveOff();
+	}
 	MonsterRenderer->ChangeAnimation("DieEffect");
 	MonsterRenderer->AddPosition({ 0, -20 });
 	DeathCheck = true;
@@ -139,6 +150,7 @@ void AWaddleDee::Die(float _DeltaTime)
 	if (true == MonsterRenderer->IsCurAnimationEnd())
 	{
 		MonsterRenderer->ActiveOff();
+		//Destroy();
 	}
 }
 

@@ -91,6 +91,11 @@ public:
 		SetCurHp(GetMaxHp());
 	}
 
+	EActorDir GetKirbyDir()
+	{
+		DirCheck();
+		return DirState;
+	}
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -163,12 +168,15 @@ protected:
 	EKirbyState BeforeState = EKirbyState::None;				// 이전 State가 무엇인지 저장
 	EActorDir DirState = EActorDir::Right;						// DirCheck에 쓰이는 DirState
 	EActorDir MyDir = EActorDir::Right;							// Move, Run 함수에서 쓸 Dir
+	EKirbyType KirbyType = EKirbyType::Normal;
 	std::string CurAnimationName = "Idle";
 
 	// 변신 관련 상태 변수
 	bool IsEating = false;
 	bool IsFireKirby = false;
 	bool IsIceKirby = false;
+	bool BeforeFireKirby = false;
+	bool BeforeIceKirby = false;
 	bool EatingFireType = false;	// 입 안에 먹은 변신체가 Fire 타입인지
 
 private:

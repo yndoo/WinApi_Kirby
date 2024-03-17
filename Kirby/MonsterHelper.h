@@ -56,6 +56,7 @@ public:
 	bool IsDamaged = false;
 protected:
 	UCollision* MonsterCollision = nullptr;
+	UCollision* MonsterFrontCollision = nullptr;	// 콜리전 잔상(동시충돌 버그때문)
 	UCollision* IceCollision = nullptr;				// 얼려졌을 경우
 	UCollision* IcePlayerBulletCollision = nullptr; // 얼려져서 공격체가 된 경우
 	UImageRenderer* MonsterRenderer = nullptr;
@@ -80,7 +81,7 @@ protected:
 	virtual void DieStart();
 	virtual void IcedStart();
 
-	virtual bool DirCheck();	// 얘는 현재 커비의 Dir을 Check하는데?
+	virtual bool DirCheck();	// 커비의 방향 알려주는 함수
 	virtual std::string GetAnimationName(std::string _Name);
 	void FallDown(Color8Bit _Color);
 	void SwitchIsDamaged(float _DeltaTime, float _CoolTime);

@@ -37,7 +37,9 @@ private:
 	ASpawner* FrostySpawner = nullptr;
 	ASpawner* FrostyStarter = nullptr;
 	KirbyUI* UI = nullptr;
-	AWaddleDee* WMon1 = nullptr;
+
+	// 몬스터
+	AWaddleDee* WDees[2] = { nullptr, };
 
 	// 맵과 사다리는 한 번만 생김
 	AMap* Map = nullptr;

@@ -45,6 +45,7 @@ void UBossLevel::BeginPlay()
 
 	// 아이템
 	TypeItem = SpawnActor<AItem>(EKirbyRenderOrder::Item);
+	TypeItem->SetSpinCenter({ 184, 513 });
 	TypeItem->SetFireTypeItem();
 	TypeItem->SetActorLocation({ 184, 513 });
 }
@@ -156,14 +157,25 @@ void UBossLevel::LevelStart(ULevel* _Level)
 	FrostyStarter = SpawnActor<ASpawner>();
 	FrostyStarter->SetActorLocation({ 320, 300 });
 
-	WMon1 = SpawnActor<AWaddleDee>();
-	WMon1->SetActorLocation({ 485, 1116 });
+	// 몬스터
+	for (int i = 0; i < 2; i++)
+	{
+		WDees[i] = SpawnActor<AWaddleDee>(EKirbyRenderOrder::Monster);
+	}
+	WDees[0]->SetActorLocation({ 485, 1116 });
+	WDees[1]->SetActorLocation({405, 910});
 }
 void UBossLevel::LevelEnd(ULevel* _Level)
 {
 	UI->Destroy();
-	OneFrosty->Destroy();
+	if (OneFrosty != nullptr)
+	{
+		OneFrosty->Destroy();
+	}
 	FrostySpawner->Destroy();
 	FrostyStarter->Destroy();
-	WMon1->Destroy();
+	for (int i = 0; i < 2; i++)
+	{
+		WDees[i]->Destroy();
+	}
 }

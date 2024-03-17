@@ -11,7 +11,7 @@ AFireBullet::~AFireBullet()
 void AFireBullet::BeginPlay()
 {
 	BulletRenderer = CreateImageRenderer(EKirbyRenderOrder::Bullet);
-	BulletRenderer->SetImage("FireBullet.png");
+	BulletRenderer->SetImage("FireBulletIdle_Right.png");
 	BulletRenderer->SetTransform({ {0,0}, {400, 400} });
 	BulletRenderer->SetTransColor(Color8Bit::Magenta);
 
@@ -24,7 +24,7 @@ void AFireBullet::BeginPlay()
 	BulletCollision->SetColType(ECollisionType::Rect);
 
 	BulletName = "FireBullet";
-	//BulletRenderer->ChangeAnimation(GetAnimationName("Idle"));
+	BulletRenderer->ChangeAnimation(GetAnimationName("Idle"));
 
 	StateChange(EBulletState::Idle);
 }

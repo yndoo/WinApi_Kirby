@@ -31,6 +31,11 @@ void AItem::Tick(float _DeltaTime)
 	}
 }
 
+void AItem::SetSpinCenter(FVector _Center)
+{
+	Center = _Center;
+}
+
 void AItem::SetLifeItem()
 {
 	ItemRenderer = CreateImageRenderer(EKirbyRenderOrder::Item);

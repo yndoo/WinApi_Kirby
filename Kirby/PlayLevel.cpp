@@ -79,12 +79,20 @@ void UPlayLevel::BeginPlay() {
 	UEngineResourcesManager::GetInst().CuttingImage("LadderMove.png", 13, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("FireLadderUp.png", 4, 10);
 	UEngineResourcesManager::GetInst().CuttingImage("FireLadderDown.png", 4, 4);
+	UEngineResourcesManager::GetInst().CuttingImage("IceLadderUp.png", 10, 1);
+	UEngineResourcesManager::GetInst().CuttingImage("IceLadderDown.png", 4, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("KirbyDance.png", 10, 3);
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("Maps\\1_3_foreground"));
 
 	Map = SpawnActor<AMap>(EKirbyRenderOrder::Map);
 	Map->Renderer->CreateAnimation("MapAnimation", "1_3_foreground", 0, 3, 0.5f, true);
 
+	// 아이템
+	/*IceItem = SpawnActor<AItem>(EKirbyRenderOrder::Item);
+	IceItem->SetSpinCenter({ 1680,240 });
+	IceItem->SetIceTypeItem();*/
+
+	// 문
 	restDoor = SpawnActor<ADoorStar>(EKirbyRenderOrder::DoorStar);
 	restDoor->SetActorLocation({ 3380, 107 });
 	restDoor->SmallStarOn();
@@ -175,12 +183,12 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	Flamers[0]->SetActorLocation({500,250});
 	Flamers[0]->MoveColor = Color8Bit::YellowA;
 
-	Flamers[1]->SetActorLocation({ 1000,300 });
+	Flamers[1]->SetActorLocation({ 1500,300 });
 	Flamers[1]->MoveColor = Color8Bit::MagentaA;
 	Flamers[1]->LateStart = true;
 
 	// WaddleDee
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		WDees[i] = SpawnActor<AWaddleDee>();
 		WDees[i]->SetActorLocation({(i+1) * 1000, 200});

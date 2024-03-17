@@ -13,6 +13,8 @@ AMrFrosty::~AMrFrosty()
 
 void AMrFrosty::BeginPlay()
 {
+	MonsterHelper::BeginPlay();
+
 	MonsterRenderer = CreateImageRenderer(EKirbyRenderOrder::Monster);
 	MonsterRenderer->SetImage("MrFrostyIdle_Left.png");
 	MonsterRenderer->SetTransform({ {0,0}, {350, 350} });
@@ -81,8 +83,8 @@ void AMrFrosty::Tick(float _DeltaTime)
 	std::vector<UCollision*> Result2;
 	if (false == IsDamaged && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result2))
 	{
-		IsDamaged = true;
-		AddDamageHp(30);
+		//IsDamaged = true;
+		//AddDamageHp(30);
 	}
 
 	// 몬스터 체력 디버깅용
@@ -167,11 +169,11 @@ void AMrFrosty::Idle(float _DeltaTime)
 
 	if (true == IsStart)
 	{
-		IsStart = false;
+		//IsStart = false;
 		StateChange(EEnemyState::Move);
 		return;
 	}
-	if (MonsterRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("Idle")) && MonsterRenderer->IsCurAnimationEnd() == true)
+	if (true == IsStart && MonsterRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("Idle")) && MonsterRenderer->IsCurAnimationEnd() == true)
 	{
 		StateChange(EEnemyState::Move);
 		return;
@@ -202,12 +204,31 @@ void AMrFrosty::Move(float _DeltaTime)
 	MoveUpdate(_DeltaTime);	
 
 	// 벽에 닿으면 HitWall 상태로 변경해야함
-	float FrostyXPos = GetActorLocation().X;
-	if (FrostyXPos < 100.f || FrostyXPos > 570.f)
+	if (IsWall())
 	{
+		switch (WallDir)
+		{
+		case EActorDir::None:
+			break;
+		case EActorDir::Left:
+			AddActorLocation(FVector::Right * 10);
+			break;
+		case EActorDir::Right:
+			AddActorLocation(FVector::Left * 10);
+			break;
+		default:
+			break;
+		}
+
 		StateChange(EEnemyState::HitWall);
 		return;
 	}
+	//float FrostyXPos = GetActorLocation().X;
+	//if (FrostyXPos < 100.f || FrostyXPos > 570.f)
+	//{
+	//	StateChange(EEnemyState::HitWall);
+	//	return;
+	//}
 }
 
 void AMrFrosty::HitWallStart()
@@ -259,7 +280,7 @@ void AMrFrosty::HitWall(float _DeltaTime)
 	MoveUpdate(_DeltaTime);
 
 	// MoveVector가 일정 이하 됐을 때는
-	if (abs(MoveVector.X) < 80.f)
+	if (abs(FinalMoveVector.X) < 80.f)
 	{
 		MoveVector = FVector::Zero;
 		// 커비가 가까이 있으면 ShootReady
@@ -388,6 +409,7 @@ void AMrFrosty::Die(float _DeltaTime)
 		{
 			MonsterRenderer->AddPosition({ 0, -40 });
 			MonsterRenderer->ChangeAnimation("DieEffect");
+			bullet->ActiveOff();
 			DeathCheck = true;
 		}
 	}
@@ -424,6 +446,25 @@ void AMrFrosty::AddMoveVector(const FVector& _DirDelta, FVector Acc)
 
 void AMrFrosty::CalMoveVector(float _DeltaTime, float MaxSpeed)
 {
+	// 벽 못가게 체크
+	if (true == IsWall())
+	{
+		MoveVector.X = 0;
+		switch (WallDir)
+		{
+		case EActorDir::None:
+			break;
+		case EActorDir::Left:
+			AddActorLocation(FVector::Right * 20 * _DeltaTime);
+			break;
+		case EActorDir::Right:
+			AddActorLocation(FVector::Left * 20 * _DeltaTime);
+			break;
+		default:
+			break;
+		}
+	}
+
 	// 최대 속도를 넘어가지 않도록
 	if (MaxSpeed <= MoveVector.Size2D())
 	{
@@ -458,6 +499,25 @@ void AMrFrosty::CalFinalMoveVector(float _DeltaTime)
 void AMrFrosty::FinalMove(float _DeltaTime)
 {
 	FVector MovePos = FinalMoveVector * _DeltaTime;
+
+	// 벽 못가게 체크
+	if (true == IsWall())
+	{
+		MovePos.X = 0;
+		switch (WallDir)
+		{
+		case EActorDir::None:
+			break;
+		case EActorDir::Left:
+			AddActorLocation(FVector::Right * 20 * _DeltaTime);
+			break;
+		case EActorDir::Right:
+			AddActorLocation(FVector::Left * 20 * _DeltaTime);
+			break;
+		default:
+			break;
+		}
+	}
 
 	AddActorLocation(MovePos);
 }
@@ -556,4 +616,22 @@ std::string AMrFrosty::GetAnimationName(std::string _Name)
 		return "Damaged" + _Name + DirName;
 	}
 	return _Name + DirName;
+}
+
+bool AMrFrosty::IsWall()
+{
+	FVector CurPos = GetActorLocation();
+	Color8Bit FColor = UContentsHelper::ColMapImage->GetColor(CurPos.iX() + 50, CurPos.iY() - 10, Color8Bit::MagentaA);
+	Color8Bit BColor = UContentsHelper::ColMapImage->GetColor(CurPos.iX() - 50, CurPos.iY() - 10, Color8Bit::MagentaA);
+	if (FColor == Color8Bit::MagentaA)
+	{
+		WallDir = EActorDir::Right;
+		return true;
+	}
+	if (BColor == Color8Bit::MagentaA)
+	{
+		WallDir = EActorDir::Left;
+		return true;
+	}
+	return false;
 }

@@ -1,4 +1,5 @@
 #include "MonsterHelper.h"
+#include "Player.h"
 
 MonsterHelper::MonsterHelper()
 {
@@ -31,7 +32,7 @@ void MonsterHelper::Tick(float _DeltaTime)
 
 	if (true == IsDamaged)
 	{
-		SwitchIsDamaged(_DeltaTime, 2.0f);	// 피격 시 2초간 IsDamaged 변수 true, 활용해서 무적 만들기 가능
+		//SwitchIsDamaged(_DeltaTime, 2.0f);	// 피격 시 2초간 IsDamaged 변수 true, 활용해서 무적 만들기 가능
 	}
 
 	if (false == DeathCheck && nullptr != MonsterCollision && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
@@ -46,6 +47,7 @@ void MonsterHelper::Tick(float _DeltaTime)
 		StateChange(EEnemyState::Damaged);
 		return;
 	}
+
 	if (false == DeathCheck && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::IceBreathBullet, Result))
 	{
 		// IceBreathBullet 종류로 공격 받았을 때
@@ -53,7 +55,6 @@ void MonsterHelper::Tick(float _DeltaTime)
 		StateChange(EEnemyState::Iced);
 		return;
 	}
-	
 }
 
 void MonsterHelper::StateChange(EEnemyState _State)
@@ -166,35 +167,41 @@ void MonsterHelper::IcedStart()
 	MonsterRenderer->SetImage("IceBlock.png");
 	MonsterRenderer->SetScale({ 40, 40 });
 	MonsterRenderer->SetPosition({ 0, -20 });
+
 	MonsterCollision->ActiveOff();
 
 	IceCollision = CreateCollision(EKirbyCollisionOrder::IcedMonster);
 	IceCollision->SetScale({ 40, 40 });
 	IceCollision->SetPosition({ 0, -20 });
 	IceCollision->SetColType(ECollisionType::Rect);
+	IceCollision->ActiveOn();
+
+	IcePlayerBulletCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);
+	IcePlayerBulletCollision->SetScale({ 40, 40 });
+	IcePlayerBulletCollision->SetPosition({ 0, -20 });
+	IcePlayerBulletCollision->SetColType(ECollisionType::Rect);
+	IcePlayerBulletCollision->ActiveOff();
 }
 void MonsterHelper::Iced(float _DeltaTime)
 {
+	// 얼음이 된 몬스터를 밀치는 순간 커비의 공격체가 됨
 	std::vector<UCollision*> Result;
-	if (true == IceCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
+	if (false == IcePushed && true == IceCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
 		DirCheck();
 		IcePushed = true;
 		IceCollision->ActiveOff();
 
-		// 얼음이 된 몬스터를 밀치는 순간 커비의 공격체가 됨
-		IcePlayerBulletCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);
-		IcePlayerBulletCollision->SetScale({ 40, 40 });
-		IcePlayerBulletCollision->SetPosition({ 0, -20 });
-		IcePlayerBulletCollision->SetColType(ECollisionType::Rect);
+		IcePlayerBulletCollision->ActiveOn();
 
 		MonsterRenderer->SetImage("IceBlock.png");
 		MonsterRenderer->SetScale({ 40, 40 });
 		MonsterRenderer->SetPosition({ 0, -20 });
 	}
+
 	if (true == IcePushed)
 	{
-		// 커비에게 밀렸다면 그 방향으로 돌진됨
+		// 커비에게 밀렸다면 그 방향으로 돌진
 		switch (DirState)
 		{
 		case EActorDir::Left:
@@ -206,13 +213,25 @@ void MonsterHelper::Iced(float _DeltaTime)
 		default:
 			break;
 		}
-		// 벽에 닿거나 몬스터에 닿으면 없애기
+
+		// 몬스터에 닿으면 없애기
 		std::vector<UCollision*> Result;
-		if (true == IsWall() || true == IcePlayerBulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
+		if (true == IcePlayerBulletCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result))
 		{
-			IcePlayerBulletCollision->ActiveOff();
+			//IceCollision->Destroy();
+			//IceCollision = CreateCollision(EKirbyCollisionOrder::PlayerBullet);	// 잔상용
+			//IceCollision->SetScale({ 40, 40 });
+			//IceCollision->SetPosition({ 0, -20 });
+			//IceCollision->SetColType(ECollisionType::Rect);
+			//IceCollision->ActiveOn();
+
+			//IcePlayerBulletCollision->ActiveOff();
 			MonsterRenderer->ActiveOff();
+
+			StateChange(EEnemyState::Die);
+			return;
 		}
+		return;
 	}
 }
 
@@ -253,7 +272,7 @@ std::string MonsterHelper::GetAnimationName(std::string _Name)
 	if (true == IsDamaged)
 	{
 		//IsDamaged = false;
-		return "Damaged" +_Name + DirName;
+		return "Damaged" + DirName;
 	}
 	return _Name + DirName;
 }
@@ -262,14 +281,8 @@ bool MonsterHelper::DirCheck()
 {
 	bool IsChanged = false;
 	EActorDir Dir = DirState;
-	if (UEngineInput::IsPress(VK_LEFT))
-	{
-		Dir = EActorDir::Left;
-	}
-	if (UEngineInput::IsPress(VK_RIGHT))
-	{
-		Dir = EActorDir::Right;
-	}
+
+	Dir = Kirby->GetKirbyDir();
 
 	if (Dir != DirState)	// 방향 변경됐으면 애니메이션 다시
 	{

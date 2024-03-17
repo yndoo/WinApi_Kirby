@@ -52,18 +52,37 @@ void APlayer::KirbyCopy()
 
 void APlayer::KirbyTypeUpdate()
 {
-	if (IsFireKirby == true)
+	if (BeforeFireKirby != IsFireKirby)
 	{
 		UContentsHelper::KirbyType = EKirbyType::Fire;
+		BeforeFireKirby = IsFireKirby;
+		IsIceKirby = false;
+		BeforeIceKirby = false;
 	}
-	else if (IsIceKirby == true)
+	if (BeforeIceKirby != IsIceKirby)
 	{
 		UContentsHelper::KirbyType = EKirbyType::Ice;
+		BeforeIceKirby = IsIceKirby;
+		IsFireKirby = false;
+		BeforeFireKirby = false;
 	}
-	else
+
+	if (false == IsIceKirby && false == IsFireKirby)
 	{
 		UContentsHelper::KirbyType = EKirbyType::Normal;
 	}
+	//if (IsFireKirby == true)
+	//{
+	//	UContentsHelper::KirbyType = EKirbyType::Fire;
+	//}
+	//else if (IsIceKirby == true)
+	//{
+	//	UContentsHelper::KirbyType = EKirbyType::Ice;
+	//}
+	//else
+	//{
+	//	UContentsHelper::KirbyType = EKirbyType::Normal;
+	//}
 }
 
 void APlayer::BeginPlay() 
@@ -164,7 +183,7 @@ void APlayer::BeginPlay()
 	AutoCreateAnimation("FireFlying", 0, 14, 0.1f, true);
 	AutoCreateAnimation("FireExhale", 0, 2, 0.15f, false);
 
-	AutoCreateAnimation("IceIdle", 0, 1, 0.1f, true);
+	AutoCreateAnimation("IceIdle", { 0, 0, 0, 0, 0, 0, 0, 1 }, 0.1f, true);
 	AutoCreateAnimation("IceMove", 0, 9, 0.1f, true);
 	AutoCreateAnimation("IceSlide", 0, 1, 0.12f, false);
 	AutoCreateAnimation("IceBrake", 0, 0, 0.1f, false);
@@ -173,7 +192,7 @@ void APlayer::BeginPlay()
 	AutoCreateAnimation("IceAttack", 0, 7, 0.05f, false);
 	AutoCreateAnimation("IceJumpStart", "IceJump", 0, 0, 0.1f, false);
 	AutoCreateAnimation("IceJumpTurn", "IceJump", 1, 6, 0.02f, false);
-	AutoCreateAnimation("IceJumpEnd", "IceJump", 7, 8, 0.05f, false);
+	AutoCreateAnimation("IceJumpEnd", "IceJump", 5, 6, 0.05f, false);
 	AutoCreateAnimation("IceJumpCrouch", "IceJump", 9, 9, 0.06f, false);
 	AutoCreateAnimation("IceFlyStart", 0, 4, 0.05f, false);
 	AutoCreateAnimation("IceFlying", 0, 7, 0.1f, true);
@@ -183,12 +202,14 @@ void APlayer::BeginPlay()
 	PlayerRenderer->CreateAnimation("LadderDown", "LadderMove.png", 10, 12, 0.2f, true);
 	PlayerRenderer->CreateAnimation("FireLadderUp", "FireLadderUp.png", 0, 39, 0.025f, true);
 	PlayerRenderer->CreateAnimation("FireLadderDown", "FireLadderDown.png", 0, 15, 0.05f, true);
+	PlayerRenderer->CreateAnimation("IceLadderUp", "IceLadderUp.png", 0, 9, 0.1f, true);
+	PlayerRenderer->CreateAnimation("IceLadderDown", "IceLadderDown.png", 0, 3, 0.2f, true);
 
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Idle"));
 
 	// 커비 몸통
 	BodyCollision = CreateCollision(EKirbyCollisionOrder::Player);
-	BodyCollision->SetScale({ 39, 0 });
+	BodyCollision->SetScale({ 40, 0 });
 	BodyCollision->SetPosition({ 0, -20 });
 	BodyCollision->SetColType(ECollisionType::CirCle);
 
@@ -227,6 +248,11 @@ void APlayer::Tick(float _DeltaTime)
 	StateUpdate(_DeltaTime);
 	KirbyTypeUpdate();
 
+	if (true == UEngineInput::IsDown('0'))
+	{
+		DamagePower = 0;
+	}
+
 	std::vector<UCollision*> Result;
 	if (State != EKirbyState::Eating &&
 		State != EKirbyState::Inhale &&
@@ -242,28 +268,23 @@ void APlayer::Tick(float _DeltaTime)
 		{
 			// 먹은 거 뱉어지기
 			IsEating = false;
-			AddDamageHp(DamagePower);
-			return;
 		}
 		if (true == IsFireKirby)
 		{
 			// 변신 풀리기
 			IsFireKirby = false;
-			AddDamageHp(DamagePower);
-			return;
 		}
 		if (true == IsIceKirby)
 		{
 			// 변신 풀리기
 			IsIceKirby = false;
-			AddDamageHp(DamagePower);
-			return;
 		}
 
 		// 기본 커비 Damaged
 		BeforeState = State;
 		StateChange(EKirbyState::Damaged);
 		return;
+		
 	}
 
 	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::LifeItem, Result))
@@ -812,6 +833,10 @@ void APlayer::Jump(float _DeltaTime)
    	if (DirCheck())	// 공중에서 방향 전환됐을 경우 남은 속도 초기화
 	{
 		MoveVector = FVector::Zero;
+		if (true == IsEating)
+		{
+			PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
+		}
 	}
 
 	if (true == UEngineInput::IsDown('Z') && false == IsEating)
@@ -1314,9 +1339,9 @@ void APlayer::DamagedStart()
 	DirCheck();
 	AddDamageHp(DamagePower);	// 데미지 입힘, 커비 죽는 거 없이 무적이긴 함!!
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Damaged"));
-	BodyCollision->SetActive(true, 1.5f);	// 1.5초간 무적일 수 있도록
+	BodyCollision->ActiveOff();
 	FrontCollision->ActiveOn();				// 동시충돌 가능하게 하기위해 콜리전 잔상?을 남김..
-	AlphaTime = 1.5f;
+	AlphaTime = 1.f;
 
 	MoveVector = FVector::Zero;
 	switch (DirState)
@@ -1356,10 +1381,11 @@ void APlayer::Damaged(float _DeltaTime)
 	MoveUpdate(_DeltaTime);
 
 	// 일정 속도 이하면 멈추기
-	if (true == PlayerRenderer->IsCurAnimationEnd() && abs(FinalMoveVector.X) < 100.0f)
+	if (true == PlayerRenderer->IsCurAnimationEnd() && abs(FinalMoveVector.X) < 100.0f && AlphaTime <= 0.f)
 	{
-		FrontCollision->ActiveOff();
 		PlayerRenderer->SetAlpha(1.0f);
+		FrontCollision->ActiveOff();
+		BodyCollision->ActiveOn();
 		MoveVector = FVector::Zero;
 		StateChange(EKirbyState::Idle);
 		return;
@@ -1531,9 +1557,13 @@ bool APlayer::DirCheck()
 	if (Dir != DirState)	// 방향 변경됐으면 애니메이션 다시
 	{
 		DirState = Dir;
+		IsChanged = true;
+		if (true == IsEating && CurAnimationName == "JumpTurn")
+		{
+			return IsChanged;
+		}
 		std::string Name = GetAnimationName(CurAnimationName);
 		PlayerRenderer->ChangeAnimation(Name);
-		IsChanged = true;
 	}
 
 	return IsChanged;
