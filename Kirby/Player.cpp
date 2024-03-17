@@ -71,18 +71,6 @@ void APlayer::KirbyTypeUpdate()
 	{
 		UContentsHelper::KirbyType = EKirbyType::Normal;
 	}
-	//if (IsFireKirby == true)
-	//{
-	//	UContentsHelper::KirbyType = EKirbyType::Fire;
-	//}
-	//else if (IsIceKirby == true)
-	//{
-	//	UContentsHelper::KirbyType = EKirbyType::Ice;
-	//}
-	//else
-	//{
-	//	UContentsHelper::KirbyType = EKirbyType::Normal;
-	//}
 }
 
 void APlayer::BeginPlay() 
@@ -259,7 +247,8 @@ void APlayer::Tick(float _DeltaTime)
 		(
 			true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Monster, Result) ||
 			true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Boss, Result) ||
-			true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::EdibleBullet, Result) 
+			true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::EdibleBullet, Result) ||
+			true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Obstacle, Result)
 		)
 	   )
 	{
@@ -1678,7 +1667,7 @@ void APlayer::FinalMove(float _DeltaTime)
 	Color8Bit TopColor = UContentsHelper::ColMapImage->GetColor(NextPlayerPos.iX(), NextPlayerPos.iY() - 20, Color8Bit::MagentaA);
 	if (TopColor == Color8Bit::MagentaA || TopColor == Color8Bit::YellowA)
 	{
-		if (false == IsEating && false == IsFireKirby && false == IsIceKirby)
+		if (false == IsEating /*&& false == IsFireKirby && false == IsIceKirby*/)
 		{
 			MovePos.Y = 0.f;
 			PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));	// 머리박을 때 찌부되는거 TestCode

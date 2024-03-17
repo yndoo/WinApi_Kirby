@@ -74,7 +74,7 @@ void AMrFrosty::Tick(float _DeltaTime)
 	}
 
 	std::vector<UCollision*> Result;
-	if (false == IsDamaged && true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result))
+	if (false == IsDamaged && (true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::PlayerBullet, Result) || true == MonsterCollision->CollisionCheck(EKirbyCollisionOrder::IceBreathBullet, Result)))
 	{
 		IsDamaged = true;
 		AddDamageHp(60);

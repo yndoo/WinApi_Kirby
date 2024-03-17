@@ -29,6 +29,7 @@ enum class EKirbyCollisionOrder
 	Ladder,
 	Block,
 	Spawner,
+	Obstacle,
 };
 
 enum class EActorDir

@@ -77,6 +77,9 @@
     <ClInclude Include="IceBreathBullet.h">
       <Filter>Actor\Bullets</Filter>
     </ClInclude>
+    <ClInclude Include="Obstacle.h">
+      <Filter>Actor\ETC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KirbyCore.cpp" />
@@ -154,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="IceBreathBullet.cpp">
       <Filter>Actor\Bullets</Filter>
+    </ClCompile>
+    <ClCompile Include="Obstacle.cpp">
+      <Filter>Actor\ETC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

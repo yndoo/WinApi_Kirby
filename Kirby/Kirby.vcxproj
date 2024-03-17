@@ -201,6 +201,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Spawner.h">
       <SubType>
       </SubType>
@@ -295,6 +296,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="Spawner.cpp">
       <SubType>
       </SubType>
