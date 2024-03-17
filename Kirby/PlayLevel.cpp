@@ -156,6 +156,8 @@ void UPlayLevel::Tick(float _DeltaTime)
 
 void UPlayLevel::LevelStart(ULevel* _Level)
 {
+	//bgm = UEngineSound::SoundPlay("PlayLevelBGM.wav");
+
 	Map->SetMapImage("1_3_foreground");
 	Map->SetColMapImage("level1-3_foreground01_col.png");
 	Map->SetBackMapImage("level1-3_background.png");

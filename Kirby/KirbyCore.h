@@ -1,5 +1,6 @@
 #pragma once
 #include <EngineCore/EngineCore.h>
+#include <EnginePlatform\EngineSound.h>
 
 // Ό³Έν :
 class KirbyCore : public UEngineCore
@@ -16,11 +17,12 @@ public:
 	KirbyCore& operator=(KirbyCore&& _Other) noexcept = delete;
 
 protected:
+	UEngineSoundPlayer bgm;
+
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
 	void End() override;
 
 private:
-
 };
 

@@ -7,6 +7,7 @@
 #include "KirbyUI.h"
 #include "DoorStar.h"
 #include "Item.h"
+#include <EnginePlatform\EngineSound.h>
 
 // 설명 :
 class UPlayLevel : public ULevel
@@ -29,6 +30,7 @@ protected:
 	void LevelEnd(ULevel* _Level) override;
 
 private:
+	UEngineSoundPlayer bgm;
 	void CuttingImgLR(std::string_view _Name, int _X, int _Y);	// CuttingImage함수 사용할 때 왼쪽 오른쪽 동시에 만들어주는 편의목적 함수
 
 	AMap* Map = nullptr;

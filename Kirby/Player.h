@@ -3,6 +3,7 @@
 #include "ContentsHelper.h"
 #include <EngineBase/EngineTime.h>
 #include <EngineCore/EngineCore.h>
+#include <EnginePlatform\EngineSound.h>
 
 // 설명 :
 class APlayer : public AActor
@@ -187,6 +188,8 @@ private:
 	UCollision* InhaleCollision = nullptr;
 	UImageRenderer* PlayerRenderer = nullptr;
 
+	UEngineSoundPlayer PlayerSound;
+
 	int MaxHp = 200;
 	int CurHp = 200;
 	int DamagePower = 80;	// 피격 데미지 항상 동일하게 둠
@@ -226,8 +229,8 @@ private:
 	float InhaleScaleVar = 40.f;
 	float InhaleScaleAdd = 100.f;
 	float InhaleFirstMax = 50.f;
-	float InhaleSecondMax = 80.f;
-	float InhaleMaxScale = 100.f;
+	float InhaleSecondMax = 100.f;
+	float InhaleMaxScale = 120.f;
 	float InhaleMaxTime = 0.f;
 	float TypeAttackTime = 0.0f;			// FireKirby, IceKirby 공격 텀에 사용되는 변수
 	float ChangingTime = 0.f;		// 변신하는 시간

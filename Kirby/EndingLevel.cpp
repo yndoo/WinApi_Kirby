@@ -5,6 +5,7 @@
 #include "EndingKirby.h"
 #include <EngineCore/EngineCore.h>
 #include "Player.h"
+#include "ContentsHelper.h"
 
 UEndingLevel::UEndingLevel()
 {
@@ -17,6 +18,7 @@ UEndingLevel::~UEndingLevel()
 void UEndingLevel::BeginPlay()
 {
 	ULevel::BeginPlay();
+
 	UEngineDirectory NewPath;
 
 	NewPath.MoveParent();
@@ -35,7 +37,7 @@ void UEndingLevel::BeginPlay()
 	UEngineResourcesManager::GetInst().LoadFolder(NewPath.AppendPath("DanceCut"));
 
 	Map = SpawnActor<AMap>();
-	Map->BackRenderer->CreateAnimation("Dance", "DanceCut", 0, 204, 0.03f, false);
+	Map->BackRenderer->CreateAnimation("Dance", "DanceCut", 0, 204, 0.033f, false);
 }
 
 void UEndingLevel::Tick(float _DeltaTime)
@@ -44,6 +46,13 @@ void UEndingLevel::Tick(float _DeltaTime)
 	if (true == Map->BackRenderer->IsCurAnimationEnd())
 	{
 		//³¡
+	}
+
+	Timer -= _DeltaTime;
+	if (Timer <= 0.f)
+	{
+		EndingSound.SetVolume(0.1f);
+		EndingSound = UEngineSound::SoundPlay("Clap.wav");
 	}
 }
 
@@ -59,6 +68,10 @@ void UEndingLevel::LevelStart(ULevel* _Level)
 	Map->ColRenderer->ActiveOff();
 
 	Map->BackRenderer->ChangeAnimation("Dance");
+
+	UContentsHelper::EndingLevelStart = true;
+
+	bgm = UEngineSound::SoundPlay("EndingBgm.wav");
 }
 void UEndingLevel::LevelEnd(ULevel* _Level)
 {

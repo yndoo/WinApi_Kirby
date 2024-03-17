@@ -92,6 +92,7 @@ void UBossLevel::Tick(float _DeltaTime)
 		if (true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
 		{
 			GEngine->ChangeLevel("EndingLevel");	
+			return;
 		}
 	}
 

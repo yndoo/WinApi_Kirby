@@ -2,6 +2,7 @@
 #include <EngineCore/Level.h>
 #include "Map.h"
 #include "KirbyUI.h"
+#include <EnginePlatform\EngineSound.h>
 
 // Ό³Έν :
 class UEndingLevel : public ULevel
@@ -17,6 +18,7 @@ public:
 	UEndingLevel& operator=(const UEndingLevel& _Other) = delete;
 	UEndingLevel& operator=(UEndingLevel&& _Other) noexcept = delete;
 
+	bool CurLevelCheck = true;
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -24,7 +26,11 @@ protected:
 	void LevelEnd(ULevel* _Level) override;
 
 private:
+	UEngineSoundPlayer EndingSound;
+	UEngineSoundPlayer bgm;
 	AMap* Map = nullptr;
 	KirbyUI* UI = nullptr;
+
+	float Timer = 3.f;
 };
 

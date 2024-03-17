@@ -930,6 +930,8 @@ void APlayer::InhaleStart()
 
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("InhaleStart"));
+	PlayerSound = UEngineSound::SoundPlay("Inhale.wav");
+	PlayerSound.Loop(1);
 	InhaleScaleVar = 50.f;
 	// 커비 방향에 따라 흡입 충돌체 위치 다름
 	if (DirState == EActorDir::Left)
@@ -990,6 +992,7 @@ void APlayer::Inhale(float _DeltaTime)
 		}
 		// 몬스터 먹어버리기
 		InhaleCollision->ActiveOff();
+		PlayerSound.Off();
 		StateChange(EKirbyState::Eating);
 		return;
 	}
@@ -999,6 +1002,7 @@ void APlayer::Inhale(float _DeltaTime)
 	{
 		// Bullet 먹어버리기
 		InhaleCollision->ActiveOff();
+		PlayerSound.Off();
 		StateChange(EKirbyState::Eating);
 		return;
 	}
@@ -1007,7 +1011,7 @@ void APlayer::Inhale(float _DeltaTime)
 	if (true == UEngineInput::IsFree('X') && InhaleMaxTime < 2.f)
 	{
 		//UContentsHelper::EatingFireMonster = false;
-
+		PlayerSound.Off();
 		InhaleCollision->ActiveOff();
 		//IsEating = false;
 		StateChange(EKirbyState::Idle);
@@ -1069,6 +1073,8 @@ void APlayer::AttackStart()
 
 	if (true == IsEating)
 	{
+		PlayerSound = UEngineSound::SoundPlay("Spit_Star.wav");
+
 		AStarBullet* bullet = GetWorld()->SpawnActor<AStarBullet>();
 		bullet->SetActorLocation(GetActorLocation() + FVector({ 0, -20 }));
 		bullet->SetDir(DirState);
@@ -1077,6 +1083,8 @@ void APlayer::AttackStart()
 	}
 	else if (true == IsFireKirby)
 	{
+		PlayerSound = UEngineSound::SoundPlay("FireAttack.wav");
+		PlayerSound.Loop(2);
 		TypeAttackTime = AttackMaxTime;
 
 		// 파이어 커비 공격
@@ -1098,6 +1106,8 @@ void APlayer::AttackStart()
 	}
 	else if (true == IsIceKirby)
 	{
+		PlayerSound = UEngineSound::SoundPlay("IceAttack.wav");
+		PlayerSound.Loop(2);
 		TypeAttackTime = AttackMaxTime;
 
 		// Ice 커비 공격
@@ -1132,6 +1142,7 @@ void APlayer::Attack(float _DeltaTime)
 
 	if ((true == IsFireKirby || true == IsIceKirby) && UEngineInput::IsFree('X'))
 	{
+		PlayerSound.Off();
 		StateChange(EKirbyState::Idle);
 		return;
 	}
@@ -1309,6 +1320,7 @@ void APlayer::ExhaleStart()
 {
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Exhale"));
+	PlayerSound = UEngineSound::SoundPlay("Exhale.wav");
 	MoveVector = FVector::Zero;
 	JumpVector = FVector::Zero;
 	GravityVector = FVector::Zero;
@@ -1328,6 +1340,7 @@ void APlayer::DamagedStart()
 	DirCheck();
 	AddDamageHp(DamagePower);	// 데미지 입힘, 커비 죽는 거 없이 무적이긴 함!!
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Damaged"));
+	PlayerSound = UEngineSound::SoundPlay("Damaged.wav");
 	BodyCollision->ActiveOff();
 	FrontCollision->ActiveOn();				// 동시충돌 가능하게 하기위해 콜리전 잔상?을 남김..
 	AlphaTime = 1.f;
@@ -1401,6 +1414,7 @@ void APlayer::ChangingStart()
 	// 변신하는 이미지 추가해야 함
 	PlayerRenderer->AnimationReset();
 	PlayerRenderer->SetImage("HappyKirby.png"); // 임시 리소스
+	PlayerSound = UEngineSound::SoundPlay("Changing.wav");
 
 	GetWorld()->SetOtherTimeScale(EKirbyRenderOrder::Player, 0.f);
 	GetWorld()->SetTimeScale(EKirbyRenderOrder::UI, 1.f);	

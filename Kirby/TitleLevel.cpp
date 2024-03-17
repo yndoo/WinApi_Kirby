@@ -65,9 +65,9 @@ void UTitleLevel::Tick(float _DeltaTime) {
 
 void UTitleLevel::LevelStart(ULevel* _Level)
 {
-
+	//bgm = UEngineSound::SoundPlay("TitleLevelBGM.wav");
 }
 void UTitleLevel::LevelEnd(ULevel* _Level)
 {
-
+	//bgm.Off();
 }

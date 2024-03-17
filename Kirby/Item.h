@@ -1,6 +1,7 @@
 #pragma once
 #include <EngineCore/Actor.h>
 #include "ContentsHelper.h"
+#include <EnginePlatform\EngineSound.h>
 
 // Ό³Έν :
 class AItem : public AActor
@@ -27,7 +28,7 @@ protected:
 
 	UImageRenderer* ItemRenderer = nullptr;
 	UCollision* ItemCollision = nullptr;
-	
+	UEngineSoundPlayer ItemSound;
 private:
 	float Angle = 0.f;
 	FVector Center = { 184, 513 };

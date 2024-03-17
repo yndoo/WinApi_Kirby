@@ -26,6 +26,7 @@ void AItem::Tick(float _DeltaTime)
 	std::vector<UCollision*> Result;
 	if (true == ItemCollision->CollisionCheck(EKirbyCollisionOrder::Player, Result))
 	{
+		ItemSound = UEngineSound::SoundPlay("EatItem.wav");
 		ItemRenderer->ActiveOff();
 		ItemCollision->ActiveOff();
 	}

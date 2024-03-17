@@ -7,6 +7,7 @@
 #include <EngineBase/EngineDirectory.h>
 #include <EngineBase/EngineFile.h>
 #include <EngineCore/EngineResourcesManager.h>
+#include <EnginePlatform\EngineSound.h>
 #include "Player.h"
 
 KirbyCore::KirbyCore()
@@ -80,6 +81,14 @@ void KirbyCore::BeginPlay()
 	UEngineResourcesManager::GetInst().CuttingImage("Item_IceCopy_ani.png", 5, 1);
 	UEngineResourcesManager::GetInst().CuttingImage("Item_FireCopy_ani.png", 5, 1);
 
+	// 사운드 로드
+	NewPath.MoveParent();
+	NewPath.Move("Sound");
+	std::list<UEngineFile> SoundList = NewPath.AllFile({ ".wav", ".mp3" }, true);
+	for (UEngineFile& File : SoundList)
+	{
+		UEngineSound::Load(File.GetFullPath());
+	}
 
 	CreateLevel<UTitleLevel>("TitleLevel");
 	CreateLevel<UPlayLevel>("PlayLevel");
@@ -87,19 +96,26 @@ void KirbyCore::BeginPlay()
 	CreateLevel<UBossLevel>("BossLevel");
 	CreateLevel<UEndingLevel>("EndingLevel");
 
-	ChangeLevel("PlayLevel");
-	//ChangeLevel("TitleLevel");	// 잠시 빼둠
+	bgm = UEngineSound::SoundPlay("PlayLevelBGM.wav");
+
+	//ChangeLevel("PlayLevel");
+	ChangeLevel("TitleLevel");	
 }
 
 void KirbyCore::Tick(float _DeltaTime)
 {
+	if (true == UContentsHelper::EndingLevelStart)
+	{
+		bgm.Off();
+	}
+
 	if (true == UEngineInput::IsDown(VK_F2))
 	{
 		GEngine->EngineDebugSwitch();
 	}
 
 	// 커비 죽어있고 목숨 남아있으면 현재 레벨 재시작 (일단 피 0되면 바로 재시작)
-	if (0 == Kirby->GetCurHp() && 0 < Kirby->GetKirbyLife())
+	if (nullptr != Kirby && 0 == Kirby->GetCurHp() && 0 < Kirby->GetKirbyLife())
 	{
 		Kirby->RestartKirby();
 		ULevel* RestartLevel = Kirby->GetWorld();
