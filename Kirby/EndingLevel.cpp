@@ -21,10 +21,12 @@ void UEndingLevel::BeginPlay()
 
 	UEngineDirectory NewPath;
 
-	NewPath.MoveParent();
+	//NewPath.MoveParent();
+	//NewPath.Move("KirbyResources");
+	//NewPath.Move("EndingLevel");
 
-	NewPath.Move("KirbyResources");
-	NewPath.Move("EndingLevel");
+	NewPath.MoveToSearchChild("KirbyResources");
+	NewPath.MoveToSearchChild("EndingLevel");
 
 	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
 

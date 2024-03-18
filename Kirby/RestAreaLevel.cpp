@@ -16,10 +16,13 @@ void URestAreaLevel::BeginPlay()
 	ULevel::BeginPlay();
 	UEngineDirectory NewPath;
 
-	NewPath.MoveParent();
+	//NewPath.MoveParent();
 
-	NewPath.Move("KirbyResources");
-	NewPath.Move("RestAreaLevel");
+	//NewPath.Move("KirbyResources");
+	//NewPath.Move("RestAreaLevel");
+
+	NewPath.MoveToSearchChild("KirbyResources");
+	NewPath.MoveToSearchChild("RestAreaLevel");
 
 	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
 

@@ -28,9 +28,12 @@ void KirbyCore::BeginPlay()
 
 	// 커비는 어디서나 등장하므로 커비코어에서 이미지 로드
 	UEngineDirectory NewPath;
-	NewPath.MoveParent();
-	NewPath.Move("KirbyResources");
-	NewPath.Move("CoreResources");
+	//NewPath.MoveParent();
+	//NewPath.Move("KirbyResources");
+	//NewPath.Move("CoreResources");
+	NewPath.MoveToSearchChild("KirbyResources");
+	NewPath.MoveToSearchChild("CoreResources");
+
 	std::list<UEngineFile> AllFileList_Core = NewPath.AllFile({ ".png", ".bmp" }, true);
 	for (UEngineFile& File : AllFileList_Core)
 	{
@@ -82,8 +85,10 @@ void KirbyCore::BeginPlay()
 	UEngineResourcesManager::GetInst().CuttingImage("Item_FireCopy_ani.png", 5, 1);
 
 	// 사운드 로드
-	NewPath.MoveParent();
-	NewPath.Move("Sound");
+	//NewPath.MoveParent();
+	//NewPath.Move("Sound");
+	//NewPath.MoveToSearchChild("KirbyResources");
+	NewPath.MoveToSearchChild("Sound");
 	std::list<UEngineFile> SoundList = NewPath.AllFile({ ".wav", ".mp3" }, true);
 	for (UEngineFile& File : SoundList)
 	{

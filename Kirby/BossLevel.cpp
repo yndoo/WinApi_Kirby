@@ -18,10 +18,13 @@ void UBossLevel::BeginPlay()
 {
 	UEngineDirectory NewPath;
 	
-	NewPath.MoveParent();
+	//NewPath.MoveParent();
 
-	NewPath.Move("KirbyResources");
-	NewPath.Move("BossLevel");
+	//NewPath.Move("KirbyResources");
+	//NewPath.Move("BossLevel");
+
+	NewPath.MoveToSearchChild("KirbyResources");
+	NewPath.MoveToSearchChild("BossLevel");
 
 	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
 

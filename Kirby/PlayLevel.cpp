@@ -25,9 +25,12 @@ void UPlayLevel::BeginPlay() {
 	// 이 레벨에서 필요한 이미지들 커팅 및 로딩 : 커비(로딩은 커비코어에서 함), 몬스터, 불렛, 맵
 	UEngineDirectory NewPath;
 
-	NewPath.MoveParent();
-	NewPath.Move("KirbyResources");
-	NewPath.Move("PlayLevel");
+	//NewPath.MoveParent();
+	//NewPath.Move("KirbyResources");
+	//NewPath.Move("PlayLevel");
+
+	NewPath.MoveToSearchChild("KirbyResources");
+	NewPath.MoveToSearchChild("PlayLevel");
 
 	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
 	for (UEngineFile& File : AllFileList)
