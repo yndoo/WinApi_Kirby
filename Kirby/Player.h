@@ -179,7 +179,6 @@ protected:
 	bool BeforeFireKirby = false;
 	bool BeforeIceKirby = false;
 	bool EatingFireType = false;	// 입 안에 먹은 변신체가 Fire 타입인지
-
 private:
 	UCollision* BodyCollision = nullptr;
 	UCollision* FrontCollision = nullptr;

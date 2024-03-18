@@ -23,6 +23,8 @@ public:
 	void SetBossHpUI(int _MaxHp, int _CurHp);
 	void BossUIOn();
 	void MonsterAniOn();
+
+	UImageRenderer* ManualRenderer = nullptr;
 protected:
 	void BeginPlay() override;
 	void Tick(float _DeltaTime) override;
@@ -39,6 +41,7 @@ private:
 	UImageRenderer* BossHpCaseUI = nullptr;
 	UImageRenderer* BossHpBarUI = nullptr;
 	UImageRenderer* MonHpRenderer = nullptr;
+
 
 	EKirbyType TypeState = EKirbyType::None;
 

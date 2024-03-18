@@ -76,6 +76,15 @@ void KirbyUI::BeginPlay()
 	MonHpRenderer->CameraEffectOff();
 	MonHpRenderer->ActiveOff();
 
+	// 설명서 매뉴얼 렌더러
+	ManualRenderer = CreateImageRenderer(EKirbyRenderOrder::UI);
+	ManualRenderer->SetImage("Manual.png");
+	ManualRenderer->SetPosition(WinScale.Half2D());
+	//ManualRenderer->SetScale(ManualRenderer->GetImage()->GetScale());
+	ManualRenderer->SetScale({368, 520});
+	ManualRenderer->CameraEffectOff();
+	ManualRenderer->ActiveOff();
+
 	// 커비 목숨 UI
 	int Life = Kirby->GetKirbyLife();
 	for (int i = 0; i < 2; i++)

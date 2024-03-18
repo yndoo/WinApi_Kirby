@@ -106,6 +106,18 @@ void UPlayLevel::Tick(float _DeltaTime)
 {
 	ULevel::Tick(_DeltaTime);
 
+	if (true == UEngineInput::IsDown(VK_TAB))
+	{
+		if (true == UI->ManualRenderer->IsActive())
+		{
+			UI->ManualRenderer->ActiveOff();
+		}
+		else
+		{
+			UI->ManualRenderer->ActiveOn();
+		}
+	}
+
 	if (true == Kirby->IsPlayerDoor() && true == UEngineInput::IsDown(VK_UP))
 	{
 		// 레벨 넘어가기 전에 위치를 저장해둬야함.

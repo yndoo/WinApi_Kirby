@@ -48,6 +48,18 @@ void URestAreaLevel::Tick(float _DeltaTime)
 {
 	ULevel::Tick(_DeltaTime);
 
+	if (true == UEngineInput::IsDown(VK_TAB))
+	{
+		if (true == UI->ManualRenderer->IsActive())
+		{
+			UI->ManualRenderer->ActiveOff();
+		}
+		else
+		{
+			UI->ManualRenderer->ActiveOn();
+		}
+	}
+
 	// 커비 Hp 변화 있으면 UI Update
 	if (KirbyHpData != Kirby->GetCurHp())
 	{

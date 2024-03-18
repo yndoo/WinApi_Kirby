@@ -43,9 +43,23 @@ void UEndingLevel::BeginPlay()
 void UEndingLevel::Tick(float _DeltaTime)
 {
 	ULevel::Tick(_DeltaTime);
+
+	if (true == UEngineInput::IsDown(VK_TAB))
+	{
+		if (true == UI->ManualRenderer->IsActive())
+		{
+			UI->ManualRenderer->ActiveOff();
+		}
+		else
+		{
+			UI->ManualRenderer->ActiveOn();
+		}
+	}
+
 	if (true == Map->BackRenderer->IsCurAnimationEnd())
 	{
 		//³¡
+		GEngine->ChangeLevel("TitleLevel");
 	}
 
 	Timer -= _DeltaTime;
