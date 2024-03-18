@@ -239,7 +239,14 @@ void APlayer::Tick(float _DeltaTime)
 
 	if (true == UEngineInput::IsDown('0'))
 	{
-		DamagePower = 0;
+		if (DamagePower == 0)
+		{
+			DamagePower = 80;
+		}
+		else
+		{
+			DamagePower = 0;
+		}
 	}
 
 	std::vector<UCollision*> Result;
