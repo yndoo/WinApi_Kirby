@@ -18,10 +18,13 @@ void UTitleLevel::BeginPlay() {
 
 	UEngineDirectory NewPath;
 
-	NewPath.MoveParent();
+	/*NewPath.MoveParent();
 
 	NewPath.Move("KirbyResources");
-	NewPath.Move("Title");
+	NewPath.Move("Title");*/
+
+	NewPath.MoveToSearchChild("KirbyResources");
+	NewPath.MoveToSearchChild("Title");
 
 	std::list<UEngineFile> AllFileList = NewPath.AllFile({ ".png", ".bmp" }, true);
 
