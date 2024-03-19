@@ -43,7 +43,7 @@ private:
 	UImageRenderer* MonHpRenderer = nullptr;
 
 
-	EKirbyType TypeState = EKirbyType::None;
+	EKirbyType TypeState = EKirbyType::Normal;
 
 	FVector TypeNamePos = { -1, 490 };
 	FVector HpCasePos = { 120, 460 };

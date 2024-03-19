@@ -141,16 +141,20 @@ void AWaddleDee::DieStart()
 	{
 		IceCollision->ActiveOff();
 	}
+	if (IcePlayerBulletCollision != nullptr)
+	{
+		Destroy(0.1f);
+	}
 	MonsterRenderer->ChangeAnimation("DieEffect");
 	MonsterRenderer->AddPosition({ 0, -20 });
 	DeathCheck = true;
 }
 void AWaddleDee::Die(float _DeltaTime)
 {
-	if (true == MonsterRenderer->IsCurAnimationEnd())
+
+	if (IcePlayerBulletCollision == nullptr && true == MonsterRenderer->IsCurAnimationEnd())
 	{
 		MonsterRenderer->ActiveOff();
-		//Destroy();
 	}
 }
 

@@ -191,11 +191,16 @@ void UBossLevel::LevelEnd(ULevel* _Level)
 	if (OneFrosty != nullptr)
 	{
 		OneFrosty->Destroy();
+		OneFrosty = nullptr;
 	}
 	FrostySpawner->Destroy();
 	FrostyStarter->Destroy();
 	for (int i = 0; i < 2; i++)
 	{
-		WDees[i]->Destroy();
+		if (false == WDees[i]->IsDestroy())
+		{
+			WDees[i]->Destroy();
+		}
+		WDees[i] = nullptr;
 	}
 }

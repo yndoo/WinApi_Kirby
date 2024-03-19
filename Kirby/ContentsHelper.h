@@ -69,6 +69,7 @@ enum class EKirbyType
 {
 	None,
 	Normal,
+	Eating,
 	Fire,
 	Ice,
 };

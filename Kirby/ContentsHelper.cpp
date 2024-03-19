@@ -5,7 +5,7 @@ UWindowImage* UContentsHelper::BackgroundImage = nullptr;
 
 bool UContentsHelper::EatingFireMonster = false;
 bool UContentsHelper::CameraRestart = false;
-EKirbyType UContentsHelper::KirbyType = EKirbyType::None;
+EKirbyType UContentsHelper::KirbyType = EKirbyType::Normal;
 bool UContentsHelper::EndingLevelStart = false;
 
 UContentsHelper::UContentsHelper()

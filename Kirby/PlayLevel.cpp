@@ -194,8 +194,11 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	// Flamer
 	for (int i = 0; i < 2; i++)
 	{
-		Flamers[i] = SpawnActor<AFlamer>();
-		FlamerHpData[i] = Flamers[i]->GetMaxHp();
+		if(nullptr == Flamers[i])
+		{
+			Flamers[i] = SpawnActor<AFlamer>();
+			FlamerHpData[i] = Flamers[i]->GetMaxHp();
+		}
 	}
 	Flamers[0]->SetActorLocation({500,250});
 	Flamers[0]->MoveColor = Color8Bit::YellowA;
@@ -207,9 +210,12 @@ void UPlayLevel::LevelStart(ULevel* _Level)
 	// WaddleDee
 	for (int i = 0; i < 4; i++)
 	{
-		WDees[i] = SpawnActor<AWaddleDee>();
-		WDees[i]->SetActorLocation({(i+1) * 1000, 200});
-		WDeeHpData[i] = WDees[i]->GetMaxHp();
+		if (nullptr == WDees[i])
+		{
+			WDees[i] = SpawnActor<AWaddleDee>();
+			WDees[i]->SetActorLocation({ (i + 1) * 1000, 200 });
+			WDeeHpData[i] = WDees[i]->GetMaxHp();
+		}
 	}
 
 	UI = SpawnActor<KirbyUI>(EKirbyRenderOrder::UI);
@@ -224,10 +230,18 @@ void UPlayLevel::LevelEnd(ULevel* _Level)
 	UI->Destroy();
 	for (int i = 0; i < 2; i++)
 	{
-		Flamers[i]->Destroy();
+		if (false == Flamers[i]->IsDestroy()) 
+		{
+			Flamers[i]->Destroy();
+		}
+		Flamers[i] = nullptr;
 	}
 	for (int i = 0; i < 2; i++)
 	{
-		WDees[i]->Destroy();
+		if (false == WDees[i]->IsDestroy())
+		{
+			WDees[i]->Destroy();
+		}
+		WDees[i] = nullptr;
 	}
 }

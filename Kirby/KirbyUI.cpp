@@ -162,6 +162,10 @@ void KirbyUI::SetBossHpUI(int _MaxHp, int _CurHp)
 
 void KirbyUI::SetTypeNameUI(EKirbyType _Type)
 {
+	if (_Type == EKirbyType::Eating)
+	{
+		return;
+	}
 	std::string resource = "nametag";
 	switch (_Type) 
 	{

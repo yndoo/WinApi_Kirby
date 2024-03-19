@@ -134,6 +134,10 @@ void AFlamer::DieStart()
 	{
 		IceCollision->ActiveOff();
 	}
+	if (IcePlayerBulletCollision != nullptr)
+	{
+		Destroy(0.1f);
+	}
 
 	IsDamaged = false;
 	//Die 애니메이션 실행

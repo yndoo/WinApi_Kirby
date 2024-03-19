@@ -42,9 +42,9 @@ void APlayer::AutoCreateAnimation(std::string_view _AnimationName, std::string_v
 void APlayer::KirbyCopy()
 {
 	BeforePos = Kirby->BeforePos;
-	IsEating = Kirby->IsEating;
+	/*IsEating = Kirby->IsEating;
 	IsFireKirby = Kirby->IsFireKirby;
-	IsIceKirby = Kirby->IsIceKirby;
+	IsIceKirby = Kirby->IsIceKirby;*/
 	EatingFireType = UContentsHelper::EatingFireMonster;
 	CurHp = Kirby->CurHp;
 	LifeNum = Kirby->LifeNum;
@@ -53,34 +53,39 @@ void APlayer::KirbyCopy()
 
 void APlayer::KirbyTypeChange(EKirbyType _KirbyType)
 {
-
+	if (UContentsHelper::KirbyType != _KirbyType)
+	{
+		//KirbyType = _KirbyType;
+		UContentsHelper::KirbyType = _KirbyType;
+	}
 }
 void APlayer::KirbyTypeUpdate()
 {
 	if (BeforeFireKirby != IsFireKirby)
 	{
-		UContentsHelper::KirbyType = EKirbyType::Fire;
-		BeforeFireKirby = IsFireKirby;
-		IsIceKirby = false;
-		BeforeIceKirby = false;
+		KirbyTypeChange(EKirbyType::Fire);
+		//BeforeFireKirby = IsFireKirby;
+		//IsIceKirby = false;
+		//BeforeIceKirby = false;
 	}
 	if (BeforeIceKirby != IsIceKirby)
 	{
-		UContentsHelper::KirbyType = EKirbyType::Ice;
-		BeforeIceKirby = IsIceKirby;
-		IsFireKirby = false;
-		BeforeFireKirby = false;
+		KirbyTypeChange(EKirbyType::Ice);
+		//BeforeIceKirby = IsIceKirby;
+		//IsFireKirby = false;
+		//BeforeFireKirby = false;
 	}
 
 	if (false == IsIceKirby && false == IsFireKirby)
 	{
-		UContentsHelper::KirbyType = EKirbyType::Normal;
+		KirbyTypeChange(EKirbyType::Normal);
 	}
 }
 
 void APlayer::BeginPlay() 
 {
 	AActor::BeginPlay();
+	KirbyTypeChange(UContentsHelper::KirbyType);
 
  	if (nullptr != Kirby)
 	{
@@ -239,7 +244,7 @@ void APlayer::Tick(float _DeltaTime)
 {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
-	KirbyTypeUpdate();
+	//KirbyTypeUpdate();
 
 	if (true == UEngineInput::IsDown('0'))
 	{
@@ -264,24 +269,27 @@ void APlayer::Tick(float _DeltaTime)
 		)
 	   )
 	{
-		// 변신 상태에서 몬스터 피격당하면 변신 풀리기
-		if (true == IsEating)
-		{
-			// 먹은 거 뱉어지기
-			IsEating = false;
-		}
-		if (true == IsFireKirby)
-		{
-			// 변신 풀리기
-			IsFireKirby = false;
-		}
-		if (true == IsIceKirby)
-		{
-			// 변신 풀리기
-			IsIceKirby = false;
-		}
+		//// 변신 상태에서 몬스터 피격당하면 변신 풀리기
+		//if (true == IsEating)
+		//{
+		//	// 먹은 거 뱉어지기
+		//	IsEating = false;
+		//}
+		//if (true == IsFireKirby)
+		//{
+		//	// 변신 풀리기
+		//	IsFireKirby = false;
+		//}
+		//if (true == IsIceKirby)
+		//{
+		//	// 변신 풀리기
+		//	IsIceKirby = false;
+		//}
 
 		// 기본 커비 Damaged
+
+		// 변신 상태 등등 Normal로 돌아감
+		KirbyTypeChange(EKirbyType::Normal);
 		BeforeState = State;
 		StateChange(EKirbyState::Damaged);
 		return;
@@ -294,13 +302,15 @@ void APlayer::Tick(float _DeltaTime)
 	}
 	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::IceTypeItem, Result))
 	{
-		IsIceKirby = true;
+		//IsIceKirby = true;
+		KirbyTypeChange(EKirbyType::Ice);
 		StateChange(EKirbyState::Changing);
 		return;
 	}
 	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::FireTypeItem, Result))
 	{
-		IsFireKirby = true;
+		//IsFireKirby = true;
+		KirbyTypeChange(EKirbyType::Fire);
 		StateChange(EKirbyState::Changing);
 		return;
 	}
@@ -501,7 +511,7 @@ void  APlayer::Idle(float _DeltaTime)
 	if (true == UEngineInput::IsPress(VK_UP))
 	{
 		std::vector<UCollision*> Result;
-		if (false == IsEating && true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
+		if (UContentsHelper::KirbyType != EKirbyType::Eating && true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 		{
 			// 사다리 오르기
 			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY() - 1.f;
@@ -514,7 +524,7 @@ void  APlayer::Idle(float _DeltaTime)
 	if (true == UEngineInput::IsPress(VK_DOWN))
 	{
 		std::vector<UCollision*> Result;
-		if (false == IsEating && true == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
+		if (UContentsHelper::KirbyType != EKirbyType::Eating && true == BottomCollision->CollisionCheck(EKirbyCollisionOrder::Ladder, Result))
 		{
 			// 사다리 내리기
 			LadderTop = Result[0]->GetOwner()->GetActorLocation().Y - Result[0]->GetTransform().GetScale().hY() - 1.f;
@@ -522,15 +532,15 @@ void  APlayer::Idle(float _DeltaTime)
 			StateChange(EKirbyState::LadderDown);
 			return;
 		}
-		if (false == IsEating)
+		if (UContentsHelper::KirbyType != EKirbyType::Eating)
 		{
 			StateChange(EKirbyState::Crouch);
 			return;
 		}
-		else if (true == IsEating)
+		else if (UContentsHelper::KirbyType == EKirbyType::Eating)
 		{
 			// 삼키기
-			IsEating = false;
+			KirbyTypeChange(EKirbyType::Normal);
 			StateChange(EKirbyState::Swallow);
 			return;
 		}
@@ -543,22 +553,39 @@ void  APlayer::Idle(float _DeltaTime)
 		return;
 	}
 
-	if (true == UEngineInput::IsDown('X') && false == IsEating)
+	if (true == UEngineInput::IsDown('X'))
 	{
-		if (true == IsFireKirby || true == IsIceKirby)
+		switch (UContentsHelper::KirbyType)
 		{
+		case EKirbyType::Normal:
+			StateChange(EKirbyState::Inhale);
+			return;
+		case EKirbyType::Eating:
 			StateChange(EKirbyState::Attack);
 			return;
+		case EKirbyType::Fire:
+			StateChange(EKirbyState::Attack);
+			return;
+		case EKirbyType::Ice:
+			StateChange(EKirbyState::Attack);
+			return;
+		default:
+			break;
 		}
-		StateChange(EKirbyState::Inhale);
-		return;
+		//if (true == IsFireKirby || true == IsIceKirby)
+		//{
+		//	StateChange(EKirbyState::Attack);
+		//	return;
+		//}
+		//StateChange(EKirbyState::Inhale);
+		//return;
 	}
 
-	if (true == UEngineInput::IsDown('X') && true == IsEating)
-	{
-		StateChange(EKirbyState::Attack);
-		return;
-	}
+	//if (true == UEngineInput::IsDown('X') && true == IsEating)
+	//{
+	//	StateChange(EKirbyState::Attack);
+	//	return;
+	//}
 
 	// ************* 이 아래로는 테스트용 *************
 	if (true == UEngineInput::IsDown('1'))
@@ -575,14 +602,28 @@ void  APlayer::Idle(float _DeltaTime)
 
 	if (true == UEngineInput::IsDown('F'))
 	{
-		IsFireKirby = !IsFireKirby;
+		if (UContentsHelper::KirbyType == EKirbyType::Fire) 
+		{
+			KirbyTypeChange(EKirbyType::Normal);
+		}
+		else
+		{
+			KirbyTypeChange(EKirbyType::Fire);
+		}
 		IdleStart();
 		return;
 	}
 
 	if (true == UEngineInput::IsDown('I'))
 	{
-		IsIceKirby = !IsIceKirby;
+		if (UContentsHelper::KirbyType == EKirbyType::Ice)
+		{
+			KirbyTypeChange(EKirbyType::Normal);
+		}
+		else
+		{
+			KirbyTypeChange(EKirbyType::Ice);
+		}
 		IdleStart();
 		return;
 	}
@@ -834,13 +875,13 @@ void APlayer::Jump(float _DeltaTime)
    	if (DirCheck())	// 공중에서 방향 전환됐을 경우 남은 속도 초기화
 	{
 		MoveVector = FVector::Zero;
-		if (true == IsEating)
+		if (UContentsHelper::KirbyType == EKirbyType::Eating)
 		{
 			PlayerRenderer->ChangeAnimation(GetAnimationName("JumpEnd"));
 		}
 	}
 
-	if (true == UEngineInput::IsDown('Z') && false == IsEating)
+	if (true == UEngineInput::IsDown('Z') && UContentsHelper::KirbyType != EKirbyType::Eating)
 	{
 		StateChange(EKirbyState::Fly);
 		return;
@@ -858,7 +899,7 @@ void APlayer::Jump(float _DeltaTime)
 
 	MoveUpdate(_DeltaTime, JumpMaxSpeed);
 
-	if (abs(FinalMoveVector.Y) < 40.f && false == IsEating)
+	if (abs(FinalMoveVector.Y) < 40.f && UContentsHelper::KirbyType != EKirbyType::Eating)
 	{
 		if (FinalMoveVector.Y < 0)
 		{
@@ -875,7 +916,7 @@ void APlayer::Jump(float _DeltaTime)
 	{
 		JumpVector = FVector::Zero;
 		
-		if (true == IsEating)	// Eating 상태에서 점프 마무리
+		if (UContentsHelper::KirbyType == EKirbyType::Eating)	// Eating 상태에서 점프 마무리
 		{
 			if (PlayerRenderer->GetCurAnimation()->Name == UEngineString::ToUpper(GetAnimationName("JumpStart")) && PlayerRenderer->IsCurAnimationEnd() == true)
 			{
@@ -887,7 +928,7 @@ void APlayer::Jump(float _DeltaTime)
 				return;
 			}
 		}
-		else if(false == IsEating)	// Eating 아닌 상태에서 점프 마무리
+		else if(UContentsHelper::KirbyType != EKirbyType::Eating)	// Eating 아닌 상태에서 점프 마무리
 		{
 			if (BeforeState == EKirbyState::Idle)
 			{
@@ -914,7 +955,7 @@ void APlayer::Jump(float _DeltaTime)
 void APlayer::BrakeStart()
 {
 	DirCheck();
-	if (false == IsEating)
+	if (UContentsHelper::KirbyType != EKirbyType::Eating)
 	{
 		PlayerRenderer->ChangeAnimation(GetAnimationName("Brake"));
 	}
@@ -1043,7 +1084,8 @@ void APlayer::Inhale(float _DeltaTime)
 void APlayer::EatingStart()
 {
 	DirCheck();
-	IsEating = true;
+	//IsEating = true;
+	KirbyTypeChange(EKirbyType::Eating);
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Eating"));
 }
 void APlayer::Eating(float _DeltaTime)
@@ -1064,7 +1106,8 @@ void APlayer::Swallow(float _DeltaTime)
 	bool test = UContentsHelper::EatingFireMonster;
 	if (true == UContentsHelper::EatingFireMonster)
 	{
-		IsFireKirby = true;
+		//IsFireKirby = true;
+		KirbyTypeChange(EKirbyType::Fire);
 		UContentsHelper::EatingFireMonster = false;
 		StateChange(EKirbyState::Changing);
 		return;
@@ -1083,7 +1126,11 @@ void APlayer::AttackStart()
 	DirCheck();
 	PlayerRenderer->ChangeAnimation(GetAnimationName("Attack"));
 
-	if (true == IsEating)
+	switch (UContentsHelper::KirbyType)
+	{
+	case EKirbyType::Normal:
+		break;
+	case EKirbyType::Eating:
 	{
 		PlayerSound = UEngineSound::SoundPlay("Spit_Star.wav");
 
@@ -1092,8 +1139,9 @@ void APlayer::AttackStart()
 		bullet->SetDir(DirState);
 		// bullet이 땅이나 몬스터에 닿으면 없어지게 해야 함? 일단 Destroy로 해두기.
 		bullet->Destroy(3.f);
+		break;
 	}
-	else if (true == IsFireKirby)
+	case EKirbyType::Fire:
 	{
 		PlayerSound = UEngineSound::SoundPlay("FireAttack.wav");
 		PlayerSound.Loop(2);
@@ -1115,8 +1163,9 @@ void APlayer::AttackStart()
 		default:
 			break;
 		}
+		break;
 	}
-	else if (true == IsIceKirby)
+	case EKirbyType::Ice:
 	{
 		PlayerSound = UEngineSound::SoundPlay("IceAttack.wav");
 		PlayerSound.Loop(2);
@@ -1139,20 +1188,24 @@ void APlayer::AttackStart()
 			break;
 		}
 	}
+		break;
+	default:
+		break;
+	}
 }
 void APlayer::Attack(float _DeltaTime)
 {
 	// 별 뱉고 다시 Idle.
-	if (true == IsEating && PlayerRenderer->IsCurAnimationEnd())
+	if (EKirbyType::Eating == UContentsHelper::KirbyType && PlayerRenderer->IsCurAnimationEnd())
 	{
-		IsEating = false;
+		KirbyTypeChange(EKirbyType::Normal);
 		UContentsHelper::EatingFireMonster = false; 
 		StateChange(EKirbyState::Idle);
 		return;
 	}
 
 
-	if ((true == IsFireKirby || true == IsIceKirby) && UEngineInput::IsFree('X'))
+	if ((EKirbyType::Fire == UContentsHelper::KirbyType || EKirbyType::Ice == UContentsHelper::KirbyType) && UEngineInput::IsFree('X'))
 	{
 		PlayerSound.Off();
 		StateChange(EKirbyState::Idle);
@@ -1161,7 +1214,7 @@ void APlayer::Attack(float _DeltaTime)
 
 	TypeAttackTime -= _DeltaTime;
 
-	if (true == IsFireKirby && UEngineInput::IsPress('X') && 0.0f > TypeAttackTime)
+	if (EKirbyType::Fire == UContentsHelper::KirbyType && UEngineInput::IsPress('X') && 0.0f > TypeAttackTime)
 	{
 		TypeAttackTime = AttackMaxTime;
 
@@ -1182,7 +1235,7 @@ void APlayer::Attack(float _DeltaTime)
 			break;
 		};
 	}
-	if (true == IsIceKirby && UEngineInput::IsPress('X') && 0.0f > TypeAttackTime)
+	if (EKirbyType::Ice == UContentsHelper::KirbyType && UEngineInput::IsPress('X') && 0.0f > TypeAttackTime)
 	{
 		TypeAttackTime = AttackMaxTime;
 		// Ice 커비 공격
@@ -1508,6 +1561,7 @@ void APlayer::CameraFreeMove(float _DeltaTime)
 std::string APlayer::GetAnimationName(std::string _Name)
 {
 	std::string DirName = "";
+	std::string resName = "";
 
 	switch (DirState)
 	{
@@ -1523,35 +1577,31 @@ std::string APlayer::GetAnimationName(std::string _Name)
 
 	CurAnimationName = _Name;
 
-	if (IsEating == true) 
+	switch (UContentsHelper::KirbyType)
 	{
-		return std::string("Eating") + _Name + DirName;
-	}
-	else if (IsFireKirby == true)
-	{
-		if (_Name == "LadderUp" || _Name == "LadderDown")
-		{
-			return std::string("Fire") + _Name;
-		}
-		return std::string("Fire") + _Name + DirName;
-	}
-	else if (IsIceKirby == true)
-	{
-		if (_Name == "LadderUp" || _Name == "LadderDown")
-		{
-			return std::string("Ice") + _Name;
-		}
-		return std::string("Ice") + _Name + DirName;
-	}
-	else
-	{
-		if (_Name == "LadderUp" || _Name == "LadderDown")
-		{
-			return _Name;
-		}
+	case EKirbyType::Normal:
+		resName = _Name;
+		break;
+	case EKirbyType::Eating:
+		resName = std::string("Eating") + _Name;
+		break;
+	case EKirbyType::Fire:
+		resName = std::string("Fire") + _Name;
+		break;
+	case EKirbyType::Ice:
+		resName = std::string("Ice") + _Name;
+		break;
+	default:
+		resName = _Name;
+		break;
 	}
 
-	return _Name + DirName;
+	if (_Name == "LadderUp" || _Name == "LadderDown")
+	{
+		return resName;
+	}
+
+	return resName + DirName;
 
 }
 
@@ -1573,7 +1623,7 @@ bool APlayer::DirCheck()
 	{
 		DirState = Dir;
 		IsChanged = true;
-		if (true == IsEating && CurAnimationName == "JumpTurn")
+		if (UContentsHelper::KirbyType == EKirbyType::Eating && CurAnimationName == "JumpTurn")
 		{
 			return IsChanged;
 		}
@@ -1693,7 +1743,7 @@ void APlayer::FinalMove(float _DeltaTime)
 	Color8Bit TopColor = UContentsHelper::ColMapImage->GetColor(NextPlayerPos.iX(), NextPlayerPos.iY() - 20, Color8Bit::MagentaA);
 	if (TopColor == Color8Bit::MagentaA || TopColor == Color8Bit::YellowA)
 	{
-		if (false == IsEating /*&& false == IsFireKirby && false == IsIceKirby*/)
+		if (UContentsHelper::KirbyType != EKirbyType::Eating /*&& false == IsFireKirby && false == IsIceKirby*/)
 		{
 			MovePos.Y = 0.f;
 			PlayerRenderer->ChangeAnimation(GetAnimationName("Crouch"));	// 머리박을 때 찌부되는거 TestCode
