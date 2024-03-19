@@ -51,6 +51,10 @@ void APlayer::KirbyCopy()
 	DamagePower = Kirby->DamagePower;
 }
 
+void APlayer::KirbyTypeChange(EKirbyType _KirbyType)
+{
+
+}
 void APlayer::KirbyTypeUpdate()
 {
 	if (BeforeFireKirby != IsFireKirby)

@@ -109,6 +109,7 @@ protected:
 
 	
 	void KirbyCopy();		// 커비 상태 복사해주는 함수
+	void KirbyTypeChange(EKirbyType _KirbyType);	// 커비 타입 바꿔주는 함수
 	void KirbyTypeUpdate();	// 커비 타입 업데이트하는 함수	
 
 	// 상태 보조 함수
