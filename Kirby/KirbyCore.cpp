@@ -102,6 +102,7 @@ void KirbyCore::BeginPlay()
 	CreateLevel<UEndingLevel>("EndingLevel");
 
 	bgm = UEngineSound::SoundPlay("PlayLevelBGM.wav");
+	bgm.Loop();
 
 	//ChangeLevel("PlayLevel");
 	ChangeLevel("TitleLevel");	
