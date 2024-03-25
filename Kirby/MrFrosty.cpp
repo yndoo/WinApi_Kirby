@@ -211,9 +211,11 @@ void AMrFrosty::Move(float _DeltaTime)
 		case EActorDir::None:
 			break;
 		case EActorDir::Left:
+			MonsterDir = EActorDir::Right;
 			AddActorLocation(FVector::Right * 10);
 			break;
 		case EActorDir::Right:
+			MonsterDir = EActorDir::Left;
 			AddActorLocation(FVector::Left * 10);
 			break;
 		default:
@@ -223,12 +225,6 @@ void AMrFrosty::Move(float _DeltaTime)
 		StateChange(EEnemyState::HitWall);
 		return;
 	}
-	//float FrostyXPos = GetActorLocation().X;
-	//if (FrostyXPos < 100.f || FrostyXPos > 570.f)
-	//{
-	//	StateChange(EEnemyState::HitWall);
-	//	return;
-	//}
 }
 
 void AMrFrosty::HitWallStart()
@@ -245,14 +241,16 @@ void AMrFrosty::HitWallStart()
 	}
 
 	// 벽에서 튕겨나가기
+	// 벽에 부딪히면 반대로.
 	JumpVector = SmallJumpPower;	
-	switch (DirState)
+
+	switch (MonsterDir)
 	{
 	case EActorDir::Right:
-		MoveVector += FVector::Left * 400.f;
+		MoveVector += FVector::Right * 400.f;
 		break;
 	case EActorDir::Left:
-		MoveVector += FVector::Right * 400.f;
+		MoveVector += FVector::Left * 400.f;
 		break;
 	default:
 		break;
@@ -266,13 +264,13 @@ void AMrFrosty::HitWall(float _DeltaTime)
 	}
 
 	// 감속
-	switch (DirState)
+	switch (MonsterDir)
 	{
 	case EActorDir::Right:
-		AddMoveVector(FVector::Right * _DeltaTime, SmallMoveAcc);
+		AddMoveVector(FVector::Left * _DeltaTime, SmallMoveAcc);
 		break;
 	case EActorDir::Left:
-		AddMoveVector(FVector::Left * _DeltaTime, SmallMoveAcc);
+		AddMoveVector(FVector::Right * _DeltaTime, SmallMoveAcc);
 		break;
 	default:
 		break;

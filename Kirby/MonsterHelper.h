@@ -92,6 +92,7 @@ protected:
 	FVector InhaleDir = FVector::Zero;
 	std::string CurAnimationName = "Idle";
 	float SwitchIsDamagedTimer = 0.f;
+	float InhaleSpeed = 200.f;
 
 	FVector WinScale = GEngine->MainWindow.GetWindowScale();
 	FVector MapSize; // = UContentsHelper::ColMapImage->GetScale();

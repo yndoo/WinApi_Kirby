@@ -25,7 +25,7 @@ void MonsterHelper::Tick(float _DeltaTime)
 	{
 		// 커비쪽으로 당겨지기
 		InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
-		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
+		AddActorLocation(InhaleDir.Normalize2DReturn() * InhaleSpeed * _DeltaTime);
 		StateChange(EEnemyState::Inhaled);
 		return;
 	}

@@ -59,28 +59,6 @@ void APlayer::KirbyTypeChange(EKirbyType _KirbyType)
 		UContentsHelper::KirbyType = _KirbyType;
 	}
 }
-void APlayer::KirbyTypeUpdate()
-{
-	if (BeforeFireKirby != IsFireKirby)
-	{
-		KirbyTypeChange(EKirbyType::Fire);
-		//BeforeFireKirby = IsFireKirby;
-		//IsIceKirby = false;
-		//BeforeIceKirby = false;
-	}
-	if (BeforeIceKirby != IsIceKirby)
-	{
-		KirbyTypeChange(EKirbyType::Ice);
-		//BeforeIceKirby = IsIceKirby;
-		//IsFireKirby = false;
-		//BeforeFireKirby = false;
-	}
-
-	if (false == IsIceKirby && false == IsFireKirby)
-	{
-		KirbyTypeChange(EKirbyType::Normal);
-	}
-}
 
 void APlayer::BeginPlay() 
 {
@@ -244,7 +222,6 @@ void APlayer::Tick(float _DeltaTime)
 {
 	AActor::Tick(_DeltaTime);
 	StateUpdate(_DeltaTime);
-	//KirbyTypeUpdate();
 
 	if (true == UEngineInput::IsDown('0'))
 	{
@@ -269,26 +246,6 @@ void APlayer::Tick(float _DeltaTime)
 		)
 	   )
 	{
-		//// 변신 상태에서 몬스터 피격당하면 변신 풀리기
-		//if (true == IsEating)
-		//{
-		//	// 먹은 거 뱉어지기
-		//	IsEating = false;
-		//}
-		//if (true == IsFireKirby)
-		//{
-		//	// 변신 풀리기
-		//	IsFireKirby = false;
-		//}
-		//if (true == IsIceKirby)
-		//{
-		//	// 변신 풀리기
-		//	IsIceKirby = false;
-		//}
-
-		// 기본 커비 Damaged
-
-		// 변신 상태 등등 Normal로 돌아감
 		KirbyTypeChange(EKirbyType::Normal);
 		BeforeState = State;
 		StateChange(EKirbyState::Damaged);
@@ -302,14 +259,12 @@ void APlayer::Tick(float _DeltaTime)
 	}
 	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::IceTypeItem, Result))
 	{
-		//IsIceKirby = true;
 		KirbyTypeChange(EKirbyType::Ice);
 		StateChange(EKirbyState::Changing);
 		return;
 	}
 	if (true == BodyCollision->CollisionCheck(EKirbyCollisionOrder::FireTypeItem, Result))
 	{
-		//IsFireKirby = true;
 		KirbyTypeChange(EKirbyType::Fire);
 		StateChange(EKirbyState::Changing);
 		return;
@@ -1267,8 +1222,24 @@ void APlayer::Fly(float _DeltaTime)
 	DirCheck();
 	WoodBlockCheck();
 
-	if (IsPlayerTopMagentaA())
+	if (true == IsPlayerFrontMagentaA())
 	{
+		switch (DirState)
+		{
+		case EActorDir::Left:
+			AddActorLocation(FVector::Right * 5.f);
+			break;
+		case EActorDir::Right:
+			AddActorLocation(FVector::Left * 5.f);
+			break;
+		default:
+			break;
+		}
+		return;
+	}
+
+	if (true == IsPlayerTopMagentaA())
+	{		
 		FVector AddV = FVector::Down * FlySpeed * _DeltaTime;
 		AddActorLocation(AddV);
 		CameraMove(AddV);
@@ -1755,6 +1726,17 @@ void APlayer::FinalMove(float _DeltaTime)
 	AddActorLocation(MovePos);
 	CameraMove(MovePos);
 	WoodBlockCheck();
+}
+
+bool APlayer::IsPlayerFrontMagentaA()
+{
+	Color8Bit ColorL = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX() - 20, GetActorLocation().iY() - 20, Color8Bit::MagentaA);
+	Color8Bit ColorR = UContentsHelper::ColMapImage->GetColor(GetActorLocation().iX() + 20, GetActorLocation().iY() - 20, Color8Bit::MagentaA);
+	if (ColorL == Color8Bit::MagentaA || ColorR == Color8Bit::MagentaA)
+	{
+		return true;
+	}
+	return false;
 }
 
 bool APlayer::IsPlayerBottomMagentaA()

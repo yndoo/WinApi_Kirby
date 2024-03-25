@@ -57,6 +57,7 @@ protected:
 	FVector GravityAcc = FVector::Down * 3000.0f;
 	FVector FinalMoveVector = FVector::Zero;
 
+	float InhaleSpeed = 200.f;
 private:
 	void UpMoving(float _DeltaTime, Color8Bit _Color);
 	bool IsPlayerBottomMagentaA();

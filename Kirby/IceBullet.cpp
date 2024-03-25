@@ -127,7 +127,7 @@ void AIceBullet::Inhaled(float _DeltaTime)
 	if (true == BulletCollision->CollisionCheck(EKirbyCollisionOrder::InhaleCol, Result))
 	{
 		FVector InhaleDir = Result[0]->GetOwner()->GetActorLocation() - GetActorLocation();
-		AddActorLocation(InhaleDir.Normalize2DReturn() * 100.f * _DeltaTime);
+		AddActorLocation(InhaleDir.Normalize2DReturn() * InhaleSpeed * _DeltaTime);
 	}
 }
 
